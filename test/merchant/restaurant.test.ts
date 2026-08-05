@@ -151,12 +151,61 @@ describe('/merchant/restaurant (restaurant-scoped)', () => {
     expect(getRes.body.restaurant.hours).toHaveLength(2);
   });
 
+  it('creates a primary location first and scopes hours to it when none exists yet', async () => {
+    seedRestaurant('restaurant_1');
+    const merchAuth = { Authorization: `Bearer ${merchantToken('restaurant_1')}` };
+
+    const res = await request(app).put('/merchant/restaurant/hours').set(merchAuth).send({
+      days: [{ day_of_week: 'monday', closed: true }],
+    });
+    expect(res.status).toBe(200);
+    expect(res.body.hours).toHaveLength(1);
+
+    const { adminContext } = await import('../../src/testUtils/fakeAdapter');
+    const locations = await adminContext().table('restaurant_locations').findMany({ where: { restaurant_id: 'restaurant_1' } });
+    expect(locations).toHaveLength(1);
+    const hoursRows = await adminContext().table('restaurant_hours').findMany({ where: { restaurant_id: 'restaurant_1' } });
+    expect(hoursRows).toHaveLength(1);
+    expect(hoursRows[0]).toMatchObject({ location_id: (locations[0] as { location_id: string }).location_id });
+  });
+
   it('rejects an invalid hours submission', async () => {
     seedRestaurant('restaurant_1');
     const merchAuth = { Authorization: `Bearer ${merchantToken('restaurant_1')}` };
 
     const res = await request(app).put('/merchant/restaurant/hours').set(merchAuth).send({
       days: [{ day_of_week: 'monday', closed: true, open_24h: true }],
+    });
+    expect(res.status).toBe(400);
+  });
+
+  it('replaces the restaurant\'s cuisines', async () => {
+    seedRestaurant('restaurant_1');
+    fakeDb.seed('admin', 'cuisines', [
+      { cuisine_id: 'cui_khmer', name: 'Khmer', active: true, sort_order: 0 },
+      { cuisine_id: 'cui_thai',  name: 'Thai',  active: true, sort_order: 1 },
+    ]);
+    const merchAuth = { Authorization: `Bearer ${merchantToken('restaurant_1')}` };
+
+    const res = await request(app).put('/merchant/restaurant/cuisines').set(merchAuth).send({
+      cuisines: ['Khmer', 'Thai'],
+    });
+    expect(res.status).toBe(200);
+    expect(res.body.cuisines.sort()).toEqual(['Khmer', 'Thai']);
+
+    const getRes = await request(app).get('/merchant/restaurant').set(merchAuth);
+    expect(getRes.body.restaurant.cuisines.sort()).toEqual(['Khmer', 'Thai']);
+  });
+
+  it('rejects a cuisines submission with an unknown cuisine name', async () => {
+    seedRestaurant('restaurant_1');
+    fakeDb.seed('admin', 'cuisines', [
+      { cuisine_id: 'cui_khmer', name: 'Khmer', active: true, sort_order: 0 },
+    ]);
+    const merchAuth = { Authorization: `Bearer ${merchantToken('restaurant_1')}` };
+
+    const res = await request(app).put('/merchant/restaurant/cuisines').set(merchAuth).send({
+      cuisines: ['Atlantis'],
     });
     expect(res.status).toBe(400);
   });

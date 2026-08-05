@@ -2,6 +2,7 @@ import { Router } from 'express';
 import { requireAdmin } from '../../middleware/auth';
 import usersRoutes    from './users.routes';
 import categoriesRoutes from './categories.routes';
+import cuisinesRoutes from './cuisines.routes';
 import servicesRoutes from './services.routes';
 import reservationsRoutes from './reservations.routes';
 import merchantApplicationsRoutes from './merchantApplications.routes';
@@ -15,6 +16,7 @@ router.use(requireAdmin);
 
 router.use('/users',      usersRoutes);
 router.use('/categories', categoriesRoutes);
+router.use('/cuisines',   cuisinesRoutes);
 router.use('/services',   servicesRoutes);
 router.use('/reservations', reservationsRoutes);
 router.use('/merchant-applications', merchantApplicationsRoutes);

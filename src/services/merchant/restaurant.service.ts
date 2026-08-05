@@ -70,10 +70,26 @@ export async function updateOwnLocation(restaurantId: string, input: LocationInp
   return { location };
 }
 
-// Bulk-replaces the merchant's own restaurant's weekly hours — see
-// restaurantHours.service.ts setForRestaurant() for the replace-all semantics.
+// Bulk-replaces the merchant's own restaurant's weekly hours. Hours are stored
+// per-location now (restaurant_hours.location_id — see restaurantHours.service.ts), but
+// this endpoint's external contract is unchanged: merchants still manage exactly one
+// (primary) location's hours at this phase, so this resolves the primary location
+// (creating one first if this restaurant somehow has none yet, same as
+// updateOwnLocation() above) and writes via setForLocation() — see there for the
+// replace-all semantics.
 export async function updateOwnHours(restaurantId: string, days: DayHoursInput[]) {
   await getOwn(restaurantId); // 404s if this merchant doesn't own a restaurant
-  const hours = await restaurantHoursService.setForRestaurant(restaurantId, days);
+
+  const existing = await restaurantLocationsService.getPrimary(restaurantId);
+  const location = existing ?? await restaurantLocationsService.create(restaurantId, {});
+  const hours = await restaurantHoursService.setForLocation(location.location_id as string, days);
   return { hours };
+}
+
+// Bulk-replaces the merchant's own restaurant's cuisines — see
+// restaurantCuisines.service.ts setForRestaurant() for the replace-all semantics.
+export async function updateOwnCuisines(restaurantId: string, cuisineNames: string[]) {
+  await getOwn(restaurantId); // 404s if this merchant doesn't own a restaurant
+  const cuisines = await restaurantCuisinesService.setForRestaurant(restaurantId, cuisineNames);
+  return { cuisines };
 }

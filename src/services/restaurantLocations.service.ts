@@ -11,6 +11,7 @@ export interface LocationInput {
   city?: string;
   latitude?: number;
   longitude?: number;
+  active?: boolean;
 }
 
 export async function getForRestaurant(restaurantId: string) {
@@ -55,6 +56,7 @@ export async function create(restaurantId: string, input: LocationInput) {
     city:          input.city ?? '',
     latitude:      input.latitude,
     longitude:     input.longitude,
+    active:        input.active ?? true,
   });
   const created = await ctx.table('restaurant_locations').findOne({ where: { location_id } }) as Record<string, unknown>;
   return withDerivedPriceSymbol(created);
@@ -62,9 +64,18 @@ export async function create(restaurantId: string, input: LocationInput) {
 
 export async function update(locationId: string, input: LocationInput) {
   const ctx = adminContext();
-  const existing = await ctx.table('restaurant_locations').findOne({ where: { location_id: locationId } });
+  const existing = await ctx.table('restaurant_locations').findOne({ where: { location_id: locationId } }) as Record<string, unknown> | null;
   if (!existing) {
     throw new AppError(404, 'Location not found');
+  }
+
+  if (input.active === false) {
+    const restaurantId = existing.restaurant_id as string;
+    const siblings = await ctx.table('restaurant_locations').findMany({ where: { restaurant_id: restaurantId } }) as Record<string, unknown>[];
+    const otherActiveCount = siblings.filter((loc) => loc.location_id !== locationId && loc.active).length;
+    if (otherActiveCount === 0) {
+      throw new AppError(400, 'Restaurant must have at least one active location');
+    }
   }
 
   const data: Record<string, unknown> = {};
@@ -75,6 +86,7 @@ export async function update(locationId: string, input: LocationInput) {
   if (input.city          !== undefined) data.city          = input.city;
   if (input.latitude      !== undefined) data.latitude      = input.latitude;
   if (input.longitude     !== undefined) data.longitude     = input.longitude;
+  if (input.active        !== undefined) data.active        = input.active;
 
   if (Object.keys(data).length === 0) {
     throw new AppError(400, 'No updatable fields provided');

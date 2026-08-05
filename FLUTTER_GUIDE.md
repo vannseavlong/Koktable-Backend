@@ -124,7 +124,10 @@ flow and not customer-facing. `category_id` may be `null`/absent for an uncatego
 see section 3a below for resolving it to a display name. `contact_email`/`contact_phone`/`address`/
 etc. moved off this object onto `locations` (a restaurant can have more than one physical site);
 `locations`, `cuisines`, and `hours` are all structured, not strings — see `ADMIN_API.md` § 5 for
-the shapes; none of them are modeled below, this guide predates the split.
+the shapes; none of them are modeled below, this guide predates the split. Note `hours` here stays
+a restaurant-level field (unlike `ADMIN_API.md` § 5's admin view, where hours moved onto each
+`locations[]` entry) — the public mirror flattens a restaurant's location(s)' hours back onto the
+restaurant object, same as the merchant-facing endpoint (§ 5 "Merchant restaurant profile").
 
 `item` object (from `catalog_items`): `{ item_id, restaurant_id, item_type, name, description, price_from, icon, color, image, category_id, active, sort_order }`.
 
@@ -255,6 +258,45 @@ class CategoryModel {
         name:       j['name'] as String,
         icon:       j['icon'] as String? ?? '',
         sortOrder:  (j['sort_order'] as num?)?.toInt() ?? 0,
+      );
+}
+```
+
+---
+
+### 3b. Cuisines — `GET /user/cuisines`
+
+Public, no auth. The canonical cuisine vocabulary (Khmer, Thai, Italian, ...) that a restaurant's
+`cuisines: string[]` (section 3) is drawn from — a separate facet from `category_id` (dining
+style), not a replacement for it. Fetch once and use as the option list for a cuisine filter/facet
+UI, same pattern as 3a Categories.
+
+```
+GET /user/cuisines
+→ { "cuisines": [ { "cuisine_id": "cui_khmer", "name": "Khmer", "icon": "🍲", "active": true, "sort_order": 1 }, ... ] }
+```
+Only `active: true` cuisines are returned, sorted by `sort_order` ascending — the same list an
+admin manages at `/admin/cuisines` (see `ADMIN_API.md` § 9).
+
+```dart
+class CuisineModel {
+  final String cuisineId;
+  final String name;
+  final String icon;
+  final int sortOrder;
+
+  const CuisineModel({
+    required this.cuisineId,
+    required this.name,
+    required this.icon,
+    required this.sortOrder,
+  });
+
+  factory CuisineModel.fromJson(Map<String, dynamic> j) => CuisineModel(
+        cuisineId: j['cuisine_id'] as String,
+        name:      j['name'] as String,
+        icon:      j['icon'] as String? ?? '',
+        sortOrder: (j['sort_order'] as num?)?.toInt() ?? 0,
       );
 }
 ```

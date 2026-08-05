@@ -59,9 +59,10 @@ export async function getActiveRestaurantIds(): Promise<Set<string>> {
   return new Set(restaurants.map((s) => s.restaurant_id as string));
 }
 
-// Shared by getById and listCatalogItems: 404s if the restaurant doesn't exist OR isn't
-// active, without distinguishing the two cases in the response.
-async function getActiveRestaurantOrThrow(id: string) {
+// Shared by getById and listCatalogItems (and reservations.service.ts's restaurant_id-only
+// creation mode): 404s if the restaurant doesn't exist OR isn't active, without
+// distinguishing the two cases in the response.
+export async function getActiveRestaurantOrThrow(id: string) {
   const ctx  = adminContext();
   const restaurant = await ctx.table('restaurants').findOne({ where: { restaurant_id: id } });
   if (!restaurant || restaurant.status !== 'active') {

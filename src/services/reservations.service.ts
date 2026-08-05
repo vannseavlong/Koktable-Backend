@@ -4,6 +4,7 @@ import { AppError } from '../utils/AppError';
 import { withTotals } from '../utils/reservationTotals';
 import { decrementIfProduct, restockIfProduct } from '../utils/stockAdjustment';
 import { usersWithSheets } from './shared/reservationLookup';
+import { getActiveRestaurantOrThrow } from './restaurants.service';
 import type { JwtPayload } from '../middleware/auth';
 
 interface CreateReservationInput {
@@ -11,9 +12,16 @@ interface CreateReservationInput {
   party_size: number;
   service_id?: string;
   item_id?: string;
+  // Third, mutually-exclusive creation mode: a direct restaurant table reservation,
+  // with neither service_id nor item_id. See validateReservationBody/create below.
+  restaurant_id?: string;
   start_date: string;
-  end_date: string;
-  daily_rate: number;
+  // Required for the service_id/item_id modes; defaults to start_date in restaurant_id-only mode.
+  end_date?: string;
+  // Required for the service_id/item_id modes; defaults to 0 in restaurant_id-only mode.
+  daily_rate?: number;
+  // Wall-clock time slot (e.g. "19:30"); only meaningful in restaurant_id-only mode.
+  reservation_time?: string;
   notes?: string;
 }
 
@@ -28,22 +36,36 @@ interface UpdateReservationInput {
   status?: string;
 }
 
+// Three mutually-exclusive creation modes:
+//  - service_id: legacy single-restaurant `services` table booking (stay-based).
+//  - item_id: restaurant-scoped `catalog_items` booking (stay-based).
+//  - restaurant_id: direct restaurant table reservation (time-slot based) — new mode,
+//    end_date/daily_rate become optional (defaulted in create() below).
+// All three still require start_date; only service_id/item_id require end_date/daily_rate
+// and a strictly-after end_date, since a stay must span at least one night.
 function validateReservationBody(body: Record<string, unknown>): string | null {
-  const { guest_name, party_size, service_id, item_id, start_date, end_date, daily_rate } = body;
+  const { guest_name, party_size, service_id, item_id, restaurant_id, start_date, end_date, daily_rate } = body;
   if (!guest_name)   return 'guest_name is required';
   if (!party_size)   return 'party_size is required';
-  if (!service_id && !item_id) return 'Either service_id or item_id is required';
-  if (service_id && item_id)   return 'Provide only one of service_id or item_id, not both';
-  if (!start_date) return 'start_date is required';
-  if (!end_date)   return 'end_date is required';
-  if (daily_rate == null) return 'daily_rate is required';
-
   if (typeof party_size !== 'number' || party_size < 1) {
     return 'party_size must be a number of at least 1';
   }
+  if (!start_date) return 'start_date is required';
 
-  if (new Date(end_date as string) <= new Date(start_date as string)) {
-    return 'end_date must be after start_date';
+  const targetCount = [service_id, item_id, restaurant_id].filter(Boolean).length;
+  if (targetCount === 0) return 'One of service_id, item_id, or restaurant_id is required';
+  if (targetCount > 1)   return 'Provide only one of service_id, item_id, or restaurant_id, not more than one';
+
+  if (service_id || item_id) {
+    if (!end_date)   return 'end_date is required';
+    if (daily_rate == null) return 'daily_rate is required';
+    if (new Date(end_date as string) <= new Date(start_date as string)) {
+      return 'end_date must be after start_date';
+    }
+  } else if (end_date != null && new Date(end_date as string) < new Date(start_date as string)) {
+    // restaurant_id-only mode: end_date is optional (defaults to start_date), but if given
+    // explicitly it still can't precede start_date.
+    return 'end_date cannot be before start_date';
   }
 
   return null;
@@ -95,15 +117,18 @@ export async function create(user: JwtPayload, body: CreateReservationInput) {
     throw new AppError(400, error);
   }
 
-  const { guest_name, party_size, service_id, item_id, start_date, end_date, daily_rate, notes } = body;
+  const { guest_name, party_size, service_id, item_id, restaurant_id, start_date, notes, reservation_time } = body;
+  let { end_date, daily_rate } = body;
 
   const adminCtx = adminContext();
 
-  // Two mutually-exclusive reservation targets: the legacy single-restaurant `services` table
-  // (service_id, restaurant_id stays blank) or a restaurant-scoped `catalog_items` row (item_id,
-  // denormalizes the item's restaurant_id onto the reservation — see schemas/user/reservations.ts).
-  let resolvedServiceId: string;
-  let resolvedServiceName: string;
+  // Three mutually-exclusive reservation targets: the legacy single-restaurant `services` table
+  // (service_id, restaurant_id stays blank), a restaurant-scoped `catalog_items` row (item_id,
+  // denormalizes the item's restaurant_id onto the reservation), or a direct restaurant table
+  // reservation (restaurant_id alone, no service/item — service_id/service_name stay blank).
+  // See schemas/user/reservations.ts.
+  let resolvedServiceId = '';
+  let resolvedServiceName = '';
   let restaurantId = '';
 
   if (item_id) {
@@ -121,15 +146,23 @@ export async function create(user: JwtPayload, body: CreateReservationInput) {
     if (item.item_type === 'product') {
       await decrementIfProduct(item_id);
     } else if (item.item_type === 'service' && item.daily_capacity != null) {
-      await checkServiceCapacity(item_id, item.daily_capacity as number, start_date, end_date);
+      await checkServiceCapacity(item_id, item.daily_capacity as number, start_date, end_date as string);
     }
-  } else {
+  } else if (service_id) {
     const service = await adminCtx.table('services').findOne({ where: { service_id } }) as Record<string, string> | null;
     if (!service) {
       throw new AppError(404, 'Service not found');
     }
     resolvedServiceId   = service_id as string;
     resolvedServiceName = service.name;
+  } else {
+    // restaurant_id-only mode: a direct table reservation, not tied to a services/catalog_items
+    // row. Reuses restaurants.service.ts's active-restaurant check so a missing or inactive
+    // restaurant 404s the same way it does for the public restaurants API (no status leak).
+    await getActiveRestaurantOrThrow(restaurant_id as string);
+    restaurantId = restaurant_id as string;
+    end_date   = end_date ?? start_date;
+    daily_rate = daily_rate ?? 0;
   }
 
   const ctx        = userContext(user.user_id, actorSheetId);
@@ -147,6 +180,7 @@ export async function create(user: JwtPayload, body: CreateReservationInput) {
     notes:        notes ?? '',
     status:       'pending',
     restaurant_id:      restaurantId,
+    reservation_time:   reservation_time ?? '',
   });
 
   const reservation = await ctx.table('reservations').findOne({ where: { reservation_id } }) as Record<string, unknown>;

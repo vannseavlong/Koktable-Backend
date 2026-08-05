@@ -127,6 +127,65 @@ describe('POST /user/reservations', () => {
     expect(nonOverlapping.status).toBe(201);
   });
 
+  it('books a direct table reservation via restaurant_id alone, defaulting end_date/daily_rate and storing reservation_time', async () => {
+    fakeDb.seed('admin', 'restaurants', [{ restaurant_id: 'restaurant_9', name: 'Test Restaurant', status: 'active' }]);
+
+    const res = await request(app).post('/user/reservations').set(auth).send({
+      guest_name: 'Alex Tran', party_size: 2, restaurant_id: 'restaurant_9',
+      start_date: '2026-08-01', reservation_time: '19:30', notes: 'Window seat',
+    });
+    expect(res.status).toBe(201);
+    expect(res.body.reservation).toMatchObject({
+      service_id: null,
+      service_name: null,
+      restaurant_id: 'restaurant_9',
+      start_date: '2026-08-01',
+      end_date: '2026-08-01',
+      daily_rate: 0,
+      reservation_time: '19:30',
+      nights: 1,
+      total: 0,
+      status: 'pending',
+    });
+  });
+
+  it('accepts an explicit end_date/daily_rate in restaurant_id-only mode', async () => {
+    fakeDb.seed('admin', 'restaurants', [{ restaurant_id: 'restaurant_9', name: 'Test Restaurant', status: 'active' }]);
+
+    const res = await request(app).post('/user/reservations').set(auth).send({
+      guest_name: 'Alex Tran', party_size: 2, restaurant_id: 'restaurant_9',
+      start_date: '2026-08-01', end_date: '2026-08-01', daily_rate: 15,
+    });
+    expect(res.status).toBe(201);
+    expect(res.body.reservation).toMatchObject({ restaurant_id: 'restaurant_9', end_date: '2026-08-01', daily_rate: 15 });
+  });
+
+  it('404s a restaurant_id that does not exist', async () => {
+    const res = await request(app).post('/user/reservations').set(auth).send({
+      guest_name: 'Alex Tran', party_size: 2, restaurant_id: 'ghost_restaurant',
+      start_date: '2026-08-01',
+    });
+    expect(res.status).toBe(404);
+  });
+
+  it('404s a restaurant_id that exists but is not active (same as unknown, no status leak)', async () => {
+    fakeDb.seed('admin', 'restaurants', [{ restaurant_id: 'restaurant_9', name: 'Pending Restaurant', status: 'pending' }]);
+    const res = await request(app).post('/user/reservations').set(auth).send({
+      guest_name: 'Alex Tran', party_size: 2, restaurant_id: 'restaurant_9',
+      start_date: '2026-08-01',
+    });
+    expect(res.status).toBe(404);
+  });
+
+  it('rejects restaurant_id combined with service_id', async () => {
+    fakeDb.seed('admin', 'restaurants', [{ restaurant_id: 'restaurant_9', name: 'Test Restaurant', status: 'active' }]);
+    const res = await request(app).post('/user/reservations').set(auth).send({
+      guest_name: 'Alex Tran', party_size: 2, restaurant_id: 'restaurant_9', service_id: 'svc_1',
+      start_date: '2026-08-01', end_date: '2026-08-02', daily_rate: 10,
+    });
+    expect(res.status).toBe(400);
+  });
+
   it('restocks a product on user self-cancel', async () => {
     fakeDb.seed('admin', 'catalog_items', [{
       item_id: 'item_1', restaurant_id: 'restaurant_9', item_type: 'product', name: 'Leash', active: true, quantity: 1,

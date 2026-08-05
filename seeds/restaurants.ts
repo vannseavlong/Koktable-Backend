@@ -41,9 +41,16 @@ const restaurant_cuisines = restaurantData.restaurant_cuisines.map((rc) => {
   };
 });
 
-const restaurant_hours = restaurantData.restaurant_hours.map((h) => ({
-  hours_id: `hrs_${h.restaurant_id}_${h.day_of_week}`,
-  ...h,
-}));
+const restaurant_hours = restaurantData.restaurant_hours.map((h) => {
+  // Same deterministic loc_${restaurant_id} the one seeded location above uses — the
+  // seed data has exactly one location per restaurant today, so each restaurant's
+  // hours become that restaurant's one location's hours.
+  const location_id = `loc_${h.restaurant_id}`;
+  return {
+    hours_id: `hrs_${location_id}_${h.day_of_week}`,
+    location_id,
+    ...h,
+  };
+});
 
 export default { restaurants, restaurant_locations, restaurant_cuisines, restaurant_hours };

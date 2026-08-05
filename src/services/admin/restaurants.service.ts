@@ -14,13 +14,29 @@ interface UpdateRestaurantStatusInput {
 
 const VALID_STATUSES = ['pending', 'active', 'suspended'];
 
+// Hours are embedded per-location (location.hours), not as a restaurant-level hours[]
+// field — a restaurant is no longer assumed to share one set of hours across all its
+// sites once it has more than one location (see restaurant_hours' location_id re-key).
+// Contrast with restaurantHours.service.ts's restaurant-scoped getForRestaurant(s)
+// convenience wrappers, which flatten hours back onto the restaurant for callers
+// (merchant/public) that still assume a single location — admin intentionally doesn't
+// use those here.
+function withLocationHours(
+  locations: Record<string, unknown>[],
+  hoursByLocation: Map<string, Record<string, unknown>[]>
+): Record<string, unknown>[] {
+  return locations.map((loc) => ({
+    ...loc,
+    hours: hoursByLocation.get(loc.location_id as string) ?? [],
+  }));
+}
+
 function attach(
   restaurant: Record<string, unknown>,
   locations: Record<string, unknown>[],
-  cuisines: string[],
-  hours: Record<string, unknown>[]
+  cuisines: string[]
 ): Record<string, unknown> {
-  return { ...restaurant, locations, cuisines, hours };
+  return { ...restaurant, locations, cuisines };
 }
 
 export async function list(query: ListRestaurantsQuery) {
@@ -31,16 +47,21 @@ export async function list(query: ListRestaurantsQuery) {
   const restaurants = await ctx.table('restaurants').findMany({ where, orderBy: '_created_at', order: 'desc' }) as Record<string, unknown>[];
   const ids = restaurants.map((r) => r.restaurant_id as string);
 
-  const [locationsByRestaurant, cuisinesByRestaurant, hoursByRestaurant] = await Promise.all([
+  const [locationsByRestaurant, cuisinesByRestaurant] = await Promise.all([
     restaurantLocationsService.getForRestaurants(ids),
     restaurantCuisinesService.getForRestaurants(ids),
-    restaurantHoursService.getForRestaurants(ids),
   ]);
+
+  // One hours table read total across every restaurant's locations, not one per
+  // restaurant or per location.
+  const allLocationIds = [...locationsByRestaurant.values()].flatMap((locs) => locs.map((l) => l.location_id as string));
+  const hoursByLocation = await restaurantHoursService.getForLocations(allLocationIds);
 
   return {
     restaurants: restaurants.map((r) => {
       const id = r.restaurant_id as string;
-      return attach(r, locationsByRestaurant.get(id) ?? [], cuisinesByRestaurant.get(id) ?? [], hoursByRestaurant.get(id) ?? []);
+      const locations = withLocationHours(locationsByRestaurant.get(id) ?? [], hoursByLocation);
+      return attach(r, locations, cuisinesByRestaurant.get(id) ?? []);
     }),
   };
 }
@@ -50,12 +71,13 @@ async function getWithDetails(id: string): Promise<Record<string, unknown> | nul
   const restaurant = await ctx.table('restaurants').findOne({ where: { restaurant_id: id } }) as Record<string, unknown> | null;
   if (!restaurant) return null;
 
-  const [locations, cuisines, hours] = await Promise.all([
+  const [locations, cuisines] = await Promise.all([
     restaurantLocationsService.getForRestaurant(id),
     restaurantCuisinesService.getForRestaurant(id),
-    restaurantHoursService.getForRestaurant(id),
   ]);
-  return attach(restaurant, locations, cuisines, hours);
+  const locationIds = locations.map((l) => l.location_id as string);
+  const hoursByLocation = await restaurantHoursService.getForLocations(locationIds);
+  return attach(restaurant, withLocationHours(locations, hoursByLocation), cuisines);
 }
 
 export async function getById(id: string) {

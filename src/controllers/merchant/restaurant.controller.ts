@@ -55,13 +55,25 @@ export const updateOwn = asyncHandler(async (req: Request, res: Response) => {
   res.json({ restaurant });
 });
 
-// Bulk replace-all: body is `{ days: DayHoursInput[] }`. setForRestaurant() deletes and
-// re-creates every one of this restaurant's rows, so a day omitted from `days` ends up with
-// no row (not "unchanged") — the caller (merchant edit form) must always submit the full week.
+// Bulk replace-all: body is `{ days: DayHoursInput[] }`. updateOwnHours() resolves this
+// restaurant's primary location and deletes/re-creates every one of its
+// restaurant_hours rows, so a day omitted from `days` ends up with no row (not
+// "unchanged") — the caller (merchant edit form) must always submit the full week.
 export const updateOwnHours = asyncHandler(async (req: Request, res: Response) => {
   const restaurantId = requireRestaurantId(req);
   const days = Array.isArray(req.body?.days) ? req.body.days : [];
   const result = await merchantRestaurantService.updateOwnHours(restaurantId, days);
+  res.json(result);
+});
+
+// Bulk replace-all: body is `{ cuisines: string[] }`. setForRestaurant() deletes and
+// re-creates every one of this restaurant's restaurant_cuisines rows, so a cuisine omitted
+// from `cuisines` ends up unlinked (not "unchanged") — the caller must always submit the
+// full desired set. Each name must match an existing cuisines.name exactly.
+export const updateOwnCuisines = asyncHandler(async (req: Request, res: Response) => {
+  const restaurantId = requireRestaurantId(req);
+  const cuisines = Array.isArray(req.body?.cuisines) ? req.body.cuisines : [];
+  const result = await merchantRestaurantService.updateOwnCuisines(restaurantId, cuisines);
   res.json(result);
 });
 

@@ -79,7 +79,7 @@ writeTsv(
 
 writeTsv(
   'restaurant_hours.tsv',
-  ['hours_id', 'restaurant_id', 'day_of_week', 'closed', 'open_24h', 'periods', '_created_at', '_updated_at', '_id'],
+  ['hours_id', 'restaurant_id', 'location_id', 'day_of_week', 'closed', 'open_24h', 'periods', '_created_at', '_updated_at', '_id'],
   withBookkeeping(restaurantsSeed.restaurant_hours)
 );
 

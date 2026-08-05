@@ -5,8 +5,15 @@ import { env } from '../config/env';
 import usersSchema               from '../../schemas/admin/users';
 import credentialsSchema         from '../../schemas/admin/credentials';
 import categoriesSchema          from '../../schemas/admin/categories';
+import cuisinesSchema            from '../../schemas/admin/cuisines';
 import servicesSchema            from '../../schemas/admin/services';
 import restaurantsSchema               from '../../schemas/admin/restaurants';
+import restaurantLocationsSchema  from '../../schemas/admin/restaurant_locations';
+import restaurantCuisinesSchema   from '../../schemas/admin/restaurant_cuisines';
+import restaurantHoursSchema     from '../../schemas/admin/restaurant_hours';
+import floorsSchema              from '../../schemas/admin/floors';
+import roomsSchema                from '../../schemas/admin/rooms';
+import tablesSchema                from '../../schemas/admin/tables';
 import catalogItemsSchema        from '../../schemas/admin/catalog_items';
 import merchantApplicationsSchema from '../../schemas/admin/merchant_applications';
 import merchantInvitesSchema     from '../../schemas/admin/merchant_invites';
@@ -54,8 +61,15 @@ adapter.registerSchemas([
   usersSchema,
   credentialsSchema,
   categoriesSchema,
+  cuisinesSchema,
   servicesSchema,
   restaurantsSchema,
+  restaurantLocationsSchema,
+  restaurantCuisinesSchema,
+  restaurantHoursSchema,
+  floorsSchema,
+  roomsSchema,
+  tablesSchema,
   catalogItemsSchema,
   merchantApplicationsSchema,
   merchantInvitesSchema,

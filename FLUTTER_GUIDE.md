@@ -117,11 +117,14 @@ returned sorted by `sort_order` ascending.
 | GET | `/user/restaurants/:id/catalog-items` | — | → `{ items: CatalogItemModel[] }` (404 using the same rule as above; active items only, sorted by `sort_order`) |
 | GET | `/user/catalog-items` | — | → `{ items: CatalogItemModel[] }` — cross-restaurant feed, see below |
 
-`restaurant` object: `{ restaurant_id, category_id, name, description, logo, banner, contact_email, contact_phone, hours, status }`
+`restaurant` object: `{ restaurant_id, category_id, name, description, logo, banner, status, locations, cuisines, hours }`
 — note `application_id` and `owner_user_id` (present on the admin/merchant-scoped
 `restaurants` endpoints) are **stripped** here; they're internal to the admin invite/ownership
 flow and not customer-facing. `category_id` may be `null`/absent for an uncategorized restaurant —
-see section 3a below for resolving it to a display name.
+see section 3a below for resolving it to a display name. `contact_email`/`contact_phone`/`address`/
+etc. moved off this object onto `locations` (a restaurant can have more than one physical site);
+`locations`, `cuisines`, and `hours` are all structured, not strings — see `ADMIN_API.md` § 5 for
+the shapes; none of them are modeled below, this guide predates the split.
 
 `item` object (from `catalog_items`): `{ item_id, restaurant_id, item_type, name, description, price_from, icon, color, image, category_id, active, sort_order }`.
 
@@ -153,11 +156,10 @@ class RestaurantModel {
   final String description;
   final String logo;
   final String banner; // '' if the merchant hasn't set one
-  final String contactEmail;
-  final String contactPhone;
-  final String hours;
   final String status; // always "active" for anything the public API returns
   final String categoryId; // '' if uncategorized
+  // locations/cuisines/hours on the wire (see ADMIN_API.md § 5) — not modeled here, this
+  // guide predates the split; parse them directly from `j` if/when this model is revived.
 
   const RestaurantModel({
     required this.restaurantId,
@@ -165,9 +167,6 @@ class RestaurantModel {
     required this.description,
     required this.logo,
     this.banner = '',
-    required this.contactEmail,
-    required this.contactPhone,
-    required this.hours,
     required this.status,
     required this.categoryId,
   });
@@ -178,9 +177,6 @@ class RestaurantModel {
         description:  j['description'] as String? ?? '',
         logo:         j['logo'] as String? ?? '',
         banner:       j['banner'] as String? ?? '',
-        contactEmail: j['contact_email'] as String? ?? '',
-        contactPhone: j['contact_phone'] as String? ?? '',
-        hours:        j['hours'] as String? ?? '',
         status:       j['status'] as String,
         categoryId:   j['category_id'] as String? ?? '',
       );

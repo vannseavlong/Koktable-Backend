@@ -105,10 +105,16 @@ export async function approve(id: string) {
         name:           application.restaurant_name,
         description:    application.description ?? '',
         logo:           '',
+        status:         'pending',
+      });
+      // Contact info lives on restaurant_locations (a restaurant can have several
+      // locations) — this seeds the first one from the application; address/coordinates
+      // are filled in later by the merchant via PATCH /merchant/restaurant/location.
+      await ctx.table('restaurant_locations').create({
+        location_id:    `loc_${nanoid(10)}`,
+        restaurant_id,
         contact_email:  application.contact_email,
         contact_phone:  application.contact_phone ?? '',
-        hours:          '',
-        status:         'pending',
       });
       restaurant = await ctx.table('restaurants').findOne({ where: { restaurant_id } }) as Record<string, string>;
     }

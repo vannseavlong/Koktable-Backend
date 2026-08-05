@@ -12,7 +12,7 @@ function seedRestaurant(overrides: Partial<Record<string, unknown>> = {}) {
   fakeDb.seed('admin', 'restaurants', [{
     restaurant_id: 'restaurant_1', application_id: 'app_1', owner_user_id: 'm_1', name: 'Test Restaurant',
     description: 'A restaurant', logo: '', contact_email: 'restaurant@test.local', contact_phone: '',
-    hours: '', status: 'active',
+    status: 'active',
     ...overrides,
   }]);
 }

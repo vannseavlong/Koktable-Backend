@@ -13,7 +13,7 @@ const auth = { Authorization: `Bearer ${adminToken()}` };
 function seedRestaurant(restaurantId = 'restaurant_1') {
   fakeDb.seed('admin', 'restaurants', [{
     restaurant_id: restaurantId, owner_user_id: 'm_1', name: 'Test Restaurant', description: '', logo: '',
-    contact_email: '', contact_phone: '', hours: '', status: 'active',
+    contact_email: '', contact_phone: '', status: 'active',
   }]);
 }
 

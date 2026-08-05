@@ -54,3 +54,19 @@ export const updateOwn = asyncHandler(async (req: Request, res: Response) => {
   const restaurant = await merchantRestaurantService.updateOwn(restaurantId, body);
   res.json({ restaurant });
 });
+
+// Bulk replace-all: body is `{ days: DayHoursInput[] }`. setForRestaurant() deletes and
+// re-creates every one of this restaurant's rows, so a day omitted from `days` ends up with
+// no row (not "unchanged") — the caller (merchant edit form) must always submit the full week.
+export const updateOwnHours = asyncHandler(async (req: Request, res: Response) => {
+  const restaurantId = requireRestaurantId(req);
+  const days = Array.isArray(req.body?.days) ? req.body.days : [];
+  const result = await merchantRestaurantService.updateOwnHours(restaurantId, days);
+  res.json(result);
+});
+
+export const updateOwnLocation = asyncHandler(async (req: Request, res: Response) => {
+  const restaurantId = requireRestaurantId(req);
+  const result = await merchantRestaurantService.updateOwnLocation(restaurantId, req.body ?? {});
+  res.json(result);
+});

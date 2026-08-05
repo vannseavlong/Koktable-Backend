@@ -1,7 +1,10 @@
 import { adminContext } from '../../lib/adapter';
 import { AppError } from '../../utils/AppError';
-import { withDerivedPriceSymbol } from '../../utils/restaurantPricing';
-import { summarizeOpeningHours } from '../../utils/restaurantHours';
+import * as restaurantHoursService from '../restaurantHours.service';
+import type { DayHoursInput } from '../restaurantHours.service';
+import * as restaurantLocationsService from '../restaurantLocations.service';
+import type { LocationInput } from '../restaurantLocations.service';
+import * as restaurantCuisinesService from '../restaurantCuisines.service';
 
 // Every read/write here is scoped to the merchant's own restaurant_id (resolved from the
 // JWT by the controller) — a merchant can never read or write another restaurant's row,
@@ -13,9 +16,6 @@ export interface UpdateRestaurantInput {
   description?: string;
   logo?: string;
   banner?: string;
-  contact_email?: string;
-  contact_phone?: string;
-  hours?: string;
   category_id?: string;
 }
 
@@ -26,12 +26,12 @@ export async function getOwn(restaurantId: string) {
     throw new AppError(404, 'Restaurant not found');
   }
 
-  const withPrice = withDerivedPriceSymbol(restaurant);
-  if (!withPrice.hours) {
-    const summarized = summarizeOpeningHours(withPrice.opening_hours);
-    if (summarized) withPrice.hours = summarized;
-  }
-  return withPrice;
+  const [location, cuisines, hours] = await Promise.all([
+    restaurantLocationsService.getPrimary(restaurantId),
+    restaurantCuisinesService.getForRestaurant(restaurantId),
+    restaurantHoursService.getForRestaurant(restaurantId),
+  ]);
+  return { ...restaurant, location, cuisines, hours } as Record<string, unknown>;
 }
 
 export async function updateOwn(restaurantId: string, body: UpdateRestaurantInput) {
@@ -42,14 +42,11 @@ export async function updateOwn(restaurantId: string, body: UpdateRestaurantInpu
   }
 
   const data: Record<string, unknown> = {};
-  if (body.name          !== undefined) data.name          = body.name;
-  if (body.description   !== undefined) data.description   = body.description;
-  if (body.logo          !== undefined) data.logo          = body.logo;
-  if (body.banner        !== undefined) data.banner        = body.banner;
-  if (body.contact_email !== undefined) data.contact_email = body.contact_email;
-  if (body.contact_phone !== undefined) data.contact_phone = body.contact_phone;
-  if (body.hours         !== undefined) data.hours         = body.hours;
-  if (body.category_id   !== undefined) data.category_id   = body.category_id;
+  if (body.name        !== undefined) data.name        = body.name;
+  if (body.description !== undefined) data.description = body.description;
+  if (body.logo        !== undefined) data.logo        = body.logo;
+  if (body.banner      !== undefined) data.banner      = body.banner;
+  if (body.category_id !== undefined) data.category_id = body.category_id;
 
   if (Object.keys(data).length === 0) {
     throw new AppError(400, 'No updatable fields provided');
@@ -58,4 +55,25 @@ export async function updateOwn(restaurantId: string, body: UpdateRestaurantInpu
   const ctx = adminContext();
   await ctx.table('restaurants').update({ where: { restaurant_id: restaurantId }, data });
   return getOwn(restaurantId);
+}
+
+// Updates the merchant's primary location (address/contact/coordinates) — creates one if
+// this restaurant somehow has none yet (shouldn't normally happen; approve() in
+// merchantApplications.service.ts creates one at restaurant-creation time).
+export async function updateOwnLocation(restaurantId: string, input: LocationInput) {
+  await getOwn(restaurantId); // 404s if this merchant doesn't own a restaurant
+
+  const existing = await restaurantLocationsService.getPrimary(restaurantId);
+  const location = existing
+    ? await restaurantLocationsService.update(existing.location_id as string, input)
+    : await restaurantLocationsService.create(restaurantId, input);
+  return { location };
+}
+
+// Bulk-replaces the merchant's own restaurant's weekly hours — see
+// restaurantHours.service.ts setForRestaurant() for the replace-all semantics.
+export async function updateOwnHours(restaurantId: string, days: DayHoursInput[]) {
+  await getOwn(restaurantId); // 404s if this merchant doesn't own a restaurant
+  const hours = await restaurantHoursService.setForRestaurant(restaurantId, days);
+  return { hours };
 }

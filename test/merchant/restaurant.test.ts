@@ -13,7 +13,15 @@ const app = buildTestApp();
 function seedRestaurant(restaurantId = 'restaurant_1', overrides: Partial<Record<string, unknown>> = {}) {
   fakeDb.seed('admin', 'restaurants', [{
     restaurant_id: restaurantId, owner_user_id: 'm_1', name: 'Test Restaurant', description: '', logo: '',
-    contact_email: 'restaurant@test.local', contact_phone: '', hours: '', status: 'active',
+    status: 'active',
+    ...overrides,
+  }]);
+}
+
+function seedLocation(restaurantId = 'restaurant_1', overrides: Partial<Record<string, unknown>> = {}) {
+  fakeDb.seed('admin', 'restaurant_locations', [{
+    location_id: `loc_${restaurantId}`, restaurant_id: restaurantId,
+    contact_email: 'restaurant@test.local', contact_phone: '',
     ...overrides,
   }]);
 }
@@ -52,15 +60,11 @@ describe('/merchant/restaurant (restaurant-scoped)', () => {
 
     const res = await request(app).patch('/merchant/restaurant').set(merchAuth).send({
       description: 'Now with private dining rooms',
-      contact_phone: '+1 555 0199',
-      hours: 'Mon-Fri 9-5',
     });
     expect(res.status).toBe(200);
     expect(res.body.restaurant).toMatchObject({
       restaurant_id: 'restaurant_1',
       description: 'Now with private dining rooms',
-      contact_phone: '+1 555 0199',
-      hours: 'Mon-Fri 9-5',
     });
   });
 
@@ -107,9 +111,10 @@ describe('/merchant/restaurant (restaurant-scoped)', () => {
     seedRestaurant('restaurant_1', { status: 'active' });
     const merchAuth = { Authorization: `Bearer ${merchantToken('restaurant_1')}` };
 
-    const res = await request(app).patch('/merchant/restaurant').set(merchAuth).send({ status: 'suspended', hours: '24/7' });
+    const res = await request(app).patch('/merchant/restaurant').set(merchAuth).send({ status: 'suspended', description: 'still open' });
     expect(res.status).toBe(200);
     expect(res.body.restaurant.status).toBe('active');
+    expect(res.body.restaurant.description).toBe('still open');
   });
 
   it('never lets a merchant see or edit another restaurant\'s row', async () => {
@@ -125,5 +130,61 @@ describe('/merchant/restaurant (restaurant-scoped)', () => {
 
     const other = await request(app).get('/merchant/restaurant').set({ Authorization: `Bearer ${merchantToken('restaurant_2')}` });
     expect(other.body.restaurant.name).toBe('Other Restaurant');
+  });
+
+  it('replaces the restaurant\'s weekly hours', async () => {
+    seedRestaurant('restaurant_1');
+    const merchAuth = { Authorization: `Bearer ${merchantToken('restaurant_1')}` };
+
+    const res = await request(app).put('/merchant/restaurant/hours').set(merchAuth).send({
+      days: [
+        { day_of_week: 'monday', closed: true },
+        { day_of_week: 'tuesday', periods: [{ open: '11:00', close: '22:00' }] },
+      ],
+    });
+    expect(res.status).toBe(200);
+    expect(res.body.hours).toHaveLength(2);
+    expect(res.body.hours[0]).toMatchObject({ day_of_week: 'monday', closed: true });
+    expect(res.body.hours[1]).toMatchObject({ day_of_week: 'tuesday', periods: [{ open: '11:00', close: '22:00' }] });
+
+    const getRes = await request(app).get('/merchant/restaurant').set(merchAuth);
+    expect(getRes.body.restaurant.hours).toHaveLength(2);
+  });
+
+  it('rejects an invalid hours submission', async () => {
+    seedRestaurant('restaurant_1');
+    const merchAuth = { Authorization: `Bearer ${merchantToken('restaurant_1')}` };
+
+    const res = await request(app).put('/merchant/restaurant/hours').set(merchAuth).send({
+      days: [{ day_of_week: 'monday', closed: true, open_24h: true }],
+    });
+    expect(res.status).toBe(400);
+  });
+
+  it('updates the primary location when one already exists', async () => {
+    seedRestaurant('restaurant_1');
+    seedLocation('restaurant_1');
+    const merchAuth = { Authorization: `Bearer ${merchantToken('restaurant_1')}` };
+
+    const res = await request(app).patch('/merchant/restaurant/location').set(merchAuth).send({
+      contact_phone: '+1 555 0199',
+      address: '1 Main St',
+    });
+    expect(res.status).toBe(200);
+    expect(res.body.location).toMatchObject({ contact_phone: '+1 555 0199', address: '1 Main St' });
+
+    const getRes = await request(app).get('/merchant/restaurant').set(merchAuth);
+    expect(getRes.body.restaurant.location).toMatchObject({ contact_phone: '+1 555 0199' });
+  });
+
+  it('creates a primary location if this restaurant somehow has none yet', async () => {
+    seedRestaurant('restaurant_1');
+    const merchAuth = { Authorization: `Bearer ${merchantToken('restaurant_1')}` };
+
+    const res = await request(app).patch('/merchant/restaurant/location').set(merchAuth).send({
+      contact_phone: '+1 555 0199',
+    });
+    expect(res.status).toBe(200);
+    expect(res.body.location).toMatchObject({ restaurant_id: 'restaurant_1', contact_phone: '+1 555 0199' });
   });
 });

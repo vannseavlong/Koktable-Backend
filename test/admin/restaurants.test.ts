@@ -13,7 +13,7 @@ const auth = { Authorization: `Bearer ${adminToken()}` };
 function seedRestaurant(overrides: Partial<Record<string, unknown>> = {}) {
   fakeDb.seed('admin', 'restaurants', [{
     restaurant_id: 'restaurant_1', owner_user_id: '', name: 'Test Restaurant', description: '', logo: '',
-    contact_email: 'restaurant@test.local', contact_phone: '', hours: '', status: 'pending',
+    contact_email: 'restaurant@test.local', contact_phone: '', status: 'pending',
     ...overrides,
   }]);
 }

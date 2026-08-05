@@ -1,10 +1,6 @@
 import { defineTable, string } from 'longcelot-sheet-db';
 
-// Single-use, expiring invite issued when an admin approves a merchant_applications
-// row. token_hash is an HMAC-SHA256 of the raw token (see src/lib/inviteToken.ts) —
-// the raw token is only ever emailed to the applicant, never stored or returned by
-// the API. expires_at/used_at/revoked_at are ISO datetimes (string, not date() — need
-// time precision, not just a calendar day).
+// Single-use, expiring invite issued when an admin approves a merchant_applications row
 export default defineTable({
   name: 'merchant_invites',
   actor: 'admin',

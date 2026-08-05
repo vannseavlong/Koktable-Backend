@@ -11,5 +11,7 @@ const restaurantImageFields = upload.fields([
 
 router.get('/',   restaurantController.getOwn);
 router.patch('/', restaurantImageFields, restaurantController.updateOwn);
+router.put('/hours', restaurantController.updateOwnHours);
+router.patch('/location', restaurantController.updateOwnLocation);
 
 export default router;

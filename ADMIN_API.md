@@ -295,9 +295,13 @@ Read-only-ish visibility into restaurants (created only via the approve flow abo
 | PATCH | `/admin/restaurants/:id` | `{ status: "pending" \| "active" \| "suspended" }` | `{ restaurant: Restaurant }` |
 
 ### Restaurant object
+`restaurants` holds only brand-level fields — everything tied to a physical site (address,
+contact info, rating/price/photos) lives on a separate, embedded `locations` array, because a
+restaurant can have more than one location (chain/branches). `cuisines` and `hours` are
+similarly embedded from their own tables, not columns on `restaurants`.
 ```json
 {
-  "restaurant_id":        "restaurant_p9c8b7a6z5",
+  "restaurant_id":  "restaurant_p9c8b7a6z5",
   "application_id": "app_x8k2m1qzrp",
   "owner_user_id":  "m_q1w2e3r4t5",
   "category_id":    "cat_fine_dining",
@@ -305,22 +309,31 @@ Read-only-ish visibility into restaurants (created only via the approve flow abo
   "description":    "Contemporary fine dining, serving the north side.",
   "logo":           "",
   "banner":         "",
-  "contact_email":  "sam@goldenfork.example",
-  "contact_phone":  "+1 555 0100",
-  "hours":          "",
   "status":         "active",
-  "address":         "218 Street 184, Phnom Penh 12211, Cambodia",
-  "city":            "Phnom Penh",
-  "cuisine":         ["Khmer", "Asian"],
-  "latitude":        11.5646873,
-  "longitude":       104.922673,
-  "rating":          4.6,
-  "rating_count":    771,
-  "price_level":     2,
-  "price_symbol":    "$$",
-  "opening_hours":   ["Monday: 11:00 AM – 9:00 PM", "..."],
-  "images":          [],
-  "google_place_id": "ChIJI4Pe2TNRCTERBsvdzo-09q8"
+  "locations": [
+    {
+      "location_id":     "loc_h7j2k9m4np",
+      "restaurant_id":   "restaurant_p9c8b7a6z5",
+      "name":            "",
+      "contact_email":   "sam@goldenfork.example",
+      "contact_phone":   "+1 555 0100",
+      "address":         "218 Street 184, Phnom Penh 12211, Cambodia",
+      "city":            "Phnom Penh",
+      "latitude":        11.5646873,
+      "longitude":       104.922673,
+      "rating":          4.6,
+      "rating_count":    771,
+      "price_level":     2,
+      "price_symbol":    "$$",
+      "images":          [],
+      "google_place_id": "ChIJI4Pe2TNRCTERBsvdzo-09q8"
+    }
+  ],
+  "cuisines": ["Khmer", "Asian"],
+  "hours": [
+    { "day_of_week": "monday", "closed": false, "open_24h": false, "periods": [{ "open": "11:00", "close": "21:00" }] },
+    { "day_of_week": "tuesday", "closed": true, "open_24h": false, "periods": [] }
+  ]
 }
 ```
 Lifecycle: `pending` (approved, invite not yet redeemed) → `active` (merchant completed invite
@@ -329,16 +342,36 @@ acceptance) → `suspended` (admin action, reversible via `PATCH { status: "acti
 what `resend-invite` (above) uses to find the restaurant for a given application.
 `owner_user_id` is blank until the restaurant reaches `active`.
 
-**Directory-import fields** (`address`, `city`, `cuisine`, `latitude`/`longitude`, `rating`,
-`rating_count`, `price_level`, `price_symbol`, `opening_hours`, `images`, `google_place_id`) are
-populated for restaurants bulk-seeded from an external directory (see `seeds/restaurants.ts`) —
-blank for merchant-onboarded restaurants unless backfilled. An imported restaurant has
-`status: "active"` with `owner_user_id`/`application_id` blank from the start — an unclaimed
-listing, not one that went through the merchant application/invite flow. `cuisine` and
-`opening_hours` are JSON arrays (stored as a JSON string in the sheet cell, parsed back to an
-array on read); `cuisine` is a separate facet from `category_id` (dining style), not a
-replacement for it. `google_place_id` is unique — it's what lets `pnpm db:seed
-seeds/restaurants.ts --skip-existing` be rerun safely without creating duplicates.
+**`locations`** (`restaurant_locations` table, `restaurant_id` FK): a restaurant is created with
+exactly one, seeded from the application's `contact_email`/`contact_phone` at approve-time
+(`address`/`city`/`latitude`/`longitude` blank until the merchant fills them in — see "Merchant
+restaurant profile" below). `name` labels a specific branch (e.g. "Downtown Branch"), blank for a
+single-location restaurant. `price_symbol` is derived from `price_level`
+(`src/utils/restaurantPricing.ts`), not independently stored. `rating`/`rating_count`/`price_level`/
+`images`/`google_place_id` are directory-import fields (see below) — blank for merchant-onboarded
+locations unless backfilled.
+
+**`cuisines`**: a many-to-many relationship — `restaurant_cuisines` (one row per
+`(restaurant_id, cuisine_id)`) joins `restaurants` to the canonical `cuisines` lookup table
+(`cuisine_id`, `name`, `icon`, `active`, `sort_order` — same shape as `categories`). The API
+still returns plain names (`cuisines: string[]`), resolved server-side; a separate facet from
+`category_id` (dining style), not a replacement for it. `seeds/cuisines.ts` seeds the canonical
+list and must run before `seeds/restaurants.ts`, which links each restaurant by name.
+
+**`hours`** (`restaurant_hours` table, one row per day, keyed by `restaurant_id`): a day missing
+from the array has no hours configured for it (distinct from `closed: true`, which is an explicit
+statement that the restaurant is closed that day). `periods` holds one `{open, close}` pair per
+continuous open interval in 24h `"HH:mm"`, more than one entry for a split-shift restaurant (e.g.
+lunch + dinner); `close < open` means the period crosses midnight. Editing hours is a separate
+write — see "Merchant restaurant profile" below.
+
+**Directory-import fields** on a location (`address`, `city`, `latitude`/`longitude`, `rating`,
+`rating_count`, `price_level`, `price_symbol`, `images`, `google_place_id`) are populated for
+restaurants bulk-seeded from an external directory (see `seeds/restaurants.ts`) — blank for
+merchant-onboarded locations unless backfilled. An imported restaurant has `status: "active"` with
+`owner_user_id`/`application_id` blank from the start — an unclaimed listing, not one that went
+through the merchant application/invite flow. `google_place_id` is unique — it's what lets
+`pnpm db:seed seeds/restaurants.ts --skip-existing` be rerun safely without creating duplicates.
 
 **Public read-only mirror**: `GET /user/restaurants` and `GET /user/restaurants/:id` (no auth) expose only
 `active` restaurants to end customers, with `application_id`/`owner_user_id` stripped — see
@@ -424,10 +457,17 @@ Lets a merchant read and edit their own restaurant's profile fields — the coun
 
 | Method | Endpoint | Auth | Body | Response |
 |--------|----------|------|------|----------|
-| GET | `/merchant/restaurant` | merchant | — | `{ restaurant: Restaurant }` |
-| PATCH | `/merchant/restaurant` | merchant | any of `name, description, logo, banner, contact_email, contact_phone, hours, category_id` | `{ restaurant: Restaurant }` |
+| GET | `/merchant/restaurant` | merchant | — | `{ restaurant: Restaurant }` (see below) |
+| PATCH | `/merchant/restaurant` | merchant | any of `name, description, logo, banner, category_id` | `{ restaurant: Restaurant }` |
+| PATCH | `/merchant/restaurant/location` | merchant | any of `name, contact_email, contact_phone, address, city, latitude, longitude` | `{ location: Location }` |
+| PUT | `/merchant/restaurant/hours` | merchant | `{ days: DayHours[] }` | `{ hours: DayHours[] }` |
 
-`PATCH` accepts either a plain JSON body (string fields only) or
+`GET`/`PATCH /merchant/restaurant`'s `Restaurant` object differs slightly from section 5's: it embeds
+a single `location` (singular — the restaurant's first/primary location) rather than a `locations`
+array, since the merchant self-service flow doesn't yet support managing more than one location.
+`cuisines` and `hours` are the same embedded shape as section 5.
+
+`PATCH /merchant/restaurant` accepts either a plain JSON body (string fields only) or
 `multipart/form-data` with optional `logo`/`banner` file parts (JPEG/PNG/WebP,
 5MB max — see `src/middleware/upload.ts`) alongside the same text fields. An
 attached file is uploaded to Drive (`src/utils/imageUpload.ts`, wrapping the
@@ -437,11 +477,22 @@ best-effort deleted from Drive. Sending the field as an explicit empty string
 with no file attached (`logo: ""`) clears it (and deletes the old file) without
 uploading a new one.
 
-Same `Restaurant` object shape as section 5, and the same JWT-`restaurant_id` scoping as
-`/merchant/catalog-items` — there's no `:id` in the URL at all, so a merchant can never target
-another restaurant's row by guessing/passing one; the row updated is always `restaurants.restaurant_id ===`
-the caller's own JWT `restaurant_id`. 404s (not 403) if that restaurant row is somehow missing, matching the
-"don't leak a forbidden distinction" convention used elsewhere in this doc.
+Same JWT-`restaurant_id` scoping as `/merchant/catalog-items` on all three endpoints above — there's
+no `:id` in any of these URLs, so a merchant can never target another restaurant's row by guessing/
+passing one; the row updated is always the caller's own JWT `restaurant_id` (or that restaurant's
+location, for the `/location` endpoint). 404s (not 403) if that restaurant row is somehow missing,
+matching the "don't leak a forbidden distinction" convention used elsewhere in this doc.
+
+`PATCH /merchant/restaurant/location` updates the restaurant's primary location, creating one if it
+somehow has none yet (shouldn't normally happen — `POST /admin/merchant-applications/:id/approve`
+creates one at restaurant-creation time, seeded from the application's contact info).
+
+`PUT /merchant/restaurant/hours` replaces the **entire** week in one call — it deletes all of
+this restaurant's `restaurant_hours` rows and re-creates them from `days`, so a day omitted from
+the array ends up with no hours configured (not "left unchanged"). Each entry in `days` is
+`{ day_of_week, closed?, open_24h?, periods? }`; `periods` (required unless `closed` or
+`open_24h`) is `{ open, close }` pairs in 24h `"HH:mm"`. Rejects a day that's both `closed` and
+`open_24h`, a duplicate `day_of_week`, or a day with no periods and neither flag set, with `400`.
 
 `status` is **not** an updatable field here — deliberately left out of both the request body
 handling and the field list above. It stays admin-only via `PATCH /admin/restaurants/:id` (section 5);

@@ -15,8 +15,14 @@ export default defineTable({
     service_id:   string().required(),
     service_name: string().required(),
     start_date:   date().required(),
-    end_date:     date().required(),
-    daily_rate:   number().min(0).required(),
+    // Required for the legacy service_id/item_id stay-based modes; the restaurant_id-only
+    // mode (see reservations.service.ts) defaults end_date to start_date and daily_rate to 0
+    // when omitted, so these can't stay hard-required at the schema level.
+    end_date:     date(),
+    daily_rate:   number().min(0),
+    // Wall-clock time slot (e.g. "19:30"), only meaningful for the restaurant_id-only
+    // table-reservation mode — blank for the legacy stay-based service_id/item_id modes.
+    reservation_time: string(),
     notes:        string(),
     status:       string().enum(['pending', 'confirmed', 'active', 'completed', 'cancelled']).default('pending').required(),
     // Denormalized from the catalog item's restaurant at reservation-creation time (mirrors

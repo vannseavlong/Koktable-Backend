@@ -293,6 +293,8 @@ Read-only-ish visibility into restaurants (created only via the approve flow abo
 | GET | `/admin/restaurants` | `?status=` | `{ restaurants: Restaurant[] }` |
 | GET | `/admin/restaurants/:id` | — | `{ restaurant: Restaurant }` |
 | PATCH | `/admin/restaurants/:id` | `{ status: "pending" \| "active" \| "suspended" }` | `{ restaurant: Restaurant }` |
+| POST | `/admin/restaurants/:id/locations` | `LocationInput` (below) | `201 { location: Location }` |
+| PATCH | `/admin/restaurants/:id/locations/:locationId` | Partial `LocationInput`, or `{ active: false }` to deactivate | `{ location: Location }` |
 
 ### Restaurant object
 `restaurants` holds only brand-level fields — everything tied to a physical site (address,
@@ -350,6 +352,35 @@ single-location restaurant. `price_symbol` is derived from `price_level`
 (`src/utils/restaurantPricing.ts`), not independently stored. `rating`/`rating_count`/`price_level`/
 `images`/`google_place_id` are directory-import fields (see below) — blank for merchant-onboarded
 locations unless backfilled.
+
+**Adding/editing locations** (admin-only — merchants can edit locations they already have via
+"Merchant restaurant profile" below, but can't add new ones): `POST /admin/restaurants/:id/locations`
+creates a new location under restaurant `:id`; `PATCH /admin/restaurants/:id/locations/:locationId`
+updates one, including deactivating it (`{ active: false }`) as a soft-delete — the row stays in the
+table (so historical reservations/hours tied to it still resolve), only the `active` flag flips.
+Nothing currently filters the `locations` array by `active` on read (admin or public `/user/restaurants`
+still return every location regardless) — `active` is available for a client to filter/label on, not yet
+enforced server-side. Both endpoints 404 if `:id` doesn't match a restaurant, and PATCH additionally
+404s if `:locationId` doesn't match a location under that restaurant. Deactivating the restaurant's only
+remaining active location is rejected with `400 "Restaurant must have at least one active location"`.
+`LocationInput`:
+```json
+{
+  "name":          "Downtown Branch",
+  "contact_email": "sam@goldenfork.example",
+  "contact_phone": "+1 555 0100",
+  "address":       "218 Street 184, Phnom Penh 12211, Cambodia",
+  "city":          "Phnom Penh",
+  "latitude":      11.5646873,
+  "longitude":     104.922673,
+  "active":        true
+}
+```
+All fields are optional on both create (blank/omitted fields default to `""`/`true` for `active`) and
+update (PATCH only touches fields present in the body; sending no updatable field is a `400`).
+Directory-import fields (`rating`, `rating_count`, `price_level`, `price_symbol`, `images`,
+`google_place_id`) aren't settable through this endpoint — they're populated only by the directory
+import seed.
 
 **`cuisines`**: a many-to-many relationship — `restaurant_cuisines` (one row per
 `(restaurant_id, cuisine_id)`) joins `restaurants` to the canonical `cuisines` lookup table

@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(pnpm add *)",
+      "Bash(pnpm approve-builds *)",
+      "Bash(pnpm exec *)",
+      "Bash(xargs cat)",
+      "Bash(mkdir -p /Users/suntel/.claude/projects/-Users-suntel-work-paw-sheetDB/memory)",
+      "Bash(mv /Users/suntel/work/paw_sheetDB/src/schemas/admin/*.ts /Users/suntel/work/paw_sheetDB/schemas/admin/)",
+      "Bash(mv /Users/suntel/work/paw_sheetDB/src/schemas/user/*.ts /Users/suntel/work/paw_sheetDB/schemas/user/)",
+      "Bash(NODE_OPTIONS='--require tsx/cjs' pnpm exec sheet-db validate)"
+    ],
+    "additionalDirectories": [
+      "/Users/suntel/.claude/projects/-Users-suntel-work-paw-sheetDB"
+    ]
+  }
+}

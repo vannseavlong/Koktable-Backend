@@ -1,0 +1,3440 @@
+{
+  "meta": {
+    "description": "Restaurant seed data for Cambodia (Phnom Penh, Sihanoukville, Siem Reap), sourced from Google Places. 'images' is intentionally empty -- see README for how to populate photos before seeding production.",
+    "cities": [
+      "Phnom Penh",
+      "Sihanoukville",
+      "Siem Reap"
+    ],
+    "total_restaurants": 106
+  },
+  "restaurants": [
+    {
+      "id": "pp-kravanh-restaurant-o-09q8",
+      "name": "Kravanh Restaurant",
+      "city": "Phnom Penh",
+      "cuisine": [
+        "Khmer"
+      ],
+      "address": "Phnom, 74 Oknha Ket St. (174), Penh 12210, Cambodia",
+      "location": {
+        "lat": 11.5646873,
+        "lng": 104.922673
+      },
+      "rating": 4.6,
+      "rating_count": 771,
+      "price_level": 2,
+      "price_symbol": "$$",
+      "phone": "+855 12 539 977",
+      "opening_hours": [
+        "Monday: 11:00 AM – 2:30 PM, 5:30 – 9:00 PM",
+        "Tuesday: 11:00 AM – 2:30 PM, 5:30 – 9:00 PM",
+        "Wednesday: 11:00 AM – 2:30 PM, 5:30 – 9:00 PM",
+        "Thursday: 11:00 AM – 2:30 PM, 5:30 – 9:00 PM",
+        "Friday: 11:00 AM – 2:30 PM, 5:30 – 9:00 PM",
+        "Saturday: 11:00 AM – 2:30 PM, 5:30 – 9:00 PM",
+        "Sunday: 11:00 AM – 2:30 PM, 5:30 – 9:00 PM"
+      ],
+      "images": [],
+      "source": {
+        "provider": "google_places",
+        "place_id": "ChIJI4Pe2TNRCTERBsvdzo-09q8"
+      }
+    },
+    {
+      "id": "pp-romduol-khmer-restaurant-rsrgu0",
+      "name": "Romduol Khmer Restaurant",
+      "city": "Phnom Penh",
+      "cuisine": [
+        "Asian"
+      ],
+      "address": "181e0 Preah Sisowath Quay, Phnom Penh, Cambodia",
+      "location": {
+        "lat": 11.5726287,
+        "lng": 104.9290156
+      },
+      "rating": 4.6,
+      "rating_count": 247,
+      "price_level": null,
+      "price_symbol": null,
+      "phone": "+855 81 277 899",
+      "opening_hours": [
+        "Monday: 10:30 AM – 10:30 PM",
+        "Tuesday: 10:30 AM – 10:30 PM",
+        "Wednesday: 10:30 AM – 10:30 PM",
+        "Thursday: 10:30 AM – 10:30 PM",
+        "Friday: 10:30 AM – 10:30 PM",
+        "Saturday: 10:30 AM – 10:30 PM",
+        "Sunday: 10:30 AM – 10:30 PM"
+      ],
+      "images": [],
+      "source": {
+        "provider": "google_places",
+        "place_id": "ChIJsaJ2aFVRCTERi_TuDrsrgu0"
+      }
+    },
+    {
+      "id": "pp-phnom-penh-three-rivers-restaurant-iqycfm",
+      "name": "Phnom Penh Three Rivers Restaurant",
+      "city": "Phnom Penh",
+      "cuisine": [
+        "Khmer",
+        "Family style"
+      ],
+      "address": "164 Preah Ang Eng St. (13), Phnom Penh 12200, Cambodia",
+      "location": {
+        "lat": 11.5669268,
+        "lng": 104.9292698
+      },
+      "rating": 4.9,
+      "rating_count": 894,
+      "price_level": null,
+      "price_symbol": null,
+      "phone": "+855 12 558 246",
+      "opening_hours": [
+        "Monday: 11:00 AM – 9:30 PM",
+        "Tuesday: 11:00 AM – 9:30 PM",
+        "Wednesday: 11:00 AM – 9:30 PM",
+        "Thursday: 11:00 AM – 9:30 PM",
+        "Friday: 11:00 AM – 9:30 PM",
+        "Saturday: 11:00 AM – 9:30 PM",
+        "Sunday: 11:00 AM – 9:30 PM"
+      ],
+      "images": [],
+      "source": {
+        "provider": "google_places",
+        "place_id": "ChIJazOAuvBRCTERQNAK2iqyCFM"
+      }
+    },
+    {
+      "id": "pp-khmer-women-food-58p2te",
+      "name": "Khmer Women' Food",
+      "city": "Phnom Penh",
+      "cuisine": [
+        "Khmer"
+      ],
+      "address": "30 Abdul Carime St. (21), Phnom Penh, Cambodia",
+      "location": {
+        "lat": 11.5516711,
+        "lng": 104.930374
+      },
+      "rating": 4.8,
+      "rating_count": 582,
+      "price_level": 1,
+      "price_symbol": "$",
+      "phone": "+855 10 947 609",
+      "opening_hours": [
+        "Monday: 10:00 AM – 10:00 PM",
+        "Tuesday: 10:00 AM – 10:00 PM",
+        "Wednesday: 10:00 AM – 10:00 PM",
+        "Thursday: 10:00 AM – 10:00 PM",
+        "Friday: 10:00 AM – 10:00 PM",
+        "Saturday: 10:00 AM – 10:30 PM",
+        "Sunday: 10:00 AM – 10:00 PM"
+      ],
+      "images": [],
+      "source": {
+        "provider": "google_places",
+        "place_id": "ChIJx-p3zS9RCTERI1IDj58P2tE"
+      }
+    },
+    {
+      "id": "pp-houbhoub-cambodian-restaurant-bkk1-qh6fzs",
+      "name": "HoubHoub Cambodian Restaurant (BKK1)",
+      "city": "Phnom Penh",
+      "cuisine": [
+        "Khmer",
+        "Asian"
+      ],
+      "address": "St.51, Langka Lane, Phnom Penh 12302, Cambodia",
+      "location": {
+        "lat": 11.5544691,
+        "lng": 104.927235
+      },
+      "rating": 4.8,
+      "rating_count": 340,
+      "price_level": null,
+      "price_symbol": null,
+      "phone": "+855 98 922 213",
+      "opening_hours": [
+        "Monday: 11:00 AM – 9:30 PM",
+        "Tuesday: 11:00 AM – 9:30 PM",
+        "Wednesday: 11:00 AM – 9:30 PM",
+        "Thursday: 11:00 AM – 9:30 PM",
+        "Friday: 11:00 AM – 9:30 PM",
+        "Saturday: 11:00 AM – 9:30 PM",
+        "Sunday: Closed"
+      ],
+      "images": [],
+      "source": {
+        "provider": "google_places",
+        "place_id": "ChIJtfPpXQBRCTERpJepqqH6fZs"
+      }
+    },
+    {
+      "id": "pp-malis-restaurant-norodom-blvd-8vsnbo",
+      "name": "Malis Restaurant - Norodom Blvd",
+      "city": "Phnom Penh",
+      "cuisine": [
+        "Khmer",
+        "Asian",
+        "Fine dining"
+      ],
+      "address": "Phnom, 136 Norodom Blvd, Penh 12301, Cambodia",
+      "location": {
+        "lat": 11.5531531,
+        "lng": 104.9291294
+      },
+      "rating": 4.3,
+      "rating_count": 1810,
+      "price_level": 3,
+      "price_symbol": "$$$",
+      "phone": "+855 15 814 888",
+      "opening_hours": [
+        "Monday: 6:30 AM – 10:30 PM",
+        "Tuesday: 6:30 AM – 10:30 PM",
+        "Wednesday: 6:30 AM – 10:30 PM",
+        "Thursday: 6:30 AM – 10:30 PM",
+        "Friday: 6:30 AM – 10:30 PM",
+        "Saturday: 6:30 AM – 10:30 PM",
+        "Sunday: 6:30 AM – 10:30 PM"
+      ],
+      "images": [],
+      "source": {
+        "provider": "google_places",
+        "place_id": "ChIJJaAn2y9RCTERzQk2y8vSnbo"
+      }
+    },
+    {
+      "id": "pp-zhan-liang-chinese-restaurant-jytzh4",
+      "name": "Zhan Liang Chinese Restaurant",
+      "city": "Phnom Penh",
+      "cuisine": [
+        "Chinese"
+      ],
+      "address": "Monivong Boulevard 66, B1, Vattanac Capital Mall, Phnom Penh 12202, Cambodia",
+      "location": {
+        "lat": 11.573637,
+        "lng": 104.918513
+      },
+      "rating": 4.5,
+      "rating_count": 108,
+      "price_level": null,
+      "price_symbol": null,
+      "phone": "+855 23 936 860",
+      "opening_hours": [
+        "Monday: 11:00 AM – 9:00 PM",
+        "Tuesday: 11:00 AM – 9:00 PM",
+        "Wednesday: 11:00 AM – 9:00 PM",
+        "Thursday: 11:00 AM – 9:00 PM",
+        "Friday: 11:00 AM – 9:00 PM",
+        "Saturday: 9:00 AM – 9:00 PM",
+        "Sunday: 9:00 AM – 9:00 PM"
+      ],
+      "images": [],
+      "source": {
+        "provider": "google_places",
+        "place_id": "ChIJR-DYG-VRCTERUmdX7JYTZh4"
+      }
+    },
+    {
+      "id": "pp-mama-wong-s-dumpling-and-noodle-house-qzw5yq",
+      "name": "Mama Wong's Dumpling and Noodle House",
+      "city": "Phnom Penh",
+      "cuisine": [
+        "Chinese"
+      ],
+      "address": "Street 308, Sangkat Chaktomok, Phnom Penh 12302, Cambodia",
+      "location": {
+        "lat": 11.5529482,
+        "lng": 104.9301061
+      },
+      "rating": 4.4,
+      "rating_count": 1057,
+      "price_level": 1,
+      "price_symbol": "$",
+      "phone": "+855 97 850 8383",
+      "opening_hours": [
+        "Monday: 11:00 AM – 11:00 PM",
+        "Tuesday: 11:00 AM – 3:30 AM",
+        "Wednesday: 11:00 AM – 3:30 AM",
+        "Thursday: 11:00 AM – 3:30 AM",
+        "Friday: 11:00 AM – 3:30 AM",
+        "Saturday: 11:00 AM – 3:30 AM",
+        "Sunday: 11:00 AM – 3:30 AM"
+      ],
+      "images": [],
+      "source": {
+        "provider": "google_places",
+        "place_id": "ChIJE2AJMy5RCTERD-vRuqZw5yQ"
+      }
+    },
+    {
+      "id": "pp-old-shanghai-bistro-chinese-restaurant-p-ejgdfi",
+      "name": "Old Shanghai Bistro - Chinese Restaurant Phnom Penh",
+      "city": "Phnom Penh",
+      "cuisine": [
+        "Chinese"
+      ],
+      "address": "48e0 Oknha Chan Nak St. (144), Phnom Penh 12201, Cambodia",
+      "location": {
+        "lat": 11.5687756,
+        "lng": 104.9235384
+      },
+      "rating": 4.9,
+      "rating_count": 14,
+      "price_level": null,
+      "price_symbol": null,
+      "phone": "+855 96 960 6592",
+      "opening_hours": [
+        "Monday: Closed",
+        "Tuesday: 12:00 – 10:00 PM",
+        "Wednesday: 12:00 – 10:00 PM",
+        "Thursday: 12:00 – 10:00 PM",
+        "Friday: 12:00 – 10:00 PM",
+        "Saturday: 12:00 – 10:00 PM",
+        "Sunday: 12:00 – 10:00 PM"
+      ],
+      "images": [],
+      "source": {
+        "provider": "google_places",
+        "place_id": "ChIJtfcxML1RCTER1KCgqEjGdfI"
+      }
+    },
+    {
+      "id": "pp-kungfu-kitchen-bkk-st-57-bcgpki",
+      "name": "Kungfu Kitchen (BKK St. 57)",
+      "city": "Phnom Penh",
+      "cuisine": [
+        "Chinese"
+      ],
+      "address": "39, St. 57, 1, Phnom Penh 120102, Cambodia",
+      "location": {
+        "lat": 11.5518854,
+        "lng": 104.9250531
+      },
+      "rating": 4.5,
+      "rating_count": 808,
+      "price_level": 1,
+      "price_symbol": "$",
+      "phone": "+855 78 228 851",
+      "opening_hours": [
+        "Monday: 11:30 AM – 9:30 PM",
+        "Tuesday: 11:30 AM – 9:30 PM",
+        "Wednesday: 11:30 AM – 9:30 PM",
+        "Thursday: 11:30 AM – 9:30 PM",
+        "Friday: 11:30 AM – 9:30 PM",
+        "Saturday: 11:30 AM – 9:30 PM",
+        "Sunday: 11:30 AM – 9:30 PM"
+      ],
+      "images": [],
+      "source": {
+        "provider": "google_places",
+        "place_id": "ChIJlV5msplTCTER-06O1BcGPKI"
+      }
+    },
+    {
+      "id": "pp-hall-of-golden-chimes-hydxtq",
+      "name": "Hall of Golden Chimes",
+      "city": "Phnom Penh",
+      "cuisine": [
+        "Chinese"
+      ],
+      "address": "Level 5, NagaWorld2 Park, 120101, Samdech Hun Sen St, Phnom Penh, Cambodia",
+      "location": {
+        "lat": 11.5558986,
+        "lng": 104.9348068
+      },
+      "rating": 4.4,
+      "rating_count": 75,
+      "price_level": null,
+      "price_symbol": null,
+      "phone": "+855 23 263 031",
+      "opening_hours": [
+        "Monday: 11:00 AM – 11:00 PM",
+        "Tuesday: 11:00 AM – 11:00 PM",
+        "Wednesday: 11:00 AM – 11:00 PM",
+        "Thursday: 11:00 AM – 11:00 PM",
+        "Friday: 11:00 AM – 11:00 PM",
+        "Saturday: 11:00 AM – 11:00 PM",
+        "Sunday: 11:00 AM – 11:00 PM"
+      ],
+      "images": [],
+      "source": {
+        "provider": "google_places",
+        "place_id": "ChIJ42dC9XNRCTER5YVNLhYdxTQ"
+      }
+    },
+    {
+      "id": "pp-kiri-southeast-asian-cuisine-ilvsr8",
+      "name": "KIRI Southeast Asian Cuisine",
+      "city": "Phnom Penh",
+      "cuisine": [
+        "Khmer",
+        "Asian",
+        "Thai"
+      ],
+      "address": "174 Preah Ang Eng St. (13), Phnom Penh 120205, Cambodia",
+      "location": {
+        "lat": 11.5667558,
+        "lng": 104.9293107
+      },
+      "rating": 4.9,
+      "rating_count": 426,
+      "price_level": null,
+      "price_symbol": null,
+      "phone": "+855 70 630 920",
+      "opening_hours": [
+        "Monday: 10:00 AM – 10:00 PM",
+        "Tuesday: 10:00 AM – 10:00 PM",
+        "Wednesday: 10:00 AM – 10:00 PM",
+        "Thursday: 10:00 AM – 10:00 PM",
+        "Friday: 10:00 AM – 10:00 PM",
+        "Saturday: 10:00 AM – 10:00 PM",
+        "Sunday: Closed"
+      ],
+      "images": [],
+      "source": {
+        "provider": "google_places",
+        "place_id": "ChIJu8QhcwBRCTERB86I1IlvSR8"
+      }
+    },
+    {
+      "id": "pp-mama-thai-lumdxy",
+      "name": "Mama Thai",
+      "city": "Phnom Penh",
+      "cuisine": [
+        "Thai",
+        "Chinese"
+      ],
+      "address": "GWXG+QHW, St 352, Phnom Penh 12302, Cambodia",
+      "location": {
+        "lat": 11.5497406,
+        "lng": 104.9264218
+      },
+      "rating": 4.0,
+      "rating_count": 1416,
+      "price_level": 2,
+      "price_symbol": "$$",
+      "phone": "+855 92 761 110",
+      "opening_hours": [
+        "Monday: 10:00 AM – 11:00 PM",
+        "Tuesday: 10:00 AM – 11:00 PM",
+        "Wednesday: 10:00 AM – 11:00 PM",
+        "Thursday: 10:00 AM – 11:00 PM",
+        "Friday: 10:00 AM – 11:00 PM",
+        "Saturday: 10:00 AM – 11:00 PM",
+        "Sunday: 10:00 AM – 11:00 PM"
+      ],
+      "images": [],
+      "source": {
+        "provider": "google_places",
+        "place_id": "ChIJffvS7SVRCTER1ytsxLuMdXY"
+      }
+    },
+    {
+      "id": "pp-the-kitchen-phnom-penh-e1v9ua",
+      "name": "The Kitchen Phnom Penh",
+      "city": "Phnom Penh",
+      "cuisine": [
+        "General / Cambodian"
+      ],
+      "address": "St 312, Phnom Penh, Cambodia",
+      "location": {
+        "lat": 11.5524957,
+        "lng": 104.9314023
+      },
+      "rating": 4.4,
+      "rating_count": 119,
+      "price_level": null,
+      "price_symbol": null,
+      "phone": "+855 17 676 295",
+      "opening_hours": [
+        "Monday: 11:00 AM – 12:00 AM",
+        "Tuesday: 11:00 AM – 12:00 AM",
+        "Wednesday: 11:00 AM – 12:00 AM",
+        "Thursday: 11:00 AM – 12:00 AM",
+        "Friday: 11:00 AM – 12:00 AM",
+        "Saturday: 11:00 AM – 12:00 AM",
+        "Sunday: 11:00 AM – 12:00 AM"
+      ],
+      "images": [],
+      "source": {
+        "provider": "google_places",
+        "place_id": "ChIJJdHUe_dRCTERKJ2_ke1V9uA"
+      }
+    },
+    {
+      "id": "pp-aura-phnom-penh-iedq-a",
+      "name": "AURA - Phnom Penh",
+      "city": "Phnom Penh",
+      "cuisine": [
+        "Bar"
+      ],
+      "address": "11B street 29, & Street 308, Phnom Penh 12301, Cambodia",
+      "location": {
+        "lat": 11.5531246,
+        "lng": 104.9297785
+      },
+      "rating": 4.7,
+      "rating_count": 953,
+      "price_level": null,
+      "price_symbol": null,
+      "phone": "+855 98 663 389",
+      "opening_hours": [
+        "Monday: 11:30 AM – 1:00 AM",
+        "Tuesday: 11:30 AM – 1:00 AM",
+        "Wednesday: 11:30 AM – 1:00 AM",
+        "Thursday: 11:30 AM – 1:00 AM",
+        "Friday: 11:30 AM – 1:00 AM",
+        "Saturday: 11:30 AM – 1:00 AM",
+        "Sunday: 11:30 AM – 1:00 AM"
+      ],
+      "images": [],
+      "source": {
+        "provider": "google_places",
+        "place_id": "ChIJOTvBzi9RCTERCjNclIeDq-A"
+      }
+    },
+    {
+      "id": "pp-at-home-thai-cuisine-6xrdme",
+      "name": "At Home Thai Cuisine",
+      "city": "Phnom Penh",
+      "cuisine": [
+        "Thai"
+      ],
+      "address": "St 420, Phnom Penh 120111, Cambodia",
+      "location": {
+        "lat": 11.5429028,
+        "lng": 104.9211644
+      },
+      "rating": 5.0,
+      "rating_count": 8,
+      "price_level": null,
+      "price_symbol": null,
+      "phone": "+855 87 524 382",
+      "opening_hours": [
+        "Monday: 11:00 AM – 11:00 PM",
+        "Tuesday: 11:00 AM – 11:00 PM",
+        "Wednesday: 11:00 AM – 11:00 PM",
+        "Thursday: 11:00 AM – 11:00 PM",
+        "Friday: 11:00 AM – 11:00 PM",
+        "Saturday: 11:00 AM – 11:00 PM",
+        "Sunday: 11:00 AM – 11:00 PM"
+      ],
+      "images": [],
+      "source": {
+        "provider": "google_places",
+        "place_id": "ChIJl-Hao85RCTER-CbWf6xRDmE"
+      }
+    },
+    {
+      "id": "pp-b-n-vietnamese-kitchen-langka-lane--87wii",
+      "name": "BÚN - Vietnamese Kitchen (Langka Lane)",
+      "city": "Phnom Penh",
+      "cuisine": [
+        "Asian"
+      ],
+      "address": "47 Rue Pasteur No. 51, Phnom Penh, Cambodia",
+      "location": {
+        "lat": 11.5546501,
+        "lng": 104.9271932
+      },
+      "rating": 4.8,
+      "rating_count": 522,
+      "price_level": null,
+      "price_symbol": null,
+      "phone": "+855 77 727 233",
+      "opening_hours": [
+        "Monday: 10:00 AM – 10:00 PM",
+        "Tuesday: 10:00 AM – 10:00 PM",
+        "Wednesday: 10:00 AM – 10:00 PM",
+        "Thursday: 10:00 AM – 10:00 PM",
+        "Friday: 10:00 AM – 10:00 PM",
+        "Saturday: 10:00 AM – 10:00 PM",
+        "Sunday: 10:00 AM – 10:00 PM"
+      ],
+      "images": [],
+      "source": {
+        "provider": "google_places",
+        "place_id": "ChIJgY5hQwBRCTER9zKWj-87wiI"
+      }
+    },
+    {
+      "id": "pp-b-n-vietnamese-kitchen-toul-tompoung-7favg0",
+      "name": "BÚN - Vietnamese Kitchen (Toul Tompoung)",
+      "city": "Phnom Penh",
+      "cuisine": [
+        "Asian"
+      ],
+      "address": "30BE0, Street St 123, Phnom Penh 120109, Cambodia",
+      "location": {
+        "lat": 11.5402727,
+        "lng": 104.9174957
+      },
+      "rating": 4.7,
+      "rating_count": 221,
+      "price_level": null,
+      "price_symbol": null,
+      "phone": "+855 69 620 109",
+      "opening_hours": [
+        "Monday: 10:00 AM – 10:00 PM",
+        "Tuesday: 10:00 AM – 10:00 PM",
+        "Wednesday: 10:00 AM – 10:00 PM",
+        "Thursday: 10:00 AM – 10:00 PM",
+        "Friday: 10:00 AM – 10:00 PM",
+        "Saturday: 10:00 AM – 10:00 PM",
+        "Sunday: 10:00 AM – 10:00 PM"
+      ],
+      "images": [],
+      "source": {
+        "provider": "google_places",
+        "place_id": "ChIJfR0FxmRRCTER9ZBEo7fAVg0"
+      }
+    },
+    {
+      "id": "pp-bassac-garden-restaurant-authentic-vietn-a01drg",
+      "name": "Bassac Garden Restaurant - Authentic Vietnamese Cuisines",
+      "city": "Phnom Penh",
+      "cuisine": [
+        "Vietnamese"
+      ],
+      "address": "Next to BIDC Bank, Number 2 Street 462, Phnom Penh 12000, Cambodia",
+      "location": {
+        "lat": 11.5393527,
+        "lng": 104.9278161
+      },
+      "rating": 4.5,
+      "rating_count": 155,
+      "price_level": null,
+      "price_symbol": null,
+      "phone": "+855 96 263 2288",
+      "opening_hours": [
+        "Monday: 7:00 AM – 10:30 PM",
+        "Tuesday: 7:00 AM – 10:30 PM",
+        "Wednesday: 7:00 AM – 10:30 PM",
+        "Thursday: 7:00 AM – 10:30 PM",
+        "Friday: 7:00 AM – 10:30 PM",
+        "Saturday: 7:00 AM – 10:30 PM",
+        "Sunday: 7:00 AM – 10:30 PM"
+      ],
+      "images": [],
+      "source": {
+        "provider": "google_places",
+        "place_id": "ChIJZ2HvpLlRCTERe_RDxa01drg"
+      }
+    },
+    {
+      "id": "pp-bassac-pho-2vuwj4",
+      "name": "Bassac Pho",
+      "city": "Phnom Penh",
+      "cuisine": [
+        "Vietnamese"
+      ],
+      "address": "12 Samdach Louis Em St. (282), Phnom Penh, Cambodia",
+      "location": {
+        "lat": 11.5547056,
+        "lng": 104.9242207
+      },
+      "rating": 4.4,
+      "rating_count": 322,
+      "price_level": null,
+      "price_symbol": null,
+      "phone": "+855 16 364 477",
+      "opening_hours": [
+        "Monday: 7:00 AM – 9:00 PM",
+        "Tuesday: 7:00 AM – 9:00 PM",
+        "Wednesday: 7:00 AM – 9:00 PM",
+        "Thursday: 7:00 AM – 9:00 PM",
+        "Friday: 7:00 AM – 9:00 PM",
+        "Saturday: 7:00 AM – 9:00 PM",
+        "Sunday: 7:00 AM – 9:00 PM"
+      ],
+      "images": [],
+      "source": {
+        "provider": "google_places",
+        "place_id": "ChIJbfKZJzBRCTER8oLr_2VUwj4"
+      }
+    },
+    {
+      "id": "pp-magnolia-restaurant-sxnnt8",
+      "name": "Magnolia Restaurant",
+      "city": "Phnom Penh",
+      "cuisine": [
+        "Vietnamese",
+        "Asian",
+        "Family style"
+      ],
+      "address": "Phnom, 55 Oknha Pich St. (242), Penh 12207, Cambodia",
+      "location": {
+        "lat": 11.5580364,
+        "lng": 104.9252112
+      },
+      "rating": 4.2,
+      "rating_count": 1782,
+      "price_level": 2,
+      "price_symbol": "$$",
+      "phone": "+855 12 529 977",
+      "opening_hours": [
+        "Monday: 6:00 AM – 11:00 PM",
+        "Tuesday: 6:00 AM – 11:00 PM",
+        "Wednesday: 6:00 AM – 11:00 PM",
+        "Thursday: 6:00 AM – 11:00 PM",
+        "Friday: 6:00 AM – 11:00 PM",
+        "Saturday: 6:00 AM – 11:00 PM",
+        "Sunday: 6:00 AM – 11:00 PM"
+      ],
+      "images": [],
+      "source": {
+        "provider": "google_places",
+        "place_id": "ChIJYxu8RjpRCTER_RTF7sxNNt8"
+      }
+    },
+    {
+      "id": "pp-kanazawa-japanese-restaurant-gvsknq",
+      "name": "Kanazawa Japanese Restaurant",
+      "city": "Phnom Penh",
+      "cuisine": [
+        "Japanese"
+      ],
+      "address": "House number 173, 175 Preah Sisowath Quay, Phnom Penh 12204, Cambodia",
+      "location": {
+        "lat": 11.5727045,
+        "lng": 104.9288653
+      },
+      "rating": 4.5,
+      "rating_count": 487,
+      "price_level": 2,
+      "price_symbol": "$$",
+      "phone": "+855 85 759 884",
+      "opening_hours": [
+        "Monday: 11:00 AM – 12:00 AM",
+        "Tuesday: 11:00 AM – 12:00 AM",
+        "Wednesday: 11:00 AM – 12:00 AM",
+        "Thursday: 11:00 AM – 12:00 AM",
+        "Friday: 11:00 AM – 12:00 AM",
+        "Saturday: 11:00 AM – 12:00 AM",
+        "Sunday: 11:00 AM – 12:00 AM"
+      ],
+      "images": [],
+      "source": {
+        "provider": "google_places",
+        "place_id": "ChIJRcPHI3dRCTERWJSskGVsknQ"
+      }
+    },
+    {
+      "id": "pp-ebinosekai-cambodia-gclhvo",
+      "name": "Ebinosekai Cambodia",
+      "city": "Phnom Penh",
+      "cuisine": [
+        "Japanese",
+        "Seafood"
+      ],
+      "address": "235D, St. 63, Boeng Keng Kang 1, Phnom Penh, Cambodia",
+      "location": {
+        "lat": 11.5488374,
+        "lng": 104.92398
+      },
+      "rating": 4.8,
+      "rating_count": 1069,
+      "price_level": null,
+      "price_symbol": null,
+      "phone": "+855 96 950 5444",
+      "opening_hours": [
+        "Monday: 11:30 AM – 2:00 PM, 5:00 – 10:30 PM",
+        "Tuesday: 11:30 AM – 2:00 PM, 5:00 – 10:30 PM",
+        "Wednesday: 11:30 AM – 2:00 PM, 5:00 – 10:30 PM",
+        "Thursday: 11:30 AM – 2:00 PM, 5:00 – 10:30 PM",
+        "Friday: 11:30 AM – 2:00 PM, 5:00 – 10:30 PM",
+        "Saturday: 11:30 AM – 10:30 PM",
+        "Sunday: 11:30 AM – 10:30 PM"
+      ],
+      "images": [],
+      "source": {
+        "provider": "google_places",
+        "place_id": "ChIJE4hNwFFRCTERRHO0uGclHvo"
+      }
+    },
+    {
+      "id": "pp-iza-japanese-restaurant-mxyx_i",
+      "name": "Iza Japanese Restaurant",
+      "city": "Phnom Penh",
+      "cuisine": [
+        "Japanese"
+      ],
+      "address": "Preah Monivong Boulevard, Vattanac Capital Tower, 66 Level 37, Phnom Penh 12202, Cambodia",
+      "location": {
+        "lat": 11.5736191,
+        "lng": 104.9184056
+      },
+      "rating": 4.4,
+      "rating_count": 300,
+      "price_level": null,
+      "price_symbol": null,
+      "phone": "+855 23 936 860",
+      "opening_hours": [
+        "Monday: 11:00 AM – 10:30 PM",
+        "Tuesday: 11:00 AM – 10:30 PM",
+        "Wednesday: 11:00 AM – 10:30 PM",
+        "Thursday: 11:00 AM – 10:30 PM",
+        "Friday: 11:00 AM – 10:30 PM",
+        "Saturday: 11:00 AM – 10:30 PM",
+        "Sunday: 11:00 AM – 10:30 PM"
+      ],
+      "images": [],
+      "source": {
+        "provider": "google_places",
+        "place_id": "ChIJL37DpkNRCTERa_QyqMXyX_I"
+      }
+    },
+    {
+      "id": "pp-le-ta-su-aeon-mall-phnom-penh-c5st_8",
+      "name": "LE-TA-SU AEON Mall Phnom Penh",
+      "city": "Phnom Penh",
+      "cuisine": [
+        "Japanese"
+      ],
+      "address": "1 Samdach Sothearos Blvd (3), Phnom Penh, Cambodia",
+      "location": {
+        "lat": 11.5476133,
+        "lng": 104.9338293
+      },
+      "rating": 4.8,
+      "rating_count": 99,
+      "price_level": null,
+      "price_symbol": null,
+      "phone": "+855 10 800 877",
+      "opening_hours": [
+        "Monday: 9:00 AM – 10:00 PM",
+        "Tuesday: 9:00 AM – 10:00 PM",
+        "Wednesday: 9:00 AM – 10:00 PM",
+        "Thursday: 9:00 AM – 10:00 PM",
+        "Friday: 9:00 AM – 10:00 PM",
+        "Saturday: 9:00 AM – 10:00 PM",
+        "Sunday: 9:00 AM – 10:00 PM"
+      ],
+      "images": [],
+      "source": {
+        "provider": "google_places",
+        "place_id": "ChIJff83SgBRCTERJ-FbAc5St_8"
+      }
+    },
+    {
+      "id": "pp-tono-izakaya-cambodia-tmfcyy",
+      "name": "Tono Izakaya Cambodia",
+      "city": "Phnom Penh",
+      "cuisine": [
+        "Japanese"
+      ],
+      "address": "40 St 334, Phnom Penh 120102, Cambodia",
+      "location": {
+        "lat": 11.5495529,
+        "lng": 104.9231919
+      },
+      "rating": 4.7,
+      "rating_count": 477,
+      "price_level": null,
+      "price_symbol": null,
+      "phone": "+855 78 508 088",
+      "opening_hours": [
+        "Monday: 12:00 – 3:00 PM, 5:00 PM – 12:00 AM",
+        "Tuesday: 12:00 – 3:00 PM, 5:00 PM – 12:00 AM",
+        "Wednesday: 12:00 – 3:00 PM, 5:00 PM – 12:00 AM",
+        "Thursday: 12:00 – 3:00 PM, 5:00 PM – 12:00 AM",
+        "Friday: 12:00 – 3:00 PM, 5:00 PM – 12:00 AM",
+        "Saturday: 12:00 – 3:00 PM, 5:00 PM – 12:00 AM",
+        "Sunday: 12:00 – 3:00 PM, 5:00 PM – 12:00 AM"
+      ],
+      "images": [],
+      "source": {
+        "provider": "google_places",
+        "place_id": "ChIJ7ZEsNVhRCTERySerttMfcYY"
+      }
+    },
+    {
+      "id": "pp-melo-korean-fushion-restaurant-xj_dfi",
+      "name": "Melo Korean Fushion Restaurant",
+      "city": "Phnom Penh",
+      "cuisine": [
+        "Korean"
+      ],
+      "address": "34 street 360, Phnom Penh, Cambodia",
+      "location": {
+        "lat": 11.5485644,
+        "lng": 104.9261734
+      },
+      "rating": 4.8,
+      "rating_count": 373,
+      "price_level": null,
+      "price_symbol": null,
+      "phone": "+855 15 797 090",
+      "opening_hours": [
+        "Monday: 10:00 AM – 10:00 PM",
+        "Tuesday: 10:00 AM – 10:00 PM",
+        "Wednesday: 10:00 AM – 10:00 PM",
+        "Thursday: 10:00 AM – 10:00 PM",
+        "Friday: 10:00 AM – 10:00 PM",
+        "Saturday: 10:00 AM – 10:00 PM",
+        "Sunday: 10:00 AM – 10:00 PM"
+      ],
+      "images": [],
+      "source": {
+        "provider": "google_places",
+        "place_id": "ChIJw_3adABRCTERWuz-Cxj_dfI"
+      }
+    },
+    {
+      "id": "pp-fun-beerking-bkk-uniwfq",
+      "name": "Fun Beerking BKK",
+      "city": "Phnom Penh",
+      "cuisine": [
+        "Korean"
+      ],
+      "address": "82 St 310, Phnom Penh, Cambodia",
+      "location": {
+        "lat": 11.5521021,
+        "lng": 104.9277961
+      },
+      "rating": 4.8,
+      "rating_count": 237,
+      "price_level": null,
+      "price_symbol": null,
+      "phone": "+855 15 733 289",
+      "opening_hours": [
+        "Monday: 11:00 AM – 11:00 PM",
+        "Tuesday: 11:00 AM – 11:00 PM",
+        "Wednesday: 11:00 AM – 11:30 PM",
+        "Thursday: 11:00 AM – 11:00 PM",
+        "Friday: 11:00 AM – 11:00 PM",
+        "Saturday: 11:00 AM – 11:00 PM",
+        "Sunday: 11:00 AM – 11:00 PM"
+      ],
+      "images": [],
+      "source": {
+        "provider": "google_places",
+        "place_id": "ChIJ0SRaXn5RCTERCuBXruniwfQ"
+      }
+    },
+    {
+      "id": "pp-cheon-tong-bkk-dkbzqi",
+      "name": "Cheon Tong BKK",
+      "city": "Phnom Penh",
+      "cuisine": [
+        "Korean"
+      ],
+      "address": "82 St 310, Phnom Penh, Cambodia",
+      "location": {
+        "lat": 11.5521218,
+        "lng": 104.9277464
+      },
+      "rating": 4.9,
+      "rating_count": 156,
+      "price_level": null,
+      "price_symbol": null,
+      "phone": "+855 70 833 289",
+      "opening_hours": [
+        "Monday: 11:00 AM – 11:00 PM",
+        "Tuesday: 11:00 AM – 11:00 PM",
+        "Wednesday: 11:00 AM – 11:00 PM",
+        "Thursday: 11:00 AM – 11:00 PM",
+        "Friday: 11:00 AM – 11:00 PM",
+        "Saturday: 11:00 AM – 11:00 PM",
+        "Sunday: 11:00 AM – 11:00 PM"
+      ],
+      "images": [],
+      "source": {
+        "provider": "google_places",
+        "place_id": "ChIJ2TjzympRCTER8BpApDkBZQI"
+      }
+    },
+    {
+      "id": "pp-jaru-korean-restaurant-3zazjk",
+      "name": "Jaru Korean Restaurant",
+      "city": "Phnom Penh",
+      "cuisine": [
+        "Korean"
+      ],
+      "address": "15 Samdach Louis Em St. (282), Phnom Penh, Cambodia",
+      "location": {
+        "lat": 11.5547516,
+        "lng": 104.9240526
+      },
+      "rating": 4.5,
+      "rating_count": 1118,
+      "price_level": 2,
+      "price_symbol": "$$",
+      "phone": "+855 77 846 843",
+      "opening_hours": [
+        "Monday: 10:30 AM – 9:00 PM",
+        "Tuesday: 10:30 AM – 9:00 PM",
+        "Wednesday: 10:30 AM – 9:00 PM",
+        "Thursday: 10:30 AM – 9:00 PM",
+        "Friday: 10:30 AM – 9:00 PM",
+        "Saturday: 10:30 AM – 9:00 PM",
+        "Sunday: 10:30 AM – 9:00 PM"
+      ],
+      "images": [],
+      "source": {
+        "provider": "google_places",
+        "place_id": "ChIJF3aBh3JRCTERe0d2_3ZAZjk"
+      }
+    },
+    {
+      "id": "pp-sikgaek-korean-restaurant-bx9yak",
+      "name": "Sikgaek Korean Restaurant",
+      "city": "Phnom Penh",
+      "cuisine": [
+        "Korean"
+      ],
+      "address": "House 231 Saint 352 & 63, BKK1 Phnom Phen, Phnom Penh 12302, Cambodia",
+      "location": {
+        "lat": 11.5490539,
+        "lng": 104.9239071
+      },
+      "rating": 4.4,
+      "rating_count": 1168,
+      "price_level": 3,
+      "price_symbol": "$$$",
+      "phone": "+855 11 238 933",
+      "opening_hours": [
+        "Monday: 11:00 AM – 10:00 PM",
+        "Tuesday: 11:00 AM – 10:00 PM",
+        "Wednesday: 11:00 AM – 10:00 PM",
+        "Thursday: 11:00 AM – 10:00 PM",
+        "Friday: 11:00 AM – 10:00 PM",
+        "Saturday: 11:00 AM – 10:00 PM",
+        "Sunday: 11:00 AM – 10:00 PM"
+      ],
+      "images": [],
+      "source": {
+        "provider": "google_places",
+        "place_id": "ChIJU40RLCRRCTERDrASFbX9yak"
+      }
+    },
+    {
+      "id": "pp-haveli-indian-restaurant-ceiuye",
+      "name": "Haveli Indian Restaurant",
+      "city": "Phnom Penh",
+      "cuisine": [
+        "Indian"
+      ],
+      "address": "House no 19 Samdach Louis Em St. (282), Penh 12301, Cambodia",
+      "location": {
+        "lat": 11.5545945,
+        "lng": 104.9236233
+      },
+      "rating": 4.8,
+      "rating_count": 659,
+      "price_level": null,
+      "price_symbol": null,
+      "phone": "+855 61 394 505",
+      "opening_hours": [
+        "Monday: 10:00 AM – 11:00 PM",
+        "Tuesday: 10:00 AM – 11:00 PM",
+        "Wednesday: 10:00 AM – 11:00 PM",
+        "Thursday: 10:00 AM – 11:00 PM",
+        "Friday: 10:00 AM – 11:00 PM",
+        "Saturday: 10:00 AM – 11:00 PM",
+        "Sunday: 10:00 AM – 11:00 PM"
+      ],
+      "images": [],
+      "source": {
+        "provider": "google_places",
+        "place_id": "ChIJy8S8CrZRCTER7l8b2ceiUYE"
+      }
+    },
+    {
+      "id": "pp-swagat-indian-restaurant-pgaoxg",
+      "name": "SWAGAT Indian Restaurant",
+      "city": "Phnom Penh",
+      "cuisine": [
+        "Indian"
+      ],
+      "address": "33 Street 288, Phnom Penh, Cambodia",
+      "location": {
+        "lat": 11.5539714,
+        "lng": 104.9238129
+      },
+      "rating": 4.8,
+      "rating_count": 695,
+      "price_level": 1,
+      "price_symbol": "$",
+      "phone": "+855 95 346 196",
+      "opening_hours": [
+        "Monday: 10:30 AM – 10:30 PM",
+        "Tuesday: 10:30 AM – 10:30 PM",
+        "Wednesday: 10:30 AM – 10:30 PM",
+        "Thursday: 10:30 AM – 10:30 PM",
+        "Friday: 10:30 AM – 10:30 PM",
+        "Saturday: 10:30 AM – 10:30 PM",
+        "Sunday: 10:30 AM – 10:30 PM"
+      ],
+      "images": [],
+      "source": {
+        "provider": "google_places",
+        "place_id": "ChIJ2TYIvjpRCTERwcOT7PGAoxg"
+      }
+    },
+    {
+      "id": "pp-gorkha-palace-phnom-penh-indian-and-nepa-cdfdqe",
+      "name": "Gorkha Palace Phnom Penh Indian and Nepalese Restaurant",
+      "city": "Phnom Penh",
+      "cuisine": [
+        "Indian"
+      ],
+      "address": "28EoE1, Street 308, Phnom Penh 12301, Cambodia",
+      "location": {
+        "lat": 11.553013,
+        "lng": 104.92952
+      },
+      "rating": 4.8,
+      "rating_count": 819,
+      "price_level": null,
+      "price_symbol": null,
+      "phone": "+855 81 318 763",
+      "opening_hours": [
+        "Monday: 10:30 AM – 12:30 AM",
+        "Tuesday: 10:30 AM – 12:30 AM",
+        "Wednesday: 10:30 AM – 12:30 AM",
+        "Thursday: 10:30 AM – 12:30 AM",
+        "Friday: 10:30 AM – 12:30 AM",
+        "Saturday: 10:30 AM – 12:30 AM",
+        "Sunday: 10:30 AM – 12:30 AM"
+      ],
+      "images": [],
+      "source": {
+        "provider": "google_places",
+        "place_id": "ChIJraKHkZ1RCTERLH1ADcDfDqE"
+      }
+    },
+    {
+      "id": "pp-dawat-indian-restaurant-eppm4y",
+      "name": "Dawat Indian Restaurant",
+      "city": "Phnom Penh",
+      "cuisine": [
+        "Indian"
+      ],
+      "address": "House No.11A Street No. 282, Phnom Penh 120102, Cambodia",
+      "location": {
+        "lat": 11.5546434,
+        "lng": 104.925625
+      },
+      "rating": 4.9,
+      "rating_count": 437,
+      "price_level": null,
+      "price_symbol": null,
+      "phone": "+855 96 468 1728",
+      "opening_hours": [
+        "Monday: 10:00 AM – 11:00 PM",
+        "Tuesday: 10:00 AM – 11:00 PM",
+        "Wednesday: 10:00 AM – 11:00 PM",
+        "Thursday: 10:00 AM – 11:00 PM",
+        "Friday: 10:00 AM – 11:00 PM",
+        "Saturday: 10:00 AM – 11:00 PM",
+        "Sunday: 10:00 AM – 11:00 PM"
+      ],
+      "images": [],
+      "source": {
+        "provider": "google_places",
+        "place_id": "ChIJjaSHG4VRCTERdqZdlEPpm4Y"
+      }
+    },
+    {
+      "id": "pp-namaste-india-restaurant-bkk-dl6-jy",
+      "name": "Namaste India Restaurant BKK",
+      "city": "Phnom Penh",
+      "cuisine": [
+        "Fine dining",
+        "Indian"
+      ],
+      "address": "177 Street 63 Corner 294 Phnom Penh, Phnom Penh 12302, Cambodia",
+      "location": {
+        "lat": 11.5534337,
+        "lng": 104.923307
+      },
+      "rating": 4.5,
+      "rating_count": 1139,
+      "price_level": 2,
+      "price_symbol": "$$",
+      "phone": "+855 86 346 342",
+      "opening_hours": [
+        "Monday: 10:00 AM – 11:00 PM",
+        "Tuesday: 10:00 AM – 11:00 PM",
+        "Wednesday: 10:00 AM – 11:00 PM",
+        "Thursday: 10:00 AM – 11:00 PM",
+        "Friday: 10:00 AM – 11:00 PM",
+        "Saturday: 10:00 AM – 11:00 PM",
+        "Sunday: 10:00 AM – 11:00 PM"
+      ],
+      "images": [],
+      "source": {
+        "provider": "google_places",
+        "place_id": "ChIJP0WqPJdRCTERNXcO6DL6-JY"
+      }
+    },
+    {
+      "id": "pp-trattoria-bello-owdybc",
+      "name": "Trattoria Bello",
+      "city": "Phnom Penh",
+      "cuisine": [
+        "Italian"
+      ],
+      "address": "17C St 460, Phnom Penh 120109, Cambodia",
+      "location": {
+        "lat": 11.5385179,
+        "lng": 104.9181894
+      },
+      "rating": 4.7,
+      "rating_count": 983,
+      "price_level": 2,
+      "price_symbol": "$$",
+      "phone": "+855 99 474 579",
+      "opening_hours": [
+        "Monday: 12:00 – 2:00 PM, 5:30 – 9:30 PM",
+        "Tuesday: 12:00 – 2:00 PM, 5:30 – 9:30 PM",
+        "Wednesday: 12:00 – 2:00 PM, 5:30 – 9:30 PM",
+        "Thursday: 12:00 – 2:00 PM, 5:30 – 9:30 PM",
+        "Friday: 12:00 – 2:00 PM, 5:30 – 9:30 PM",
+        "Saturday: 12:00 – 2:00 PM, 5:30 – 9:30 PM",
+        "Sunday: 12:00 – 2:00 PM, 5:30 – 9:30 PM"
+      ],
+      "images": [],
+      "source": {
+        "provider": "google_places",
+        "place_id": "ChIJHYhBet5QCTERuQWfOowdYbc"
+      }
+    },
+    {
+      "id": "pp-bellini-italian-1dspxq",
+      "name": "Bellini Italian",
+      "city": "Phnom Penh",
+      "cuisine": [
+        "Italian"
+      ],
+      "address": "HW2G+W5V, St 306, Phnom Penh, Cambodia",
+      "location": {
+        "lat": 11.5523516,
+        "lng": 104.9254358
+      },
+      "rating": 4.8,
+      "rating_count": 61,
+      "price_level": null,
+      "price_symbol": null,
+      "phone": "+855 85 464 850",
+      "opening_hours": [
+        "Monday: 11:00 AM – 10:30 PM",
+        "Tuesday: 11:00 AM – 10:30 PM",
+        "Wednesday: 11:00 AM – 10:30 PM",
+        "Thursday: 11:00 AM – 10:30 PM",
+        "Friday: 11:00 AM – 11:00 PM",
+        "Saturday: 11:00 AM – 11:00 PM",
+        "Sunday: 11:00 AM – 10:30 PM"
+      ],
+      "images": [],
+      "source": {
+        "provider": "google_places",
+        "place_id": "ChIJRdQpMwBRCTERx0mth1dspXQ"
+      }
+    },
+    {
+      "id": "pp-la-volpaia-phnom-penh-araouq",
+      "name": "La Volpaia - Phnom Penh",
+      "city": "Phnom Penh",
+      "cuisine": [
+        "Italian"
+      ],
+      "address": "16CE0 street 392, Phnom Penh, Cambodia",
+      "location": {
+        "lat": 11.5459001,
+        "lng": 104.9236973
+      },
+      "rating": 4.5,
+      "rating_count": 274,
+      "price_level": null,
+      "price_symbol": null,
+      "phone": "+855 23 992 739",
+      "opening_hours": [
+        "Monday: 11:00 AM – 10:00 PM",
+        "Tuesday: 11:00 AM – 10:00 PM",
+        "Wednesday: 11:00 AM – 10:00 PM",
+        "Thursday: 11:00 AM – 10:00 PM",
+        "Friday: 11:00 AM – 10:00 PM",
+        "Saturday: 11:00 AM – 10:00 PM",
+        "Sunday: 11:00 AM – 10:00 PM"
+      ],
+      "images": [],
+      "source": {
+        "provider": "google_places",
+        "place_id": "ChIJkbDujw1RCTER9Ela6aRAoUQ"
+      }
+    },
+    {
+      "id": "pp-bacaro-wine-bar-italian-cuisine-fhgw3s",
+      "name": "Bacaro Wine Bar & Italian Cuisine",
+      "city": "Phnom Penh",
+      "cuisine": [
+        "Italian"
+      ],
+      "address": "street 240, Phnom Penh 120207, Cambodia",
+      "location": {
+        "lat": 11.5600833,
+        "lng": 104.9282537
+      },
+      "rating": 4.8,
+      "rating_count": 79,
+      "price_level": null,
+      "price_symbol": null,
+      "phone": "+855 76 298 3264",
+      "opening_hours": [
+        "Monday: Closed",
+        "Tuesday: 11:00 AM – 10:00 PM",
+        "Wednesday: 11:00 AM – 10:00 PM",
+        "Thursday: 11:00 AM – 10:00 PM",
+        "Friday: 11:00 AM – 10:00 PM",
+        "Saturday: 11:00 AM – 10:00 PM",
+        "Sunday: 11:00 AM – 10:00 PM"
+      ],
+      "images": [],
+      "source": {
+        "provider": "google_places",
+        "place_id": "ChIJkUyudQBRCTERJ6MFafHgW3s"
+      }
+    },
+    {
+      "id": "pp-il-forno-qmr520",
+      "name": "Il Forno",
+      "city": "Phnom Penh",
+      "cuisine": [
+        "Italian",
+        "Wine bar"
+      ],
+      "address": "#11 Street 302, BKK1 Phnom Penh, Phnom Penh 12302, Cambodia",
+      "location": {
+        "lat": 11.553398,
+        "lng": 104.9277226
+      },
+      "rating": 4.4,
+      "rating_count": 556,
+      "price_level": 2,
+      "price_symbol": "$$",
+      "phone": "+855 10 660 515",
+      "opening_hours": [
+        "Monday: 12:00 – 10:30 PM",
+        "Tuesday: 12:00 – 10:30 PM",
+        "Wednesday: 12:00 – 10:30 PM",
+        "Thursday: 12:00 – 10:30 PM",
+        "Friday: 12:00 – 10:30 PM",
+        "Saturday: 12:00 – 10:30 PM",
+        "Sunday: 12:00 – 10:30 PM"
+      ],
+      "images": [],
+      "source": {
+        "provider": "google_places",
+        "place_id": "ChIJWUEl8C9RCTERZBMXSqMr520"
+      }
+    },
+    {
+      "id": "pp-le-bistrot-de-l-institut-francais-bqfrpk",
+      "name": "Le Bistrot de l'Institut Francais",
+      "city": "Phnom Penh",
+      "cuisine": [
+        "French",
+        "Cafe"
+      ],
+      "address": "218 Street 184, Phnom Penh 12211, Cambodia",
+      "location": {
+        "lat": 11.5620425,
+        "lng": 104.9208158
+      },
+      "rating": 4.8,
+      "rating_count": 27,
+      "price_level": null,
+      "price_symbol": null,
+      "phone": "+855 87 883 288",
+      "opening_hours": [
+        "Monday: 8:00 AM – 10:00 PM",
+        "Tuesday: 8:00 AM – 10:00 PM",
+        "Wednesday: 8:00 AM – 10:00 PM",
+        "Thursday: 8:00 AM – 10:00 PM",
+        "Friday: 8:00 AM – 10:00 PM",
+        "Saturday: 8:00 AM – 10:00 PM",
+        "Sunday: Closed"
+      ],
+      "images": [],
+      "source": {
+        "provider": "google_places",
+        "place_id": "ChIJnbUBUadRCTERc1cz-BqFRpk"
+      }
+    },
+    {
+      "id": "pp-le-langka-v3idiy",
+      "name": "Le Langka",
+      "city": "Phnom Penh",
+      "cuisine": [
+        "French"
+      ],
+      "address": "132 Z13 Rue Pasteur No. 51, Phnom Penh, Cambodia",
+      "location": {
+        "lat": 11.5544409,
+        "lng": 104.9270675
+      },
+      "rating": 4.7,
+      "rating_count": 956,
+      "price_level": 2,
+      "price_symbol": "$$",
+      "phone": "+855 86 916 234",
+      "opening_hours": [
+        "Monday: 6:00 – 10:00 PM",
+        "Tuesday: 6:00 – 10:00 PM",
+        "Wednesday: 6:00 – 10:00 PM",
+        "Thursday: 6:00 – 10:00 PM",
+        "Friday: 6:00 – 10:00 PM",
+        "Saturday: 6:00 – 10:00 PM",
+        "Sunday: 6:00 – 10:00 PM"
+      ],
+      "images": [],
+      "source": {
+        "provider": "google_places",
+        "place_id": "ChIJn3B1rDpRCTERTkihYv3iDiY"
+      }
+    },
+    {
+      "id": "pp-p-p-bistro-fydd6e",
+      "name": "Pépé Bistro",
+      "city": "Phnom Penh",
+      "cuisine": [
+        "French"
+      ],
+      "address": "223, Street 13, Sangkat Chey Chom Neas Phnom Penh, Phnom Penh 12206, Cambodia",
+      "location": {
+        "lat": 11.5664323,
+        "lng": 104.9291996
+      },
+      "rating": 4.8,
+      "rating_count": 433,
+      "price_level": 2,
+      "price_symbol": "$$",
+      "phone": "+855 87 911 871",
+      "opening_hours": [
+        "Monday: 6:00 – 9:30 PM",
+        "Tuesday: 11:30 AM – 2:00 PM, 6:00 – 9:30 PM",
+        "Wednesday: 11:30 AM – 2:00 PM, 6:00 – 9:30 PM",
+        "Thursday: 11:30 AM – 2:00 PM, 6:00 – 9:30 PM",
+        "Friday: 11:30 AM – 2:00 PM, 6:00 – 9:30 PM",
+        "Saturday: 11:30 AM – 2:00 PM, 6:00 – 9:30 PM",
+        "Sunday: Closed"
+      ],
+      "images": [],
+      "source": {
+        "provider": "google_places",
+        "place_id": "ChIJe9OxR0hRCTERYYQX9fyDD6E"
+      }
+    },
+    {
+      "id": "pp-le-manolis-sxkabe",
+      "name": "Le Manolis",
+      "city": "Phnom Penh",
+      "cuisine": [
+        "French"
+      ],
+      "address": "No 6, Str. 13 Preah Ang Eng St. (13), Phnom Penh, Cambodia",
+      "location": {
+        "lat": 11.5756166,
+        "lng": 104.9259138
+      },
+      "rating": 4.5,
+      "rating_count": 270,
+      "price_level": null,
+      "price_symbol": null,
+      "phone": "+855 85 369 300",
+      "opening_hours": [
+        "Monday: 11:00 AM – 12:00 AM",
+        "Tuesday: 11:00 AM – 12:00 AM",
+        "Wednesday: 11:00 AM – 12:00 AM",
+        "Thursday: 11:00 AM – 12:00 AM",
+        "Friday: 11:00 AM – 12:00 AM",
+        "Saturday: 11:00 AM – 12:00 AM",
+        "Sunday: 11:00 AM – 12:00 AM"
+      ],
+      "images": [],
+      "source": {
+        "provider": "google_places",
+        "place_id": "ChIJI0KIL_xRCTER9bVoNsXKaBE"
+      }
+    },
+    {
+      "id": "pp-delice-chroy-changvar-the-peninsula-s6xgko",
+      "name": "ÔDELICE Chroy Changvar (The Peninsula)",
+      "city": "Phnom Penh",
+      "cuisine": [
+        "French",
+        "Western"
+      ],
+      "address": "3G Keo Chenda St 1, F, The Peninsula Hotel, Phnom Penh 121001, Cambodia",
+      "location": {
+        "lat": 11.589508,
+        "lng": 104.9286341
+      },
+      "rating": 4.7,
+      "rating_count": 158,
+      "price_level": null,
+      "price_symbol": null,
+      "phone": "+855 87 322 284",
+      "opening_hours": [
+        "Monday: 10:30 AM – 11:00 PM",
+        "Tuesday: 10:30 AM – 11:00 PM",
+        "Wednesday: 10:30 AM – 11:00 PM",
+        "Thursday: 10:30 AM – 11:00 PM",
+        "Friday: 10:30 AM – 11:00 PM",
+        "Saturday: 10:30 AM – 11:00 PM",
+        "Sunday: 10:30 AM – 11:00 PM"
+      ],
+      "images": [],
+      "source": {
+        "provider": "google_places",
+        "place_id": "ChIJAUwBAgBTCTERbQJ4US6xgKo"
+      }
+    },
+    {
+      "id": "pp-nesat-seafood-house-2oiies",
+      "name": "NESAT Seafood House",
+      "city": "Phnom Penh",
+      "cuisine": [
+        "Seafood"
+      ],
+      "address": "St 446, Phnom Penh, Cambodia",
+      "location": {
+        "lat": 11.5403904,
+        "lng": 104.9158532
+      },
+      "rating": 4.6,
+      "rating_count": 690,
+      "price_level": 2,
+      "price_symbol": "$$",
+      "phone": "+855 77 683 003",
+      "opening_hours": [
+        "Monday: 11:00 AM – 11:00 PM",
+        "Tuesday: 11:00 AM – 11:00 PM",
+        "Wednesday: 11:00 AM – 11:00 PM",
+        "Thursday: 11:00 AM – 11:00 PM",
+        "Friday: 11:00 AM – 11:00 PM",
+        "Saturday: 11:00 AM – 11:00 PM",
+        "Sunday: Closed"
+      ],
+      "images": [],
+      "source": {
+        "provider": "google_places",
+        "place_id": "ChIJAXeMRd5QCTERNW2kj2OIies"
+      }
+    },
+    {
+      "id": "pp-clams-seafood-club-meo9ks",
+      "name": "Clams Seafood Club",
+      "city": "Phnom Penh",
+      "cuisine": [
+        "Seafood"
+      ],
+      "address": "132 Z13, 12302 Rue Pasteur No. 51, Phnom Penh 120102, Cambodia",
+      "location": {
+        "lat": 11.554421,
+        "lng": 104.9269647
+      },
+      "rating": 4.6,
+      "rating_count": 250,
+      "price_level": null,
+      "price_symbol": null,
+      "phone": "+855 93 714 494",
+      "opening_hours": [
+        "Monday: 10:00 AM – 10:00 PM",
+        "Tuesday: 10:00 AM – 10:00 PM",
+        "Wednesday: 10:00 AM – 10:00 PM",
+        "Thursday: 10:00 AM – 10:00 PM",
+        "Friday: 10:00 AM – 10:00 PM",
+        "Saturday: 10:00 AM – 10:00 PM",
+        "Sunday: 10:00 AM – 10:00 PM"
+      ],
+      "images": [],
+      "source": {
+        "provider": "google_places",
+        "place_id": "ChIJC3pVNh5RCTER4opkxmeO9ks"
+      }
+    },
+    {
+      "id": "pp-the-boiling-seafood-tbs-nswb70",
+      "name": "The Boiling Seafood - TBS",
+      "city": "Phnom Penh",
+      "cuisine": [
+        "Western",
+        "Seafood"
+      ],
+      "address": "19 St 302, Phnom Penh, Cambodia",
+      "location": {
+        "lat": 11.5532206,
+        "lng": 104.9271701
+      },
+      "rating": 4.9,
+      "rating_count": 20,
+      "price_level": null,
+      "price_symbol": null,
+      "phone": "+855 61 798 383",
+      "opening_hours": [
+        "Monday: 11:00 AM – 10:30 PM",
+        "Tuesday: 11:00 AM – 10:30 PM",
+        "Wednesday: 11:00 AM – 10:30 PM",
+        "Thursday: 11:00 AM – 10:30 PM",
+        "Friday: 11:00 AM – 10:30 PM",
+        "Saturday: 11:00 AM – 10:30 PM",
+        "Sunday: 11:00 AM – 10:30 PM"
+      ],
+      "images": [],
+      "source": {
+        "provider": "google_places",
+        "place_id": "ChIJrdy3cgBRCTERY7gKMNSWb70"
+      }
+    },
+    {
+      "id": "pp-guangdong-seafood-city-hyel5i",
+      "name": "Guangdong Seafood City",
+      "city": "Phnom Penh",
+      "cuisine": [
+        "Seafood",
+        "Chinese"
+      ],
+      "address": "National 1, SOHO Mall, Phnom Penh 12301, Cambodia",
+      "location": {
+        "lat": 11.5521933,
+        "lng": 104.9349506
+      },
+      "rating": 4.9,
+      "rating_count": 60,
+      "price_level": null,
+      "price_symbol": null,
+      "phone": "+855 96 878 6887",
+      "opening_hours": [
+        "Monday: 11:00 AM – 4:00 AM",
+        "Tuesday: 11:00 AM – 4:00 AM",
+        "Wednesday: 11:00 AM – 4:00 AM",
+        "Thursday: 11:00 AM – 4:00 AM",
+        "Friday: 11:00 AM – 4:00 AM",
+        "Saturday: 11:00 AM – 4:00 AM",
+        "Sunday: 11:00 AM – 4:00 AM"
+      ],
+      "images": [],
+      "source": {
+        "provider": "google_places",
+        "place_id": "ChIJhR4TdwBRCTERXl_NXHYEl5I"
+      }
+    },
+    {
+      "id": "shv-fat-goose-restaurant-bar-dzttha",
+      "name": "Fat Goose Restaurant & Bar",
+      "city": "Sihanoukville",
+      "cuisine": [
+        "General / Cambodian"
+      ],
+      "address": "Otres 2, Marina Rd, Preah Sihanouk 180401, Cambodia",
+      "location": {
+        "lat": 10.5615099,
+        "lng": 103.5580763
+      },
+      "rating": 4.8,
+      "rating_count": 214,
+      "price_level": null,
+      "price_symbol": null,
+      "phone": null,
+      "opening_hours": [
+        "Monday: 7:30 AM – 11:00 PM",
+        "Tuesday: 7:30 AM – 11:00 PM",
+        "Wednesday: 7:30 AM – 11:00 PM",
+        "Thursday: 7:30 AM – 11:00 PM",
+        "Friday: 7:30 AM – 11:00 PM",
+        "Saturday: 7:30 AM – 11:00 PM",
+        "Sunday: 7:30 AM – 11:00 PM"
+      ],
+      "images": [],
+      "source": {
+        "provider": "google_places",
+        "place_id": "ChIJK74ey-0JCDERTHgZ8dzttHA"
+      }
+    },
+    {
+      "id": "shv-la-luna-skybar-sihanoukville-l6rcay",
+      "name": "La Luna Skybar Sihanoukville",
+      "city": "Sihanoukville",
+      "cuisine": [
+        "Bar"
+      ],
+      "address": "Phum 3, 115st, Preah Sihanouk 18000, Cambodia",
+      "location": {
+        "lat": 10.6234808,
+        "lng": 103.5184629
+      },
+      "rating": 4.6,
+      "rating_count": 58,
+      "price_level": null,
+      "price_symbol": null,
+      "phone": "+855 77 518 818",
+      "opening_hours": [
+        "Monday: 5:00 PM – 2:00 AM",
+        "Tuesday: 5:00 PM – 2:00 AM",
+        "Wednesday: 5:00 PM – 2:00 AM",
+        "Thursday: 5:00 PM – 2:00 AM",
+        "Friday: 5:00 PM – 2:00 AM",
+        "Saturday: 5:00 PM – 2:00 AM",
+        "Sunday: 5:00 PM – 2:00 AM"
+      ],
+      "images": [],
+      "source": {
+        "provider": "google_places",
+        "place_id": "ChIJ9WjCalzhBzERMEAUyl6rCAY"
+      }
+    },
+    {
+      "id": "shv-sandan-7jmxxy",
+      "name": "Sandan",
+      "city": "Sihanoukville",
+      "cuisine": [
+        "Khmer"
+      ],
+      "address": "Street 10311, near 7 Makara Street, Preah Sihanouk, Cambodia",
+      "location": {
+        "lat": 10.6186792,
+        "lng": 103.5250675
+      },
+      "rating": 4.7,
+      "rating_count": 772,
+      "price_level": 2,
+      "price_symbol": "$$",
+      "phone": "+855 98 454 400",
+      "opening_hours": [
+        "Monday: 10:00 AM – 10:00 PM",
+        "Tuesday: 10:00 AM – 10:00 PM",
+        "Wednesday: 10:00 AM – 10:00 PM",
+        "Thursday: 10:00 AM – 10:00 PM",
+        "Friday: 10:00 AM – 10:00 PM",
+        "Saturday: 10:00 AM – 10:00 PM",
+        "Sunday: 10:00 AM – 10:00 PM"
+      ],
+      "images": [],
+      "source": {
+        "provider": "google_places",
+        "place_id": "ChIJvdWMvuzhBzERdTXwC7jmxXY"
+      }
+    },
+    {
+      "id": "shv-level-22-sihanoukville-qse6nm",
+      "name": "Level 22 Sihanoukville",
+      "city": "Sihanoukville",
+      "cuisine": [
+        "General / Cambodian"
+      ],
+      "address": "Level 22 Restaurant - Pool Club - Sky Lounge, Preah Sihanouk 18204, Cambodia",
+      "location": {
+        "lat": 10.6146615,
+        "lng": 103.5420948
+      },
+      "rating": 4.6,
+      "rating_count": 251,
+      "price_level": null,
+      "price_symbol": null,
+      "phone": "+855 96 302 6014",
+      "opening_hours": [
+        "Monday: 8:00 AM – 2:00 AM",
+        "Tuesday: 8:00 AM – 2:00 AM",
+        "Wednesday: 8:00 AM – 2:00 AM",
+        "Thursday: 8:00 AM – 2:00 AM",
+        "Friday: 8:00 AM – 2:00 AM",
+        "Saturday: 8:00 AM – 2:00 AM",
+        "Sunday: 8:00 AM – 2:00 AM"
+      ],
+      "images": [],
+      "source": {
+        "provider": "google_places",
+        "place_id": "ChIJg90tQk_hBzERXtmgdqse6nM"
+      }
+    },
+    {
+      "id": "shv-the-titanic-restaurant-rn8lxi",
+      "name": "The Titanic Restaurant",
+      "city": "Sihanoukville",
+      "cuisine": [
+        "Bar"
+      ],
+      "address": "5 Street No 814, Preah Sihanouk, Cambodia",
+      "location": {
+        "lat": 10.6166927,
+        "lng": 103.5395118
+      },
+      "rating": 4.5,
+      "rating_count": 310,
+      "price_level": 2,
+      "price_symbol": "$$",
+      "phone": "+855 70 560 992",
+      "opening_hours": [
+        "Monday: 9:00 AM – 10:00 PM",
+        "Tuesday: 9:00 AM – 10:00 PM",
+        "Wednesday: 9:00 AM – 10:00 PM",
+        "Thursday: 9:00 AM – 10:00 PM",
+        "Friday: 9:00 AM – 10:00 PM",
+        "Saturday: 9:00 AM – 10:00 PM",
+        "Sunday: 9:00 AM – 10:00 PM"
+      ],
+      "images": [],
+      "source": {
+        "provider": "google_places",
+        "place_id": "ChIJEekevenhBzER6FtQxrN8LxI"
+      }
+    },
+    {
+      "id": "shv-cvik2eat-rooftop-restaurant-ikkc7a",
+      "name": "Cvik2Eat Rooftop Restaurant",
+      "city": "Sihanoukville",
+      "cuisine": [
+        "Japanese",
+        "Italian",
+        "BBQ",
+        "Bar",
+        "Western"
+      ],
+      "address": "O2 Street 825, Cvik Apartments, 9th floor, Preah Sihanouk 18202, Cambodia",
+      "location": {
+        "lat": 10.6228736,
+        "lng": 103.5432354
+      },
+      "rating": 4.7,
+      "rating_count": 99,
+      "price_level": null,
+      "price_symbol": null,
+      "phone": "+855 93 413 201",
+      "opening_hours": [
+        "Monday: 9:00 AM – 12:00 AM",
+        "Tuesday: 9:00 AM – 12:00 AM",
+        "Wednesday: 9:00 AM – 12:00 AM",
+        "Thursday: 9:00 AM – 12:00 AM",
+        "Friday: 9:00 AM – 12:00 AM",
+        "Saturday: 9:00 AM – 12:00 AM",
+        "Sunday: 9:00 AM – 12:00 AM"
+      ],
+      "images": [],
+      "source": {
+        "provider": "google_places",
+        "place_id": "ChIJjeLfbADhBzERIWDvWIkkc7A"
+      }
+    },
+    {
+      "id": "shv-khin-s-shack-gup_xy",
+      "name": "Khin's Shack",
+      "city": "Sihanoukville",
+      "cuisine": [
+        "General / Cambodian"
+      ],
+      "address": "Preah Sihanouk, Cambodia",
+      "location": {
+        "lat": 10.6030681,
+        "lng": 103.527177
+      },
+      "rating": 4.3,
+      "rating_count": 278,
+      "price_level": 1,
+      "price_symbol": "$",
+      "phone": "+855 93 994 213",
+      "opening_hours": [
+        "Monday: 7:30 AM – 11:45 PM",
+        "Tuesday: 7:30 AM – 11:45 PM",
+        "Wednesday: 7:30 AM – 11:45 PM",
+        "Thursday: 7:30 AM – 11:45 PM",
+        "Friday: 7:30 AM – 11:45 PM",
+        "Saturday: 7:30 AM – 11:45 PM",
+        "Sunday: 7:30 AM – 11:45 PM"
+      ],
+      "images": [],
+      "source": {
+        "provider": "google_places",
+        "place_id": "ChIJV9j0cfHhBzERrBP4tguP_xY"
+      }
+    },
+    {
+      "id": "shv-chhne-meas-qbozyi",
+      "name": "Chhne Meas",
+      "city": "Sihanoukville",
+      "cuisine": [
+        "Seafood"
+      ],
+      "address": "Preah Sihanouk, Cambodia",
+      "location": {
+        "lat": 10.6386182,
+        "lng": 103.5016147
+      },
+      "rating": 4.0,
+      "rating_count": 929,
+      "price_level": 3,
+      "price_symbol": "$$$",
+      "phone": "+855 12 340 060",
+      "opening_hours": [
+        "Monday: 11:00 AM – 11:00 PM",
+        "Tuesday: 11:00 AM – 11:00 PM",
+        "Wednesday: 11:00 AM – 11:00 PM",
+        "Thursday: 11:00 AM – 11:00 PM",
+        "Friday: 11:00 AM – 11:00 PM",
+        "Saturday: 11:00 AM – 11:00 PM",
+        "Sunday: 11:00 AM – 11:00 PM"
+      ],
+      "images": [],
+      "source": {
+        "provider": "google_places",
+        "place_id": "ChIJi9nzFKvhBzERi8xPNQBOzyI"
+      }
+    },
+    {
+      "id": "shv-sihanoukville-seafood-sfmiys",
+      "name": "Sihanoukville Seafood",
+      "city": "Sihanoukville",
+      "cuisine": [
+        "Seafood"
+      ],
+      "address": "Preah Sihanouk, Cambodia",
+      "location": {
+        "lat": 10.6160558,
+        "lng": 103.5274801
+      },
+      "rating": 4.4,
+      "rating_count": 46,
+      "price_level": 1,
+      "price_symbol": "$",
+      "phone": "+855 16 373 376",
+      "opening_hours": [
+        "Monday: Open 24 hours",
+        "Tuesday: Open 24 hours",
+        "Wednesday: Open 24 hours",
+        "Thursday: Open 24 hours",
+        "Friday: Open 24 hours",
+        "Saturday: Open 24 hours",
+        "Sunday: Open 24 hours"
+      ],
+      "images": [],
+      "source": {
+        "provider": "google_places",
+        "place_id": "ChIJA3_l6-nhBzERqrmBLSFmIys"
+      }
+    },
+    {
+      "id": "shv-chanla-khmer-noodle-wonton-soup-o-eyf0",
+      "name": "Chanla Khmer Noodle & Wonton Soup",
+      "city": "Sihanoukville",
+      "cuisine": [
+        "General / Cambodian"
+      ],
+      "address": "Preah Sihanouk, Cambodia",
+      "location": {
+        "lat": 10.6832807,
+        "lng": 103.2865021
+      },
+      "rating": 4.4,
+      "rating_count": 30,
+      "price_level": null,
+      "price_symbol": null,
+      "phone": null,
+      "opening_hours": [
+        "Monday: 7:00 AM – 10:00 PM",
+        "Tuesday: 7:00 AM – 10:00 PM",
+        "Wednesday: 7:30 AM – 10:00 PM",
+        "Thursday: 7:30 AM – 10:00 PM",
+        "Friday: 7:30 AM – 10:00 PM",
+        "Saturday: 7:30 AM – 10:00 PM",
+        "Sunday: 7:00 AM – 10:00 PM"
+      ],
+      "images": [],
+      "source": {
+        "provider": "google_places",
+        "place_id": "ChIJDdPoRgDpBzERX-diso-eyF0"
+      }
+    },
+    {
+      "id": "shv-kravann-khmer-food-restaurant-qsov-a",
+      "name": "Kravann Khmer Food Restaurant",
+      "city": "Sihanoukville",
+      "cuisine": [
+        "Khmer"
+      ],
+      "address": "Street 212, Preah Sihanouk 18034, Cambodia",
+      "location": {
+        "lat": 10.6202684,
+        "lng": 103.5295672
+      },
+      "rating": 4.3,
+      "rating_count": 179,
+      "price_level": 1,
+      "price_symbol": "$",
+      "phone": "+855 70 877 713",
+      "opening_hours": [
+        "Monday: 6:00 AM – 11:00 PM",
+        "Tuesday: 6:00 AM – 11:00 PM",
+        "Wednesday: 6:00 AM – 11:00 PM",
+        "Thursday: 6:00 AM – 11:00 PM",
+        "Friday: 6:00 AM – 11:00 PM",
+        "Saturday: 6:00 AM – 11:00 PM",
+        "Sunday: 6:00 AM – 11:00 PM"
+      ],
+      "images": [],
+      "source": {
+        "provider": "google_places",
+        "place_id": "ChIJIY-xysXhBzERoP4e0qSOV-A"
+      }
+    },
+    {
+      "id": "shv-kampung-nusantara-6wi0_k",
+      "name": "Kampung Nusantara",
+      "city": "Sihanoukville",
+      "cuisine": [
+        "Indonesian",
+        "Asian",
+        "Food court"
+      ],
+      "address": "Street 705, Preah Sihanouk, Cambodia",
+      "location": {
+        "lat": 10.6331088,
+        "lng": 103.5110163
+      },
+      "rating": 4.7,
+      "rating_count": 88,
+      "price_level": null,
+      "price_symbol": null,
+      "phone": "+855 77 850 314",
+      "opening_hours": [
+        "Monday: 7:00 AM – 2:00 AM",
+        "Tuesday: 7:00 AM – 2:00 AM",
+        "Wednesday: 7:00 AM – 2:00 AM",
+        "Thursday: 7:00 AM – 2:00 AM",
+        "Friday: 7:00 AM – 2:00 AM",
+        "Saturday: 7:00 AM – 2:00 AM",
+        "Sunday: 7:00 AM – 2:00 AM"
+      ],
+      "images": [],
+      "source": {
+        "provider": "google_places",
+        "place_id": "ChIJI0SiIQDhBzERv5O1F6Wi0_k"
+      }
+    },
+    {
+      "id": "shv-toto-pizza-qnqjoa",
+      "name": "TOTO'PIZZA",
+      "city": "Sihanoukville",
+      "cuisine": [
+        "Italian"
+      ],
+      "address": "Sereypheap street, Street 111, Preah Sihanouk 18000, Cambodia",
+      "location": {
+        "lat": 10.6176576,
+        "lng": 103.521533
+      },
+      "rating": 4.7,
+      "rating_count": 285,
+      "price_level": 2,
+      "price_symbol": "$$",
+      "phone": "+855 96 816 2559",
+      "opening_hours": [
+        "Monday: 12:00 – 10:00 PM",
+        "Tuesday: Closed",
+        "Wednesday: 12:00 – 10:00 PM",
+        "Thursday: 12:00 – 10:00 PM",
+        "Friday: 12:00 – 10:00 PM",
+        "Saturday: 12:00 – 10:00 PM",
+        "Sunday: 12:00 – 10:00 PM"
+      ],
+      "images": [],
+      "source": {
+        "provider": "google_places",
+        "place_id": "ChIJS7KwmEfhBzERblS4HQNqjOA"
+      }
+    },
+    {
+      "id": "shv-dara-restro-8cohpq",
+      "name": "DARA Restro",
+      "city": "Sihanoukville",
+      "cuisine": [
+        "Italian",
+        "Khmer"
+      ],
+      "address": "Koh Rong, Preah Sihanouk, Cambodia",
+      "location": {
+        "lat": 10.7418611,
+        "lng": 103.2576667
+      },
+      "rating": 4.9,
+      "rating_count": 89,
+      "price_level": null,
+      "price_symbol": null,
+      "phone": "+855 71 250 7456",
+      "opening_hours": [
+        "Monday: 10:00 AM – 10:00 PM",
+        "Tuesday: 10:00 AM – 10:00 PM",
+        "Wednesday: 10:00 AM – 10:00 PM",
+        "Thursday: 10:00 AM – 10:00 PM",
+        "Friday: 10:00 AM – 10:00 PM",
+        "Saturday: 10:00 AM – 10:00 PM",
+        "Sunday: 10:00 AM – 10:00 PM"
+      ],
+      "images": [],
+      "source": {
+        "provider": "google_places",
+        "place_id": "ChIJ0yLscADBBzERnPZyZ8COHPQ"
+      }
+    },
+    {
+      "id": "shv-the-tiramis-italian-food-vlcfrm",
+      "name": "The Tiramisù Italian food",
+      "city": "Sihanoukville",
+      "cuisine": [
+        "Italian"
+      ],
+      "address": "Koh Rong, Preah Sihanouk, Cambodia",
+      "location": {
+        "lat": 10.7663636,
+        "lng": 103.2481927
+      },
+      "rating": 4.9,
+      "rating_count": 29,
+      "price_level": null,
+      "price_symbol": null,
+      "phone": "+855 96 248 2359",
+      "opening_hours": [
+        "Monday: 8:00 AM – 3:00 PM, 6:00 – 9:00 PM",
+        "Tuesday: 8:00 AM – 3:00 PM, 6:00 – 9:00 PM",
+        "Wednesday: 8:00 AM – 3:00 PM, 6:00 – 9:00 PM",
+        "Thursday: 8:00 AM – 3:00 PM, 6:00 – 9:00 PM",
+        "Friday: 8:00 AM – 3:00 PM, 6:00 – 9:00 PM",
+        "Saturday: 8:00 AM – 3:00 PM, 6:00 – 9:00 PM",
+        "Sunday: 8:00 AM – 3:00 PM, 6:00 – 9:00 PM"
+      ],
+      "images": [],
+      "source": {
+        "provider": "google_places",
+        "place_id": "ChIJh0zjumzBBzERuzfWoVLCfRM"
+      }
+    },
+    {
+      "id": "shv-indian-royal-halal-food-restaurant-shiha-xurd_g",
+      "name": "Indian Royal Halal Food Restaurant Shihanoukville",
+      "city": "Sihanoukville",
+      "cuisine": [
+        "Indian"
+      ],
+      "address": "Serendipity Beach Street (502), Preah Sihanouk 18204, Cambodia",
+      "location": {
+        "lat": 10.6078921,
+        "lng": 103.5214134
+      },
+      "rating": 4.8,
+      "rating_count": 518,
+      "price_level": null,
+      "price_symbol": null,
+      "phone": "+855 61 642 056",
+      "opening_hours": [
+        "Monday: Open 24 hours",
+        "Tuesday: Open 24 hours",
+        "Wednesday: Open 24 hours",
+        "Thursday: Open 24 hours",
+        "Friday: Open 24 hours",
+        "Saturday: Open 24 hours",
+        "Sunday: Open 24 hours"
+      ],
+      "images": [],
+      "source": {
+        "provider": "google_places",
+        "place_id": "ChIJwcmaMD7hBzERkd1JJxUrd_g"
+      }
+    },
+    {
+      "id": "shv-moti-s-mahal-indian-restaurant-sfibgg",
+      "name": "Moti's Mahal Indian Restaurant",
+      "city": "Sihanoukville",
+      "cuisine": [
+        "Indian"
+      ],
+      "address": "Serendipity Beach Street (502), Preah Sihanouk 18204, Cambodia",
+      "location": {
+        "lat": 10.6082499,
+        "lng": 103.5214998
+      },
+      "rating": 4.7,
+      "rating_count": 93,
+      "price_level": null,
+      "price_symbol": null,
+      "phone": "+855 85 228 762",
+      "opening_hours": [
+        "Monday: 10:00 AM – 12:00 AM",
+        "Tuesday: 10:00 AM – 12:00 AM",
+        "Wednesday: 10:00 AM – 12:00 AM",
+        "Thursday: 10:00 AM – 12:00 AM",
+        "Friday: 10:00 AM – 12:00 AM",
+        "Saturday: 10:00 AM – 12:00 AM",
+        "Sunday: 10:00 AM – 12:00 AM"
+      ],
+      "images": [],
+      "source": {
+        "provider": "google_places",
+        "place_id": "ChIJy9nUTxDhBzERaYMoAsFibGg"
+      }
+    },
+    {
+      "id": "shv-the-galaxy-indian-restaurant-ls-lym",
+      "name": "The Galaxy Indian Restaurant",
+      "city": "Sihanoukville",
+      "cuisine": [
+        "Indian"
+      ],
+      "address": "7 Makara Street 200, Preah Sihanouk, Cambodia",
+      "location": {
+        "lat": 10.6120505,
+        "lng": 103.5299598
+      },
+      "rating": 4.7,
+      "rating_count": 44,
+      "price_level": null,
+      "price_symbol": null,
+      "phone": "+855 95 469 557",
+      "opening_hours": [
+        "Monday: 11:30 AM – 1:30 AM",
+        "Tuesday: 11:30 AM – 1:30 AM",
+        "Wednesday: 11:30 AM – 1:30 AM",
+        "Thursday: 11:30 AM – 1:30 AM",
+        "Friday: 11:30 AM – 1:30 AM",
+        "Saturday: 11:30 AM – 1:30 AM",
+        "Sunday: 11:30 AM – 1:30 AM"
+      ],
+      "images": [],
+      "source": {
+        "provider": "google_places",
+        "place_id": "ChIJufPQEgDhBzERu25ZPLS-LYM"
+      }
+    },
+    {
+      "id": "shv-indian-royal-halal-food-restaurant-china-5jxnao",
+      "name": "Indian Royal Halal Food Restaurant Chinatown",
+      "city": "Sihanoukville",
+      "cuisine": [
+        "Indian"
+      ],
+      "address": "Chinatown, Preah Sihanouk 18204, Cambodia",
+      "location": {
+        "lat": 10.5793912,
+        "lng": 103.5579759
+      },
+      "rating": 4.7,
+      "rating_count": 66,
+      "price_level": null,
+      "price_symbol": null,
+      "phone": "+855 70 420 291",
+      "opening_hours": [
+        "Monday: Open 24 hours",
+        "Tuesday: Open 24 hours",
+        "Wednesday: Open 24 hours",
+        "Thursday: Open 24 hours",
+        "Friday: Open 24 hours",
+        "Saturday: Open 24 hours",
+        "Sunday: Open 24 hours"
+      ],
+      "images": [],
+      "source": {
+        "provider": "google_places",
+        "place_id": "ChIJVecB2CwJCDERvB-kj5Jxnao"
+      }
+    },
+    {
+      "id": "shv-the-otres-river-bbq-restaurant-caf-jaqikq",
+      "name": "The Otres River BBQ Restaurant & Café",
+      "city": "Sihanoukville",
+      "cuisine": [
+        "BBQ"
+      ],
+      "address": "Otres, Preah Sihanouk 180404, Cambodia",
+      "location": {
+        "lat": 10.5669583,
+        "lng": 103.5620183
+      },
+      "rating": 4.0,
+      "rating_count": 10,
+      "price_level": null,
+      "price_symbol": null,
+      "phone": null,
+      "opening_hours": [],
+      "images": [],
+      "source": {
+        "provider": "google_places",
+        "place_id": "ChIJP7jG-mIJCDERy8NFGJAqikQ"
+      }
+    },
+    {
+      "id": "shv-angkor-beach-bar-_y_fd0",
+      "name": "Angkor Beach Bar",
+      "city": "Sihanoukville",
+      "cuisine": [
+        "Seafood"
+      ],
+      "address": "Preah Sihanouk, Cambodia",
+      "location": {
+        "lat": 10.6027094,
+        "lng": 103.5276569
+      },
+      "rating": 4.2,
+      "rating_count": 560,
+      "price_level": 2,
+      "price_symbol": "$$",
+      "phone": "+855 16 744 748",
+      "opening_hours": [
+        "Monday: 4:00 AM – 11:30 PM",
+        "Tuesday: 4:00 AM – 11:30 PM",
+        "Wednesday: 4:00 AM – 11:30 PM",
+        "Thursday: 4:00 AM – 11:30 PM",
+        "Friday: 4:00 AM – 11:30 PM",
+        "Saturday: 4:00 AM – 11:30 PM",
+        "Sunday: 4:00 AM – 11:30 PM"
+      ],
+      "images": [],
+      "source": {
+        "provider": "google_places",
+        "place_id": "ChIJTUlNDPHhBzERfHg9l_y_Fd0"
+      }
+    },
+    {
+      "id": "shv-beach-club-42l7c8",
+      "name": "Beach Club",
+      "city": "Sihanoukville",
+      "cuisine": [
+        "General / Cambodian"
+      ],
+      "address": "Preah Sihanouk, Cambodia",
+      "location": {
+        "lat": 10.6220957,
+        "lng": 103.4911022
+      },
+      "rating": 4.4,
+      "rating_count": 51,
+      "price_level": null,
+      "price_symbol": null,
+      "phone": "+855 98 231 555",
+      "opening_hours": [
+        "Monday: 8:30 AM – 12:00 AM",
+        "Tuesday: 8:30 AM – 12:00 AM",
+        "Wednesday: 8:30 AM – 12:00 AM",
+        "Thursday: 8:30 AM – 12:00 AM",
+        "Friday: 8:30 AM – 12:00 AM",
+        "Saturday: 8:30 AM – 12:00 AM",
+        "Sunday: 8:30 AM – 12:00 AM"
+      ],
+      "images": [],
+      "source": {
+        "provider": "google_places",
+        "place_id": "ChIJe4aFjKThBzERwijpR42L7C8"
+      }
+    },
+    {
+      "id": "shv-lotus-restaurant-co6qw8",
+      "name": "LOTUS RESTAURANT",
+      "city": "Sihanoukville",
+      "cuisine": [
+        "Chinese"
+      ],
+      "address": "Independence Beach, 2 Thnou St, Preah Sihanouk 180403, Cambodia",
+      "location": {
+        "lat": 10.6100111,
+        "lng": 103.5028024
+      },
+      "rating": 4.3,
+      "rating_count": 32,
+      "price_level": null,
+      "price_symbol": null,
+      "phone": "+855 10 772 268",
+      "opening_hours": [
+        "Monday: 7:00 AM – 9:00 PM",
+        "Tuesday: 7:00 AM – 9:00 PM",
+        "Wednesday: 7:00 AM – 9:00 PM",
+        "Thursday: 7:00 AM – 9:00 PM",
+        "Friday: 7:00 AM – 9:00 PM",
+        "Saturday: 7:00 AM – 9:00 PM",
+        "Sunday: 7:00 AM – 9:00 PM"
+      ],
+      "images": [],
+      "source": {
+        "provider": "google_places",
+        "place_id": "ChIJo15f69jhBzERO-R7-co6QW8"
+      }
+    },
+    {
+      "id": "sr-maom-khmer-cuisine-fy6wzk",
+      "name": "MAOM Khmer Cuisine",
+      "city": "Siem Reap",
+      "cuisine": [
+        "General / Cambodian"
+      ],
+      "address": "Krong Siem Reap, Cambodia",
+      "location": {
+        "lat": 13.3782812,
+        "lng": 103.8599097
+      },
+      "rating": 4.9,
+      "rating_count": 586,
+      "price_level": null,
+      "price_symbol": null,
+      "phone": "+855 93 315 841",
+      "opening_hours": [
+        "Monday: 11:00 AM – 10:30 PM",
+        "Tuesday: 11:00 AM – 10:30 PM",
+        "Wednesday: 11:00 AM – 10:30 PM",
+        "Thursday: 11:00 AM – 10:30 PM",
+        "Friday: 11:00 AM – 10:30 PM",
+        "Saturday: 11:00 AM – 10:30 PM",
+        "Sunday: 11:00 AM – 10:30 PM"
+      ],
+      "images": [],
+      "source": {
+        "provider": "google_places",
+        "place_id": "ChIJc0T_CgAXEDER764czFY6Wzk"
+      }
+    },
+    {
+      "id": "sr-old-maison-eatery-jxpote",
+      "name": "Old Maison Eatery",
+      "city": "Siem Reap",
+      "cuisine": [
+        "General / Cambodian"
+      ],
+      "address": "Wat Damnak, Krong Siem Reap 17204, Cambodia",
+      "location": {
+        "lat": 13.349778,
+        "lng": 103.8551896
+      },
+      "rating": 4.9,
+      "rating_count": 1164,
+      "price_level": null,
+      "price_symbol": null,
+      "phone": "+855 95 555 677",
+      "opening_hours": [
+        "Monday: 3:00 – 10:30 PM",
+        "Tuesday: 3:00 – 10:30 PM",
+        "Wednesday: 3:00 – 10:30 PM",
+        "Thursday: 3:00 – 10:30 PM",
+        "Friday: 3:00 – 10:30 PM",
+        "Saturday: 3:00 – 10:30 PM",
+        "Sunday: 3:00 – 10:30 PM"
+      ],
+      "images": [],
+      "source": {
+        "provider": "google_places",
+        "place_id": "ChIJxROYXQAXEDERR8diEjXpotE"
+      }
+    },
+    {
+      "id": "sr-mealea-watbo-wdb2sc",
+      "name": "Mealea Watbo",
+      "city": "Siem Reap",
+      "cuisine": [
+        "General / Cambodian"
+      ],
+      "address": "Street 26, Krong Siem Reap, Cambodia",
+      "location": {
+        "lat": 13.352948,
+        "lng": 103.86278
+      },
+      "rating": 4.8,
+      "rating_count": 1272,
+      "price_level": null,
+      "price_symbol": null,
+      "phone": "+855 69 892 999",
+      "opening_hours": [
+        "Monday: 11:00 AM – 11:00 PM",
+        "Tuesday: 11:00 AM – 11:00 PM",
+        "Wednesday: 11:00 AM – 11:00 PM",
+        "Thursday: 11:00 AM – 11:00 PM",
+        "Friday: 11:00 AM – 11:00 PM",
+        "Saturday: 11:00 AM – 11:00 PM",
+        "Sunday: 11:00 AM – 11:00 PM"
+      ],
+      "images": [],
+      "source": {
+        "provider": "google_places",
+        "place_id": "ChIJa7kwZgAXEDER8VGSVWdB2Sc"
+      }
+    },
+    {
+      "id": "sr-mesa-restaurant-5t36au",
+      "name": "Mesa - Restaurant",
+      "city": "Siem Reap",
+      "cuisine": [
+        "General / Cambodian"
+      ],
+      "address": "Road 2, Krong Siem Reap 17252, Cambodia",
+      "location": {
+        "lat": 13.3547536,
+        "lng": 103.8544251
+      },
+      "rating": 4.9,
+      "rating_count": 3689,
+      "price_level": null,
+      "price_symbol": null,
+      "phone": "+855 69 389 966",
+      "opening_hours": [
+        "Monday: 11:00 AM – 12:00 AM",
+        "Tuesday: 11:00 AM – 12:00 AM",
+        "Wednesday: 11:00 AM – 12:00 AM",
+        "Thursday: 11:00 AM – 12:00 AM",
+        "Friday: 11:00 AM – 12:00 AM",
+        "Saturday: 11:00 AM – 12:00 AM",
+        "Sunday: 11:00 AM – 12:00 AM"
+      ],
+      "images": [],
+      "source": {
+        "provider": "google_places",
+        "place_id": "ChIJDVi3zRsXEDER-yTL-5t36AU"
+      }
+    },
+    {
+      "id": "sr-haven-hj3ziy",
+      "name": "HAVEN",
+      "city": "Siem Reap",
+      "cuisine": [
+        "Western",
+        "Khmer"
+      ],
+      "address": "Chocolate Rd, Krong Siem Reap, Cambodia",
+      "location": {
+        "lat": 13.3495994,
+        "lng": 103.8607204
+      },
+      "rating": 4.9,
+      "rating_count": 2702,
+      "price_level": 2,
+      "price_symbol": "$$",
+      "phone": "+855 78 342 404",
+      "opening_hours": [
+        "Monday: Closed",
+        "Tuesday: 10:00 AM – 10:00 PM",
+        "Wednesday: 10:00 AM – 10:00 PM",
+        "Thursday: 10:00 AM – 10:00 PM",
+        "Friday: 10:00 AM – 10:00 PM",
+        "Saturday: 10:00 AM – 10:00 PM",
+        "Sunday: 10:00 AM – 10:00 PM"
+      ],
+      "images": [],
+      "source": {
+        "provider": "google_places",
+        "place_id": "ChIJE9tumWUXEDERiapAWHJ3ziY"
+      }
+    },
+    {
+      "id": "sr-madam-moch-khmer-restaurant-egwnoo",
+      "name": "Madam Moch Khmer Restaurant",
+      "city": "Siem Reap",
+      "cuisine": [
+        "Khmer"
+      ],
+      "address": "021 Taphul Rd, Krong Siem Reap, Cambodia",
+      "location": {
+        "lat": 13.3606579,
+        "lng": 103.853573
+      },
+      "rating": 4.6,
+      "rating_count": 1233,
+      "price_level": 1,
+      "price_symbol": "$",
+      "phone": "+855 78 599 829",
+      "opening_hours": [
+        "Monday: 11:00 AM – 10:00 PM",
+        "Tuesday: 11:00 AM – 10:00 PM",
+        "Wednesday: 11:00 AM – 10:00 PM",
+        "Thursday: 11:00 AM – 10:00 PM",
+        "Friday: 11:00 AM – 10:00 PM",
+        "Saturday: 11:00 AM – 10:00 PM",
+        "Sunday: 11:00 AM – 10:00 PM"
+      ],
+      "images": [],
+      "source": {
+        "provider": "google_places",
+        "place_id": "ChIJ1zVS1G0XEDERDpkv7eGwnoo"
+      }
+    },
+    {
+      "id": "sr-the-station-b-pub-street-tgdgdg",
+      "name": "The Station B Pub Street",
+      "city": "Siem Reap",
+      "cuisine": [
+        "General / Cambodian"
+      ],
+      "address": "Street 11 & Street 08, Krong Siem Reap 171202, Cambodia",
+      "location": {
+        "lat": 13.354528,
+        "lng": 103.8544186
+      },
+      "rating": 4.9,
+      "rating_count": 1151,
+      "price_level": null,
+      "price_symbol": null,
+      "phone": "+855 96 269 0999",
+      "opening_hours": [
+        "Monday: 10:00 AM – 12:30 AM",
+        "Tuesday: 10:00 AM – 12:30 AM",
+        "Wednesday: 10:00 AM – 12:30 AM",
+        "Thursday: 10:00 AM – 12:30 AM",
+        "Friday: 10:00 AM – 1:00 AM",
+        "Saturday: 10:00 AM – 1:00 AM",
+        "Sunday: 10:00 AM – 1:00 AM"
+      ],
+      "images": [],
+      "source": {
+        "provider": "google_places",
+        "place_id": "ChIJNTSYXTAXEDERveNafTgdGDg"
+      }
+    },
+    {
+      "id": "sr-rachana-pub-street-8psmdk",
+      "name": "Rachana Pub Street",
+      "city": "Siem Reap",
+      "cuisine": [
+        "Asian"
+      ],
+      "address": "70 Street 08, Krong Siem Reap, Cambodia",
+      "location": {
+        "lat": 13.3547969,
+        "lng": 103.8545457
+      },
+      "rating": 4.9,
+      "rating_count": 665,
+      "price_level": null,
+      "price_symbol": null,
+      "phone": "+855 69 389 966",
+      "opening_hours": [
+        "Monday: 2:00 – 11:30 PM",
+        "Tuesday: 2:00 – 11:30 PM",
+        "Wednesday: 2:00 – 11:30 PM",
+        "Thursday: 2:00 – 11:30 PM",
+        "Friday: 2:00 – 11:30 PM",
+        "Saturday: 2:00 – 11:30 PM",
+        "Sunday: 2:00 – 11:30 PM"
+      ],
+      "images": [],
+      "source": {
+        "provider": "google_places",
+        "place_id": "ChIJ_cPAPwAXEDERJDaqz8PsMDk"
+      }
+    },
+    {
+      "id": "sr-amara-dining-pub-street-9ia5pg",
+      "name": "Amara Dining Pub Street",
+      "city": "Siem Reap",
+      "cuisine": [
+        "General / Cambodian"
+      ],
+      "address": "Krong Siem Reap, Cambodia",
+      "location": {
+        "lat": 13.35485,
+        "lng": 103.8551507
+      },
+      "rating": 4.9,
+      "rating_count": 839,
+      "price_level": null,
+      "price_symbol": null,
+      "phone": "+855 96 889 9000",
+      "opening_hours": [
+        "Monday: 11:00 AM – 1:00 AM",
+        "Tuesday: 11:00 AM – 1:00 AM",
+        "Wednesday: 11:00 AM – 1:00 AM",
+        "Thursday: 11:00 AM – 1:00 AM",
+        "Friday: 11:00 AM – 1:00 AM",
+        "Saturday: 11:00 AM – 1:00 AM",
+        "Sunday: 11:00 AM – 1:00 AM"
+      ],
+      "images": [],
+      "source": {
+        "provider": "google_places",
+        "place_id": "ChIJAaHVJgAXEDERx1r3G9ia5pg"
+      }
+    },
+    {
+      "id": "sr-v-design-restaurant-tbid9g",
+      "name": "V Design Restaurant",
+      "city": "Siem Reap",
+      "cuisine": [
+        "General / Cambodian"
+      ],
+      "address": "Street 08, Krong Siem Reap 17252, Cambodia",
+      "location": {
+        "lat": 13.35445,
+        "lng": 103.8541529
+      },
+      "rating": 4.9,
+      "rating_count": 1010,
+      "price_level": null,
+      "price_symbol": null,
+      "phone": null,
+      "opening_hours": [
+        "Monday: 8:00 AM – 1:00 AM",
+        "Tuesday: 8:00 AM – 1:00 AM",
+        "Wednesday: 8:00 AM – 1:00 AM",
+        "Thursday: 8:00 AM – 1:00 AM",
+        "Friday: 8:00 AM – 1:00 AM",
+        "Saturday: 8:00 AM – 1:00 AM",
+        "Sunday: 8:00 AM – 1:00 AM"
+      ],
+      "images": [],
+      "source": {
+        "provider": "google_places",
+        "place_id": "ChIJOYlAowIXEDERgVLwJtBid9g"
+      }
+    },
+    {
+      "id": "sr-fellini-siem-reap-em6cse",
+      "name": "Fellini Siem Reap",
+      "city": "Siem Reap",
+      "cuisine": [
+        "Italian",
+        "Bar",
+        "Steakhouse",
+        "Wine bar",
+        "Seafood"
+      ],
+      "address": "Bamboo St, Krong Siem Reap 17254, Cambodia",
+      "location": {
+        "lat": 13.3498934,
+        "lng": 103.8561307
+      },
+      "rating": 4.9,
+      "rating_count": 1318,
+      "price_level": null,
+      "price_symbol": null,
+      "phone": "+855 61 448 899",
+      "opening_hours": [
+        "Monday: 11:00 AM – 10:30 PM",
+        "Tuesday: 11:00 AM – 10:30 PM",
+        "Wednesday: 11:00 AM – 10:30 PM",
+        "Thursday: 11:00 AM – 10:30 PM",
+        "Friday: 11:00 AM – 10:30 PM",
+        "Saturday: 11:00 AM – 10:30 PM",
+        "Sunday: 11:00 AM – 10:30 PM"
+      ],
+      "images": [],
+      "source": {
+        "provider": "google_places",
+        "place_id": "ChIJ-yymhs4XEDER4bLbDEm6cSE"
+      }
+    },
+    {
+      "id": "sr-cucina-pizza-pasta-italian-restaurant-si-eid_og",
+      "name": "CUCINA - Pizza & Pasta - Italian Restaurant Siem Reap",
+      "city": "Siem Reap",
+      "cuisine": [
+        "Italian",
+        "Wine bar",
+        "Bar"
+      ],
+      "address": "Central Market St, 639, Krong Siem Reap 17252, Cambodia",
+      "location": {
+        "lat": 13.3569081,
+        "lng": 103.8572463
+      },
+      "rating": 4.8,
+      "rating_count": 538,
+      "price_level": null,
+      "price_symbol": null,
+      "phone": "+855 12 804 952",
+      "opening_hours": [
+        "Monday: Closed",
+        "Tuesday: 11:00 AM – 10:00 PM",
+        "Wednesday: 11:00 AM – 10:00 PM",
+        "Thursday: 11:00 AM – 10:00 PM",
+        "Friday: 11:00 AM – 10:00 PM",
+        "Saturday: 11:00 AM – 10:00 PM",
+        "Sunday: 3:00 – 10:00 PM"
+      ],
+      "images": [],
+      "source": {
+        "provider": "google_places",
+        "place_id": "ChIJCcZ-QDwXEDERJPV3weID_og"
+      }
+    },
+    {
+      "id": "sr-mamma-shop-italian-restaurant-ygyc-u",
+      "name": "Mamma Shop Italian Restaurant",
+      "city": "Siem Reap",
+      "cuisine": [
+        "Italian"
+      ],
+      "address": "678 Hap Guan St, Krong Siem Reap 17252, Cambodia",
+      "location": {
+        "lat": 13.357432,
+        "lng": 103.85591
+      },
+      "rating": 4.7,
+      "rating_count": 1138,
+      "price_level": 2,
+      "price_symbol": "$$",
+      "phone": "+855 88 413 8649",
+      "opening_hours": [
+        "Monday: 11:30 AM – 10:00 PM",
+        "Tuesday: 11:30 AM – 10:00 PM",
+        "Wednesday: 11:30 AM – 10:00 PM",
+        "Thursday: 11:30 AM – 10:00 PM",
+        "Friday: 11:30 AM – 10:00 PM",
+        "Saturday: 11:30 AM – 10:00 PM",
+        "Sunday: Closed"
+      ],
+      "images": [],
+      "source": {
+        "provider": "google_places",
+        "place_id": "ChIJNUORJXAXEDER4KVDBYGYC-U"
+      }
+    },
+    {
+      "id": "sr-il-forno-00jp44",
+      "name": "Il Forno",
+      "city": "Siem Reap",
+      "cuisine": [
+        "Italian"
+      ],
+      "address": "33-27 Street 09, Krong Siem Reap, Cambodia",
+      "location": {
+        "lat": 13.3545211,
+        "lng": 103.8557699
+      },
+      "rating": 4.5,
+      "rating_count": 1164,
+      "price_level": 2,
+      "price_symbol": "$$",
+      "phone": "+855 78 208 174",
+      "opening_hours": [
+        "Monday: 11:00 AM – 10:30 PM",
+        "Tuesday: 11:00 AM – 10:30 PM",
+        "Wednesday: 11:00 AM – 10:30 PM",
+        "Thursday: 11:00 AM – 10:30 PM",
+        "Friday: 11:00 AM – 10:30 PM",
+        "Saturday: 11:00 AM – 10:30 PM",
+        "Sunday: 11:00 AM – 10:30 PM"
+      ],
+      "images": [],
+      "source": {
+        "provider": "google_places",
+        "place_id": "ChIJjxigZGUXEDERHoG-F00jp44"
+      }
+    },
+    {
+      "id": "sr-indian-royal-halal-food-siem-reap-gv0ngo",
+      "name": "Indian Royal Halal Food-Siem Reap",
+      "city": "Siem Reap",
+      "cuisine": [
+        "Indian"
+      ],
+      "address": "53 2 Thnou St, Krong Siem Reap, Cambodia",
+      "location": {
+        "lat": 13.3551675,
+        "lng": 103.8549755
+      },
+      "rating": 4.8,
+      "rating_count": 681,
+      "price_level": null,
+      "price_symbol": null,
+      "phone": "+855 96 595 8764",
+      "opening_hours": [
+        "Monday: Open 24 hours",
+        "Tuesday: Open 24 hours",
+        "Wednesday: Open 24 hours",
+        "Thursday: Open 24 hours",
+        "Friday: Open 24 hours",
+        "Saturday: Open 24 hours",
+        "Sunday: Open 24 hours"
+      ],
+      "images": [],
+      "source": {
+        "provider": "google_places",
+        "place_id": "ChIJ6_jmTAAXEDERBIQkwGV0ngo"
+      }
+    },
+    {
+      "id": "sr-natraj-indian-restaurant-kxmy8m",
+      "name": "Natraj Indian Restaurant",
+      "city": "Siem Reap",
+      "cuisine": [
+        "Indian"
+      ],
+      "address": "103A Sivutha Blvd, Krong Siem Reap 17252, Cambodia",
+      "location": {
+        "lat": 13.3589541,
+        "lng": 103.8545165
+      },
+      "rating": 4.8,
+      "rating_count": 602,
+      "price_level": null,
+      "price_symbol": null,
+      "phone": "+855 69 708 176",
+      "opening_hours": [
+        "Monday: 10:00 AM – 11:30 PM",
+        "Tuesday: 10:00 AM – 11:30 PM",
+        "Wednesday: 10:00 AM – 11:30 PM",
+        "Thursday: 10:00 AM – 11:30 PM",
+        "Friday: 10:00 AM – 11:30 PM",
+        "Saturday: 10:00 AM – 11:30 PM",
+        "Sunday: 10:00 AM – 11:30 PM"
+      ],
+      "images": [],
+      "source": {
+        "provider": "google_places",
+        "place_id": "ChIJ6aQ_zZgXEDER5tdRHKXmy8M"
+      }
+    },
+    {
+      "id": "sr-soni-restaurant-erq2l4",
+      "name": "Soni Restaurant",
+      "city": "Siem Reap",
+      "cuisine": [
+        "Indian",
+        "Asian",
+        "Halal",
+        "Indian/Pakistani"
+      ],
+      "address": "Night Market St, Krong Siem Reap 17252, Cambodia",
+      "location": {
+        "lat": 13.3558333,
+        "lng": 103.8501902
+      },
+      "rating": 4.8,
+      "rating_count": 99,
+      "price_level": null,
+      "price_symbol": null,
+      "phone": "+855 67 438 880",
+      "opening_hours": [
+        "Monday: 10:30 AM – 11:00 PM",
+        "Tuesday: 10:30 AM – 11:00 PM",
+        "Wednesday: 10:30 AM – 11:00 PM",
+        "Thursday: 10:30 AM – 11:00 PM",
+        "Friday: 10:30 AM – 11:00 PM",
+        "Saturday: 10:30 AM – 11:00 PM",
+        "Sunday: 10:30 AM – 11:00 PM"
+      ],
+      "images": [],
+      "source": {
+        "provider": "google_places",
+        "place_id": "ChIJ_XX40tcXEDERMnSqeeRq2l4"
+      }
+    },
+    {
+      "id": "sr-lotus-dosa-corner-indian-restaurant-z5famy",
+      "name": "Lotus Dosa Corner Indian Restaurant",
+      "city": "Siem Reap",
+      "cuisine": [
+        "Indian"
+      ],
+      "address": "Mondol 1 village, Street 09, Krong Siem Reap 171202, Cambodia",
+      "location": {
+        "lat": 13.3539082,
+        "lng": 103.8542754
+      },
+      "rating": 4.8,
+      "rating_count": 2299,
+      "price_level": null,
+      "price_symbol": null,
+      "phone": "+855 96 929 6456",
+      "opening_hours": [
+        "Monday: 8:00 AM – 10:00 PM",
+        "Tuesday: 8:00 AM – 10:00 PM",
+        "Wednesday: 8:00 AM – 10:00 PM",
+        "Thursday: 8:00 AM – 10:00 PM",
+        "Friday: 8:00 AM – 10:00 PM",
+        "Saturday: 8:00 AM – 10:00 PM",
+        "Sunday: 8:00 AM – 10:00 PM"
+      ],
+      "images": [],
+      "source": {
+        "provider": "google_places",
+        "place_id": "ChIJk____z8XEDER00k-pZ5FAMY"
+      }
+    },
+    {
+      "id": "sr-endora-french-restaurant-wine-bar-19c8sm",
+      "name": "Endora French Restaurant & Wine Bar",
+      "city": "Siem Reap",
+      "cuisine": [
+        "French",
+        "Wine bar",
+        "Bar"
+      ],
+      "address": "Little Pub Street, New Street A, Krong Siem Reap 17252, Cambodia",
+      "location": {
+        "lat": 13.3557748,
+        "lng": 103.8564818
+      },
+      "rating": 4.8,
+      "rating_count": 257,
+      "price_level": null,
+      "price_symbol": null,
+      "phone": "+855 89 535 194",
+      "opening_hours": [
+        "Monday: Closed",
+        "Tuesday: 5:00 – 11:00 PM",
+        "Wednesday: 5:00 – 11:00 PM",
+        "Thursday: 5:00 – 11:00 PM",
+        "Friday: 5:00 – 11:00 PM",
+        "Saturday: 5:00 – 11:00 PM",
+        "Sunday: 5:00 – 11:00 PM"
+      ],
+      "images": [],
+      "source": {
+        "provider": "google_places",
+        "place_id": "ChIJwwqV_SgXEDERhgQod19C8SM"
+      }
+    },
+    {
+      "id": "sr-le-cul-de-sac-9ju9om",
+      "name": "Le Cul-de-Sac",
+      "city": "Siem Reap",
+      "cuisine": [
+        "French"
+      ],
+      "address": "Krong Siem Reap, Cambodia",
+      "location": {
+        "lat": 13.3692062,
+        "lng": 103.8379384
+      },
+      "rating": 4.8,
+      "rating_count": 367,
+      "price_level": null,
+      "price_symbol": null,
+      "phone": "+855 12 229 826",
+      "opening_hours": [
+        "Monday: 5:00 – 11:00 PM",
+        "Tuesday: Closed",
+        "Wednesday: 5:00 – 11:00 PM",
+        "Thursday: 5:00 – 11:00 PM",
+        "Friday: 11:00 AM – 11:00 PM",
+        "Saturday: 11:00 AM – 11:00 PM",
+        "Sunday: 11:00 AM – 11:00 PM"
+      ],
+      "images": [],
+      "source": {
+        "provider": "google_places",
+        "place_id": "ChIJiepCV4UXEDEROD_m_9jU9oM"
+      }
+    },
+    {
+      "id": "sr-olive-cuisine-de-saison-wvpx44",
+      "name": "Olive Cuisine de Saison",
+      "city": "Siem Reap",
+      "cuisine": [
+        "French"
+      ],
+      "address": "Olive St, Krong Siem Reap 17252, Cambodia",
+      "location": {
+        "lat": 13.3543476,
+        "lng": 103.8563615
+      },
+      "rating": 4.6,
+      "rating_count": 507,
+      "price_level": null,
+      "price_symbol": null,
+      "phone": "+855 61 678 994",
+      "opening_hours": [
+        "Monday: 11:30 AM – 9:30 PM",
+        "Tuesday: 11:30 AM – 9:30 PM",
+        "Wednesday: 11:30 AM – 9:30 PM",
+        "Thursday: 11:30 AM – 9:30 PM",
+        "Friday: 11:30 AM – 9:30 PM",
+        "Saturday: 11:30 AM – 9:30 PM",
+        "Sunday: 11:30 AM – 9:30 PM"
+      ],
+      "images": [],
+      "source": {
+        "provider": "google_places",
+        "place_id": "ChIJvawxTWUXEDERvKa0YwvPx44"
+      }
+    },
+    {
+      "id": "sr-graines-de-piaf-axvamw",
+      "name": "Graines de Piaf",
+      "city": "Siem Reap",
+      "cuisine": [
+        "French",
+        "Wine bar",
+        "Bar"
+      ],
+      "address": "Funky Ln, Krong Siem Reap 171009, Cambodia",
+      "location": {
+        "lat": 13.3560478,
+        "lng": 103.8504426
+      },
+      "rating": 4.9,
+      "rating_count": 202,
+      "price_level": null,
+      "price_symbol": null,
+      "phone": "+855 68 905 062",
+      "opening_hours": [
+        "Monday: 6:00 PM – 12:00 AM",
+        "Tuesday: 6:00 PM – 12:00 AM",
+        "Wednesday: 6:00 PM – 12:00 AM",
+        "Thursday: 6:00 PM – 12:00 AM",
+        "Friday: 6:00 PM – 12:00 AM",
+        "Saturday: 6:00 PM – 12:00 AM",
+        "Sunday: Closed"
+      ],
+      "images": [],
+      "source": {
+        "provider": "google_places",
+        "place_id": "ChIJGYHBhmUXEDERhwyWmaXvaMw"
+      }
+    },
+    {
+      "id": "sr-fumizen-siem-reap-h1m8pc",
+      "name": "Fumizen Siem Reap",
+      "city": "Siem Reap",
+      "cuisine": [
+        "Japanese"
+      ],
+      "address": "9 Preah Sangreach Tep Vong St, Krong Siem Reap, Cambodia",
+      "location": {
+        "lat": 13.3583697,
+        "lng": 103.854701
+      },
+      "rating": 4.6,
+      "rating_count": 189,
+      "price_level": null,
+      "price_symbol": null,
+      "phone": "+855 63 210 775",
+      "opening_hours": [
+        "Monday: 10:00 AM – 10:00 PM",
+        "Tuesday: 10:00 AM – 10:00 PM",
+        "Wednesday: 10:00 AM – 10:00 PM",
+        "Thursday: 10:00 AM – 10:00 PM",
+        "Friday: 10:00 AM – 10:00 PM",
+        "Saturday: 10:00 AM – 10:00 PM",
+        "Sunday: 10:00 AM – 10:00 PM"
+      ],
+      "images": [],
+      "source": {
+        "provider": "google_places",
+        "place_id": "ChIJ7bWoECkXEDERlAQ0HH1m8Pc"
+      }
+    },
+    {
+      "id": "sr-samurai-sushi-ramen-dumpling-yakitori-bb-yorwei",
+      "name": "SAMURAI: Sushi, Ramen, Dumpling, Yakitori BBQ",
+      "city": "Siem Reap",
+      "cuisine": [
+        "Japanese",
+        "Chinese",
+        "Korean",
+        "Bar"
+      ],
+      "address": "Svay Dangkum, Krong Siem Reap, Cambodia",
+      "location": {
+        "lat": 13.3536608,
+        "lng": 103.852137
+      },
+      "rating": 4.6,
+      "rating_count": 588,
+      "price_level": 2,
+      "price_symbol": "$$",
+      "phone": "+855 76 555 7770",
+      "opening_hours": [
+        "Monday: 11:00 AM – 2:00 PM, 4:00 – 11:00 PM",
+        "Tuesday: 11:00 AM – 2:00 PM, 4:00 – 11:00 PM",
+        "Wednesday: 11:00 AM – 2:00 PM, 4:00 – 11:00 PM",
+        "Thursday: 11:00 AM – 2:00 PM, 4:00 – 11:00 PM",
+        "Friday: 11:00 AM – 2:00 PM, 4:00 – 11:00 PM",
+        "Saturday: 11:00 AM – 2:00 PM, 4:00 – 11:00 PM",
+        "Sunday: 11:00 AM – 2:00 PM, 4:00 – 11:00 PM"
+      ],
+      "images": [],
+      "source": {
+        "provider": "google_places",
+        "place_id": "ChIJoRsEYfgXEDEROqhhuYORWeI"
+      }
+    },
+    {
+      "id": "sr-the-hashi-japanese-restaurant-auesdu",
+      "name": "The Hashi Japanese Restaurant",
+      "city": "Siem Reap",
+      "cuisine": [
+        "Japanese",
+        "Asian"
+      ],
+      "address": "Wat Bo Rd, Krong Siem Reap, Cambodia",
+      "location": {
+        "lat": 13.3562698,
+        "lng": 103.8599624
+      },
+      "rating": 4.4,
+      "rating_count": 736,
+      "price_level": 2,
+      "price_symbol": "$$",
+      "phone": "+855 81 226 007",
+      "opening_hours": [
+        "Monday: 11:00 AM – 3:00 PM, 6:00 – 11:00 PM",
+        "Tuesday: 11:00 AM – 3:00 PM, 6:00 – 11:00 PM",
+        "Wednesday: 11:00 AM – 3:00 PM, 6:00 – 11:00 PM",
+        "Thursday: 11:00 AM – 3:00 PM, 6:00 – 11:00 PM",
+        "Friday: 11:00 AM – 3:00 PM, 6:00 – 11:00 PM",
+        "Saturday: 11:00 AM – 3:00 PM, 6:00 – 11:00 PM",
+        "Sunday: 11:00 AM – 3:00 PM, 6:00 – 11:00 PM"
+      ],
+      "images": [],
+      "source": {
+        "provider": "google_places",
+        "place_id": "ChIJsRIT8G0XEDERD3iWOaUESdU"
+      }
+    },
+    {
+      "id": "sr-shen-kitchen-dumpling-house-chinese-rest-jlo8-8",
+      "name": "Shen Kitchen - Dumpling House & Chinese Restaurant",
+      "city": "Siem Reap",
+      "cuisine": [
+        "Chinese"
+      ],
+      "address": "Psah Chas Alley 1, Krong Siem Reap 17253, Cambodia",
+      "location": {
+        "lat": 13.3541134,
+        "lng": 103.8561074
+      },
+      "rating": 4.7,
+      "rating_count": 86,
+      "price_level": null,
+      "price_symbol": null,
+      "phone": "+855 76 494 1873",
+      "opening_hours": [
+        "Monday: 3:15 – 10:30 PM",
+        "Tuesday: 8:00 AM – 10:30 PM",
+        "Wednesday: 8:00 AM – 10:30 PM",
+        "Thursday: 8:00 AM – 10:30 PM",
+        "Friday: 8:00 AM – 10:30 PM",
+        "Saturday: 8:00 AM – 10:30 PM",
+        "Sunday: 8:00 AM – 10:30 PM"
+      ],
+      "images": [],
+      "source": {
+        "provider": "google_places",
+        "place_id": "ChIJsY7MVB0XEDERmh-SmJlo8-8"
+      }
+    },
+    {
+      "id": "sr-rono-dumpling-house-5hyvne",
+      "name": "RoNo Dumpling House",
+      "city": "Siem Reap",
+      "cuisine": [
+        "Chinese"
+      ],
+      "address": "Angkor Night Market St, Krong Siem Reap, Cambodia",
+      "location": {
+        "lat": 13.3570481,
+        "lng": 103.8528032
+      },
+      "rating": 4.6,
+      "rating_count": 390,
+      "price_level": null,
+      "price_symbol": null,
+      "phone": null,
+      "opening_hours": [
+        "Monday: 7:00 AM – 10:00 PM",
+        "Tuesday: 7:00 AM – 10:00 PM",
+        "Wednesday: 7:00 AM – 10:00 PM",
+        "Thursday: 7:00 AM – 10:00 PM",
+        "Friday: 7:00 AM – 10:00 PM",
+        "Saturday: 7:00 AM – 10:00 PM",
+        "Sunday: 7:00 AM – 10:00 PM"
+      ],
+      "images": [],
+      "source": {
+        "provider": "google_places",
+        "place_id": "ChIJta-rBW8XEDERlbUs05HYVnE"
+      }
+    },
+    {
+      "id": "sr-angkor-hand-pulled-noodles-dumplings-3efsmw",
+      "name": "Angkor Hand-Pulled Noodles & Dumplings",
+      "city": "Siem Reap",
+      "cuisine": [
+        "General / Cambodian"
+      ],
+      "address": "2 Steung Thmei, Krong Siem Reap 17251, Cambodia",
+      "location": {
+        "lat": 13.3537203,
+        "lng": 103.8514593
+      },
+      "rating": 4.9,
+      "rating_count": 1012,
+      "price_level": 1,
+      "price_symbol": "$",
+      "phone": "+855 96 997 8834",
+      "opening_hours": [
+        "Monday: 9:00 AM – 10:00 PM",
+        "Tuesday: 9:00 AM – 10:00 PM",
+        "Wednesday: 9:00 AM – 10:00 PM",
+        "Thursday: 9:00 AM – 10:00 PM",
+        "Friday: 9:00 AM – 10:00 PM",
+        "Saturday: 9:00 AM – 10:00 PM",
+        "Sunday: 9:00 AM – 10:00 PM"
+      ],
+      "images": [],
+      "source": {
+        "provider": "google_places",
+        "place_id": "ChIJb3UBJosXEDERBZdf73eFsmw"
+      }
+    },
+    {
+      "id": "sr-d19-lucky-house-seafood-0mjn38",
+      "name": "D19 Lucky House Seafood",
+      "city": "Siem Reap",
+      "cuisine": [
+        "Chinese"
+      ],
+      "address": "National Road no 6, Krong Siem Reap, Cambodia",
+      "location": {
+        "lat": 13.3693001,
+        "lng": 103.8452297
+      },
+      "rating": 4.3,
+      "rating_count": 98,
+      "price_level": 2,
+      "price_symbol": "$$",
+      "phone": "+855 92 554 610",
+      "opening_hours": [
+        "Monday: 9:00 AM – 11:30 PM",
+        "Tuesday: 9:00 AM – 11:30 PM",
+        "Wednesday: 9:00 AM – 11:30 PM",
+        "Thursday: 9:00 AM – 11:30 PM",
+        "Friday: 9:00 AM – 11:30 PM",
+        "Saturday: 9:00 AM – 11:30 PM",
+        "Sunday: 9:00 AM – 11:30 PM"
+      ],
+      "images": [],
+      "source": {
+        "provider": "google_places",
+        "place_id": "ChIJmxk8tW4XEDERAyipH0Mjn38"
+      }
+    },
+    {
+      "id": "sr-embassy-by-chef-kimsan-nkrnfq",
+      "name": "Embassy by Chef Kimsan",
+      "city": "Siem Reap",
+      "cuisine": [
+        "Khmer",
+        "Fine dining"
+      ],
+      "address": "Corner Street 05, Krong Siem Reap 17253, Cambodia",
+      "location": {
+        "lat": 13.3589805,
+        "lng": 103.8575475
+      },
+      "rating": 4.8,
+      "rating_count": 871,
+      "price_level": 2,
+      "price_symbol": "$$",
+      "phone": "+855 89 282 911",
+      "opening_hours": [
+        "Monday: 6:00 – 11:00 PM",
+        "Tuesday: 6:00 – 11:00 PM",
+        "Wednesday: 6:00 – 11:00 PM",
+        "Thursday: 6:00 – 11:00 PM",
+        "Friday: 6:00 – 11:00 PM",
+        "Saturday: 6:00 – 11:00 PM",
+        "Sunday: 6:00 – 11:00 PM"
+      ],
+      "images": [],
+      "source": {
+        "provider": "google_places",
+        "place_id": "ChIJ454ZwXoXEDERW1FWjnkRnfQ"
+      }
+    },
+    {
+      "id": "sr-the-labyrinth-xd-04y",
+      "name": "The Labyrinth",
+      "city": "Siem Reap",
+      "cuisine": [
+        "General / Cambodian"
+      ],
+      "address": "NR6, Krong Siem Reap 171202, Cambodia",
+      "location": {
+        "lat": 13.3707231,
+        "lng": 103.8449636
+      },
+      "rating": 4.8,
+      "rating_count": 56,
+      "price_level": null,
+      "price_symbol": null,
+      "phone": "+855 77 643 404",
+      "opening_hours": [
+        "Monday: Closed",
+        "Tuesday: 6:30 – 10:00 PM",
+        "Wednesday: 6:30 – 10:00 PM",
+        "Thursday: 6:30 – 10:00 PM",
+        "Friday: 6:30 – 10:00 PM",
+        "Saturday: 6:30 – 10:00 PM",
+        "Sunday: 6:30 – 10:00 PM"
+      ],
+      "images": [],
+      "source": {
+        "provider": "google_places",
+        "place_id": "ChIJaWEhhgoXEDERd3-BSxD-04Y"
+      }
+    },
+    {
+      "id": "sr-kroya-by-chef-chanrith-g-vg7g",
+      "name": "Kroya by Chef Chanrith",
+      "city": "Siem Reap",
+      "cuisine": [
+        "Fine dining",
+        "Khmer"
+      ],
+      "address": "Shinta Mani Hotel, Junction of Oum Khun St & Street 14, Krong Siem Reap, Cambodia",
+      "location": {
+        "lat": 13.3593389,
+        "lng": 103.8581158
+      },
+      "rating": 4.7,
+      "rating_count": 334,
+      "price_level": null,
+      "price_symbol": null,
+      "phone": "+855 98 969 234",
+      "opening_hours": [
+        "Monday: 11:00 AM – 10:30 PM",
+        "Tuesday: 11:00 AM – 10:30 PM",
+        "Wednesday: 11:00 AM – 10:30 PM",
+        "Thursday: 11:00 AM – 10:30 PM",
+        "Friday: 11:00 AM – 10:30 PM",
+        "Saturday: 11:00 AM – 10:30 PM",
+        "Sunday: 11:00 AM – 10:30 PM"
+      ],
+      "images": [],
+      "source": {
+        "provider": "google_places",
+        "place_id": "ChIJk4I063EXEDER4_QZ_g-vg7g"
+      }
+    },
+    {
+      "id": "sr-lum-orng-farm-to-table-restaurant-f7ow7w",
+      "name": "LUM ORNG Farm to Table Restaurant",
+      "city": "Siem Reap",
+      "cuisine": [
+        "General / Cambodian"
+      ],
+      "address": "Tramneak Street, Krong Siem Reap 17251, Cambodia",
+      "location": {
+        "lat": 13.3661765,
+        "lng": 103.9024258
+      },
+      "rating": 4.7,
+      "rating_count": 271,
+      "price_level": null,
+      "price_symbol": null,
+      "phone": "+855 61 926 562",
+      "opening_hours": [
+        "Monday: 12:00 – 2:00 PM, 6:00 – 10:00 PM",
+        "Tuesday: 12:00 – 2:00 PM, 6:00 – 10:00 PM",
+        "Wednesday: 11:30 AM – 2:30 PM, 5:30 – 10:30 PM",
+        "Thursday: 11:30 AM – 2:30 PM, 5:30 – 10:30 PM",
+        "Friday: 11:30 AM – 2:30 PM, 5:30 – 10:30 PM",
+        "Saturday: 11:30 AM – 2:30 PM, 5:30 – 10:30 PM",
+        "Sunday: 11:30 AM – 2:30 PM, 5:30 – 10:30 PM"
+      ],
+      "images": [],
+      "source": {
+        "provider": "google_places",
+        "place_id": "ChIJK68iJUcXEDERtyM9Df7OW7w"
+      }
+    }
+  ]
+}

@@ -1,0 +1,43 @@
+{
+  "name": "restaurant_sheetDB",
+  "version": "1.0.0",
+  "description": "Restaurant reservation API backed by Google Sheets",
+  "main": "dist/src/index.js",
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "build": "tsc",
+    "start": "node dist/src/index.js",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "db:sync": "NODE_OPTIONS='--require tsx/cjs' lsdb sync",
+    "db:status": "NODE_OPTIONS='--require tsx/cjs' lsdb status",
+    "db:validate": "NODE_OPTIONS='--require tsx/cjs' lsdb validate",
+    "db:seed": "NODE_OPTIONS='--require tsx/cjs' lsdb seed",
+    "db:mock-users": "tsx scripts/mock-users.ts",
+    "db:backfill-restaurant-fields": "tsx scripts/backfill-restaurant-fields.ts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "packageManager": "pnpm@10.29.3",
+  "dependencies": {
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "express-rate-limit": "^8.5.2",
+    "longcelot-sheet-db": "^0.1.41",
+    "multer": "^2.2.0",
+    "nanoid": "^3.3.12"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.6",
+    "@types/multer": "^2.2.0",
+    "@types/node": "^25.9.3",
+    "@types/supertest": "^7.2.1",
+    "supertest": "^7.2.2",
+    "tsx": "^4.22.4",
+    "typescript": "^6.0.3",
+    "vitest": "^4.1.10"
+  }
+}

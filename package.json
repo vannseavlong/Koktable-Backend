@@ -13,7 +13,8 @@
     "db:status": "NODE_OPTIONS='--require tsx/cjs' lsdb status",
     "db:validate": "NODE_OPTIONS='--require tsx/cjs' lsdb validate",
     "db:seed": "NODE_OPTIONS='--require tsx/cjs' lsdb seed",
-    "db:mock-users": "tsx scripts/mock-users.ts"
+    "db:mock-users": "tsx scripts/mock-users.ts",
+    "export:sheet-tsv": "tsx scripts/export-restaurant-tsv.ts sheet-import"
   },
   "keywords": [],
   "author": "",

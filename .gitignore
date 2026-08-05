@@ -23,6 +23,9 @@ pnpm-debug.log*
 *.pid
 *.seed
 
+# Generated copy-paste-into-Sheets exports (scripts/export-restaurant-tsv.ts)
+/sheet-import/
+
 # OS
 .DS_Store
 Thumbs.db

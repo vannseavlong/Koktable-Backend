@@ -298,9 +298,10 @@ Read-only-ish visibility into restaurants (created only via the approve flow abo
 
 ### Restaurant object
 `restaurants` holds only brand-level fields — everything tied to a physical site (address,
-contact info, rating/price/photos) lives on a separate, embedded `locations` array, because a
-restaurant can have more than one location (chain/branches). `cuisines` and `hours` are
-similarly embedded from their own tables, not columns on `restaurants`.
+contact info, rating/price/photos, **and now hours**) lives on a separate, embedded `locations`
+array, because a restaurant can have more than one location (chain/branches) and each location
+keeps its own hours. `cuisines` is similarly embedded from its own table, not a column on
+`restaurants`.
 ```json
 {
   "restaurant_id":  "restaurant_p9c8b7a6z5",
@@ -328,16 +329,19 @@ similarly embedded from their own tables, not columns on `restaurants`.
       "price_level":     2,
       "price_symbol":    "$$",
       "images":          [],
-      "google_place_id": "ChIJI4Pe2TNRCTERBsvdzo-09q8"
+      "google_place_id": "ChIJI4Pe2TNRCTERBsvdzo-09q8",
+      "hours": [
+        { "day_of_week": "monday", "closed": false, "open_24h": false, "periods": [{ "open": "11:00", "close": "21:00" }] },
+        { "day_of_week": "tuesday", "closed": true, "open_24h": false, "periods": [] }
+      ]
     }
   ],
-  "cuisines": ["Khmer", "Asian"],
-  "hours": [
-    { "day_of_week": "monday", "closed": false, "open_24h": false, "periods": [{ "open": "11:00", "close": "21:00" }] },
-    { "day_of_week": "tuesday", "closed": true, "open_24h": false, "periods": [] }
-  ]
+  "cuisines": ["Khmer", "Asian"]
 }
 ```
+`restaurants` itself has **no** `hours` field anymore — as of the `restaurant_hours.location_id`
+re-key, hours are no longer assumed shared across every location of a multi-location brand, so
+each entry in `locations` carries its own `hours` instead.
 Lifecycle: `pending` (approved, invite not yet redeemed) → `active` (merchant completed invite
 acceptance) → `suspended` (admin action, reversible via `PATCH { status: "active" }`).
 `application_id` links back to the `merchant_applications` row that created this restaurant — it's
@@ -384,17 +388,22 @@ import seed.
 
 **`cuisines`**: a many-to-many relationship — `restaurant_cuisines` (one row per
 `(restaurant_id, cuisine_id)`) joins `restaurants` to the canonical `cuisines` lookup table
-(`cuisine_id`, `name`, `icon`, `active`, `sort_order` — same shape as `categories`). The API
-still returns plain names (`cuisines: string[]`), resolved server-side; a separate facet from
-`category_id` (dining style), not a replacement for it. `seeds/cuisines.ts` seeds the canonical
-list and must run before `seeds/restaurants.ts`, which links each restaurant by name.
+(`cuisine_id`, `name`, `icon`, `active`, `sort_order` — same shape as `categories`, admin-managed at
+`/admin/cuisines`, see section 9). The API still returns plain names (`cuisines: string[]`), resolved
+server-side; a separate facet from `category_id` (dining style), not a replacement for it.
+`seeds/cuisines.ts` seeds the canonical list and must run before `seeds/restaurants.ts`, which links
+each restaurant by name. A merchant edits their own restaurant's cuisines via
+`PUT /merchant/restaurant/cuisines` (see "Merchant restaurant profile" below).
 
-**`hours`** (`restaurant_hours` table, one row per day, keyed by `restaurant_id`): a day missing
-from the array has no hours configured for it (distinct from `closed: true`, which is an explicit
-statement that the restaurant is closed that day). `periods` holds one `{open, close}` pair per
-continuous open interval in 24h `"HH:mm"`, more than one entry for a split-shift restaurant (e.g.
-lunch + dinner); `close < open` means the period crosses midnight. Editing hours is a separate
-write — see "Merchant restaurant profile" below.
+**`locations[].hours`** (`restaurant_hours` table, one row per day, keyed by `location_id` — a
+`restaurant_id` is also stored on each row, denormalized for direct cross-location querying, same
+convention as `floors`/`rooms`/`tables`): a day missing from the array has no hours configured for
+it (distinct from `closed: true`, which is an explicit statement that the location is closed that
+day). `periods` holds one `{open, close}` pair per continuous open interval in 24h `"HH:mm"`, more
+than one entry for a split-shift location (e.g. lunch + dinner); `close < open` means the period
+crosses midnight. Editing hours is a separate write — see "Merchant restaurant profile" below
+(the merchant endpoint still edits by restaurant, resolving to that restaurant's primary location
+internally — see there).
 
 **Directory-import fields** on a location (`address`, `city`, `latitude`/`longitude`, `rating`,
 `rating_count`, `price_level`, `price_symbol`, `images`, `google_place_id`) are populated for
@@ -407,7 +416,12 @@ through the merchant application/invite flow. `google_place_id` is unique — it
 **Public read-only mirror**: `GET /user/restaurants` and `GET /user/restaurants/:id` (no auth) expose only
 `active` restaurants to end customers, with `application_id`/`owner_user_id` stripped — see
 `FLUTTER_GUIDE.md` section 3. `pending`/`suspended` restaurants 404 there exactly like an unknown
-`restaurant_id`, so their existence/status is never leaked publicly.
+`restaurant_id`, so their existence/status is never leaked publicly. Unlike this admin section,
+the public mirror still returns a **restaurant-level** `hours` field (not nested under
+`locations`) — it's the flattened union of the restaurant's location(s)' hours
+(`restaurantHours.service.ts`'s restaurant-scoped `getForRestaurant`/`getForRestaurants`
+convenience wrappers), same rationale as the merchant endpoint above; every restaurant has exactly
+one location today so this is a lossless pass-through for now.
 
 ---
 
@@ -492,11 +506,16 @@ Lets a merchant read and edit their own restaurant's profile fields — the coun
 | PATCH | `/merchant/restaurant` | merchant | any of `name, description, logo, banner, category_id` | `{ restaurant: Restaurant }` |
 | PATCH | `/merchant/restaurant/location` | merchant | any of `name, contact_email, contact_phone, address, city, latitude, longitude` | `{ location: Location }` |
 | PUT | `/merchant/restaurant/hours` | merchant | `{ days: DayHours[] }` | `{ hours: DayHours[] }` |
+| PUT | `/merchant/restaurant/cuisines` | merchant | `{ cuisines: string[] }` (cuisine names) | `{ cuisines: string[] }` |
 
-`GET`/`PATCH /merchant/restaurant`'s `Restaurant` object differs slightly from section 5's: it embeds
+`GET`/`PATCH /merchant/restaurant`'s `Restaurant` object differs from section 5's: it embeds
 a single `location` (singular — the restaurant's first/primary location) rather than a `locations`
-array, since the merchant self-service flow doesn't yet support managing more than one location.
-`cuisines` and `hours` are the same embedded shape as section 5.
+array, since the merchant self-service flow doesn't yet support managing more than one location;
+and unlike section 5, `hours` stays a **restaurant-level** field here (not nested under
+`location`) — internally it's still the primary location's `restaurant_hours` rows (via
+`restaurantHours.service.ts`'s location-scoped functions, resolved through
+`restaurantLocationsService.getPrimary()`), just presented flat since a merchant only has the one
+location to manage at this phase. `cuisines` is the same embedded shape as section 5.
 
 `PATCH /merchant/restaurant` accepts either a plain JSON body (string fields only) or
 `multipart/form-data` with optional `logo`/`banner` file parts (JPEG/PNG/WebP,
@@ -518,12 +537,21 @@ matching the "don't leak a forbidden distinction" convention used elsewhere in t
 somehow has none yet (shouldn't normally happen — `POST /admin/merchant-applications/:id/approve`
 creates one at restaurant-creation time, seeded from the application's contact info).
 
-`PUT /merchant/restaurant/hours` replaces the **entire** week in one call — it deletes all of
-this restaurant's `restaurant_hours` rows and re-creates them from `days`, so a day omitted from
-the array ends up with no hours configured (not "left unchanged"). Each entry in `days` is
+`PUT /merchant/restaurant/hours` replaces the **entire** week in one call — it resolves this
+restaurant's primary location (creating one first, same as `PATCH /merchant/restaurant/location`,
+if this restaurant somehow has none yet) and deletes/re-creates all of that location's
+`restaurant_hours` rows from `days`, so a day omitted from the array ends up with no hours
+configured (not "left unchanged"). Each entry in `days` is
 `{ day_of_week, closed?, open_24h?, periods? }`; `periods` (required unless `closed` or
 `open_24h`) is `{ open, close }` pairs in 24h `"HH:mm"`. Rejects a day that's both `closed` and
 `open_24h`, a duplicate `day_of_week`, or a day with no periods and neither flag set, with `400`.
+
+`PUT /merchant/restaurant/cuisines` replaces the **entire** cuisine set in one call — it deletes
+all of this restaurant's `restaurant_cuisines` rows and re-creates them from `cuisines`
+(`restaurantCuisines.service.ts`'s `setForRestaurant`), so a cuisine omitted from the array ends up
+unlinked (not "left unchanged"). Each entry must be an existing `cuisines.name` exactly (case-
+sensitive, no auto-create — add it via `/admin/cuisines` first, section 9); an unrecognized name or
+an empty array rejects the whole request with `400` rather than partially applying it.
 
 `status` is **not** an updatable field here — deliberately left out of both the request body
 handling and the field list above. It stays admin-only via `PATCH /admin/restaurants/:id` (section 5);
@@ -630,3 +658,45 @@ Deleting a category does **not** cascade — any `restaurants`/`catalog_items`/`
 pointing at a deleted `category_id` keeps the stale id rather than being nulled out or blocked.
 Prefer `PATCH { active: false }` (which hides it from `GET /user/categories` and therefore from
 new dropdown selections) over `DELETE` unless the id was never actually used.
+
+---
+
+## 9. Cuisines — `/admin/cuisines` and `GET /user/cuisines`
+
+Canonical cuisine vocabulary (Khmer, Thai, Italian, ...) that `restaurant_cuisines` (see section 5)
+joins restaurants to — a separate facet from `category_id` (dining style), not a replacement for it.
+Same shape and CRUD pattern as Categories (section 8) — admin-managed; merchants and the mobile app
+only ever read it (merchants select from it via `PUT /merchant/restaurant/cuisines`, below).
+
+| Method | Endpoint | Auth | Body | Response |
+|--------|----------|------|------|----------|
+| GET | `/admin/cuisines` | admin | `?active=true\|false` | `{ cuisines: Cuisine[] }` (sorted by `sort_order` asc) |
+| GET | `/admin/cuisines/:id` | admin | — | `{ cuisine: Cuisine }` |
+| POST | `/admin/cuisines` | admin | `{ name, icon?, active?, sort_order? }` | `{ cuisine: Cuisine }` (201) |
+| PATCH | `/admin/cuisines/:id` | admin | any subset of create fields | `{ cuisine: Cuisine }` |
+| DELETE | `/admin/cuisines/:id` | admin | — | `204 No Content` (hard delete) |
+| PATCH | `/admin/cuisines/reorder` | admin | `{ order: string[] }` (cuisine_ids, desired order) | `{ cuisines: Cuisine[] }` |
+| GET | `/user/cuisines` | none (public) | — | `{ cuisines: Cuisine[] }` (only `active: true`, sorted by `sort_order` asc) |
+
+`name` is required and must be unique on create; `icon` is a free-text emoji/icon key, `active`
+defaults to `true`, `sort_order` to `0`.
+
+### Cuisine object
+```json
+{
+  "cuisine_id": "cui_a1b2c3d4e5",
+  "name":       "Khmer",
+  "icon":       "🍲",
+  "active":     true,
+  "sort_order": 1
+}
+```
+
+Deleting a cuisine does **not** cascade — any `restaurant_cuisines` row still pointing at a deleted
+`cuisine_id` keeps the stale id rather than being nulled out or blocked (same non-cascading
+behavior as Categories, section 8). Prefer `PATCH { active: false }` over `DELETE` unless the id
+was never actually used. `restaurantCuisines.service.ts`'s `setForRestaurant` (used by both the
+merchant picker below and the admin/seed restaurant-linking path) resolves names to ids and
+rejects any name that isn't in this table with `400`, so removing a cuisine that's still actively
+selected by restaurants will start rejecting re-submissions of their full cuisine list until it's
+dropped from the submitted set or re-added here.

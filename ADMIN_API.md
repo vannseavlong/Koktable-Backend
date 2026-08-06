@@ -321,7 +321,8 @@ keeps its own hours. `cuisines` is similarly embedded from its own table, not a 
       "contact_email":   "sam@goldenfork.example",
       "contact_phone":   "+1 555 0100",
       "address":         "218 Street 184, Phnom Penh 12211, Cambodia",
-      "city":            "Phnom Penh",
+      "city_id":         "city_pp",
+      "district_id":     "dist_bkk1",
       "latitude":        11.5646873,
       "longitude":       104.922673,
       "rating":          4.6,
@@ -350,12 +351,25 @@ what `resend-invite` (above) uses to find the restaurant for a given application
 
 **`locations`** (`restaurant_locations` table, `restaurant_id` FK): a restaurant is created with
 exactly one, seeded from the application's `contact_email`/`contact_phone` at approve-time
-(`address`/`city`/`latitude`/`longitude` blank until the merchant fills them in — see "Merchant
+(`address`/`city_id`/`latitude`/`longitude` blank until the merchant fills them in — see "Merchant
 restaurant profile" below). `name` labels a specific branch (e.g. "Downtown Branch"), blank for a
 single-location restaurant. `price_symbol` is derived from `price_level`
 (`src/utils/restaurantPricing.ts`), not independently stored. `rating`/`rating_count`/`price_level`/
-`images`/`google_place_id` are directory-import fields (see below) — blank for merchant-onboarded
-locations unless backfilled.
+`images`/`google_place_id`/**`district_id`** are directory-import fields (see below) — blank for
+merchant-onboarded locations unless backfilled.
+
+`city_id`/`district_id` are FKs into the `cities`/`districts` lookup tables (`schemas/admin/cities.ts`,
+`schemas/admin/districts.ts` — same `id`/`name`/`active`/`sort_order` shape as `categories`/`cuisines`,
+`districts.city_id` refs `cities`), not free text — this is what backs the "All cities"/"All
+districts" filter dropdowns as a cheap read of a small lookup table instead of scanning every
+location and de-duping city/district strings in JS, and keeps repeated directory-crawl imports from
+drifting into inconsistent spellings for the same place. `district_id` is populated by
+`scripts/backfill-district.ts` from the Google Places Details API keyed on `google_place_id`,
+resolving (or creating) the matching `districts` row scoped to the location's `city_id` — not
+merchant/admin-editable via `LocationInput`, same as the other directory-import fields. `city_id` is
+merchant/admin-editable via `LocationInput` below, unlike free-text `city` before it. `GET
+/user/restaurants` accepts `city_id`/`district_id` as filter query params — see `FLUTTER_GUIDE.md`
+§ 3. See section 9a below for the `cities`/`districts` list endpoints.
 
 **Adding/editing locations** (admin-only — merchants can edit locations they already have via
 "Merchant restaurant profile" below, but can't add new ones): `POST /admin/restaurants/:id/locations`
@@ -374,7 +388,7 @@ remaining active location is rejected with `400 "Restaurant must have at least o
   "contact_email": "sam@goldenfork.example",
   "contact_phone": "+1 555 0100",
   "address":       "218 Street 184, Phnom Penh 12211, Cambodia",
-  "city":          "Phnom Penh",
+  "city_id":       "city_pp",
   "latitude":      11.5646873,
   "longitude":     104.922673,
   "active":        true
@@ -382,9 +396,16 @@ remaining active location is rejected with `400 "Restaurant must have at least o
 ```
 All fields are optional on both create (blank/omitted fields default to `""`/`true` for `active`) and
 update (PATCH only touches fields present in the body; sending no updatable field is a `400`).
+`city_id`, unlike the other blank-defaulted fields, is left `undefined` rather than `""` when
+omitted — it's an FK ref, and the library's FK validator rejects any non-null/undefined value
+(including `""`) that doesn't match a real `cities` row, so leaving it unset is how a location stays
+cityless for now instead of erroring. A supplied `city_id` must reference an existing `cities` row — same as `category_id` elsewhere in
+this API, an FK violation here currently surfaces as a generic `500` rather than a clean `4xx`
+(the library throws its own `ValidationError`, not this repo's `AppError`, so `errorHandler.ts`
+doesn't special-case it — a known, pre-existing gap, not new to `city_id`).
 Directory-import fields (`rating`, `rating_count`, `price_level`, `price_symbol`, `images`,
-`google_place_id`) aren't settable through this endpoint — they're populated only by the directory
-import seed.
+`google_place_id`, `district_id`) aren't settable through this endpoint — they're populated only by
+the directory import / `scripts/backfill-district.ts`.
 
 **`cuisines`**: a many-to-many relationship — `restaurant_cuisines` (one row per
 `(restaurant_id, cuisine_id)`) joins `restaurants` to the canonical `cuisines` lookup table
@@ -405,7 +426,7 @@ crosses midnight. Editing hours is a separate write — see "Merchant restaurant
 (the merchant endpoint still edits by restaurant, resolving to that restaurant's primary location
 internally — see there).
 
-**Directory-import fields** on a location (`address`, `city`, `latitude`/`longitude`, `rating`,
+**Directory-import fields** on a location (`address`, `city_id`, `latitude`/`longitude`, `rating`,
 `rating_count`, `price_level`, `price_symbol`, `images`, `google_place_id`) are populated for
 restaurants bulk-seeded from an external directory (see `seeds/restaurants.ts`) — blank for
 merchant-onboarded locations unless backfilled. An imported restaurant has `status: "active"` with
@@ -504,7 +525,7 @@ Lets a merchant read and edit their own restaurant's profile fields — the coun
 |--------|----------|------|------|----------|
 | GET | `/merchant/restaurant` | merchant | — | `{ restaurant: Restaurant }` (see below) |
 | PATCH | `/merchant/restaurant` | merchant | any of `name, description, logo, banner, category_id` | `{ restaurant: Restaurant }` |
-| PATCH | `/merchant/restaurant/location` | merchant | any of `name, contact_email, contact_phone, address, city, latitude, longitude` | `{ location: Location }` |
+| PATCH | `/merchant/restaurant/location` | merchant | any of `name, contact_email, contact_phone, address, city_id, latitude, longitude` | `{ location: Location }` |
 | PUT | `/merchant/restaurant/hours` | merchant | `{ days: DayHours[] }` | `{ hours: DayHours[] }` |
 | PUT | `/merchant/restaurant/cuisines` | merchant | `{ cuisines: string[] }` (cuisine names) | `{ cuisines: string[] }` |
 
@@ -690,6 +711,51 @@ defaults to `true`, `sort_order` to `0`.
   "active":     true,
   "sort_order": 1
 }
+```
+
+## 10. Cities & Districts — `/admin/cities`, `/admin/districts`, `GET /user/cities`, `GET /user/districts`
+
+Canonical city/district (sublocality/neighborhood) vocabulary that `restaurant_locations.city_id`/
+`district_id` (see section 5) reference instead of storing free text — this is what backs the "All
+cities"/"All districts" filter dropdowns on `GET /user/restaurants` as a cheap read of these (small)
+lookup tables instead of scanning every location and de-duping in JS, and what keeps repeated
+directory-crawl imports from drifting into inconsistent spellings for the same place. `districts`
+nests under `cities` (`districts.city_id` FK) — a district name is only unique within its city (e.g.
+"Riverside" exists in more than one city), not globally. Same CRUD pattern as Categories/Cuisines
+(sections 8–9) — admin-managed; merchants and the mobile app only ever read it (a merchant sets
+their location's city via `city_id` on `PATCH /merchant/restaurant/location`, section 6).
+
+| Method | Endpoint | Auth | Body | Response |
+|--------|----------|------|------|----------|
+| GET | `/admin/cities` | admin | `?active=true\|false` | `{ cities: City[] }` (sorted by `sort_order` asc) |
+| GET | `/admin/cities/:id` | admin | — | `{ city: City }` |
+| POST | `/admin/cities` | admin | `{ name, active?, sort_order? }` | `{ city: City }` (201) |
+| PATCH | `/admin/cities/:id` | admin | any subset of create fields | `{ city: City }` |
+| DELETE | `/admin/cities/:id` | admin | — | `204 No Content` (hard delete) |
+| PATCH | `/admin/cities/reorder` | admin | `{ order: string[] }` (city_ids, desired order) | `{ cities: City[] }` |
+| GET | `/user/cities` | none (public) | — | `{ cities: City[] }` (only `active: true`, sorted by `sort_order` asc) |
+| GET | `/admin/districts` | admin | `?active=true\|false&city_id=` | `{ districts: District[] }` (sorted by `sort_order` asc) |
+| GET | `/admin/districts/:id` | admin | — | `{ district: District }` |
+| POST | `/admin/districts` | admin | `{ city_id, name, active?, sort_order? }` | `{ district: District }` (201) |
+| PATCH | `/admin/districts/:id` | admin | any subset of create fields | `{ district: District }` |
+| DELETE | `/admin/districts/:id` | admin | — | `204 No Content` (hard delete) |
+| PATCH | `/admin/districts/reorder` | admin | `{ order: string[] }` (district_ids, desired order) | `{ districts: District[] }` |
+| GET | `/user/districts` | none (public) | `?city_id=` | `{ districts: District[] }` (only `active: true`, sorted by `sort_order` asc) |
+
+`name` is required (and unique on `cities`, not on `districts` — see above) on create; `city_id` is
+required on `districts` create and must reference an existing `cities` row (`422` if not — unlike
+`restaurant_locations.city_id` in section 5, this FK check is validated explicitly in
+`src/services/admin/districts.service.ts` rather than relying on the library's own FK validator).
+`active` defaults to `true`, `sort_order` to `0`.
+
+### City object
+```json
+{ "city_id": "city_a1b2c3d4e5", "name": "Phnom Penh", "active": true, "sort_order": 0 }
+```
+
+### District object
+```json
+{ "district_id": "dist_a1b2c3d4e5", "city_id": "city_a1b2c3d4e5", "name": "BKK1", "active": true, "sort_order": 0 }
 ```
 
 Deleting a cuisine does **not** cascade — any `restaurant_cuisines` row still pointing at a deleted

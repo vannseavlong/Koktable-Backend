@@ -46,6 +46,43 @@ describe('GET /user/restaurants', () => {
     expect(res.status).toBe(200);
     expect(res.body.restaurants).toEqual([]);
   });
+
+  it('filters by city_id, matching if any of the restaurant\'s locations is in that city', async () => {
+    seedRestaurant({ restaurant_id: 'restaurant_1', name: 'PP Spot' });
+    seedRestaurant({ restaurant_id: 'restaurant_2', name: 'Siem Reap Spot' });
+    fakeDb.seed('admin', 'restaurant_locations', [
+      { location_id: 'loc_1', restaurant_id: 'restaurant_1', city_id: 'city_pp', district_id: 'dist_bkk1' },
+      { location_id: 'loc_2', restaurant_id: 'restaurant_2', city_id: 'city_sr', district_id: 'dist_slakram' },
+    ]);
+
+    const res = await request(app).get('/user/restaurants').query({ city_id: 'city_pp' });
+    expect(res.status).toBe(200);
+    expect(res.body.restaurants.map((r: { restaurant_id: string }) => r.restaurant_id)).toEqual(['restaurant_1']);
+  });
+
+  it('filters by city_id and district_id together', async () => {
+    seedRestaurant({ restaurant_id: 'restaurant_1', name: 'BKK1 Spot' });
+    seedRestaurant({ restaurant_id: 'restaurant_2', name: 'Riverside Spot' });
+    fakeDb.seed('admin', 'restaurant_locations', [
+      { location_id: 'loc_1', restaurant_id: 'restaurant_1', city_id: 'city_pp', district_id: 'dist_bkk1' },
+      { location_id: 'loc_2', restaurant_id: 'restaurant_2', city_id: 'city_pp', district_id: 'dist_riverside' },
+    ]);
+
+    const res = await request(app).get('/user/restaurants').query({ city_id: 'city_pp', district_id: 'dist_riverside' });
+    expect(res.status).toBe(200);
+    expect(res.body.restaurants.map((r: { restaurant_id: string }) => r.restaurant_id)).toEqual(['restaurant_2']);
+  });
+
+  it('ignores an unset/empty city_id or district_id filter', async () => {
+    seedRestaurant({ restaurant_id: 'restaurant_1' });
+    fakeDb.seed('admin', 'restaurant_locations', [
+      { location_id: 'loc_1', restaurant_id: 'restaurant_1', city_id: 'city_pp', district_id: 'dist_bkk1' },
+    ]);
+
+    const res = await request(app).get('/user/restaurants').query({ city_id: '' });
+    expect(res.status).toBe(200);
+    expect(res.body.restaurants).toHaveLength(1);
+  });
 });
 
 describe('GET /user/restaurants/:id', () => {

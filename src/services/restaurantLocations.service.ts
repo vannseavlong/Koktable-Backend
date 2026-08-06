@@ -8,7 +8,7 @@ export interface LocationInput {
   contact_email?: string;
   contact_phone?: string;
   address?: string;
-  city?: string;
+  city_id?: string;
   latitude?: number;
   longitude?: number;
   active?: boolean;
@@ -53,7 +53,11 @@ export async function create(restaurantId: string, input: LocationInput) {
     contact_email: input.contact_email ?? '',
     contact_phone: input.contact_phone ?? '',
     address:       input.address ?? '',
-    city:          input.city ?? '',
+    // Left undefined (not '') when omitted, unlike the plain-string fields above: city_id
+    // is an FK ref (schemas/admin/restaurant_locations.ts) and the library's FK validator
+    // runs on any non-null/undefined value, including '' — an empty string would fail as
+    // "city '' does not exist" instead of just leaving the location cityless for now.
+    city_id:       input.city_id,
     latitude:      input.latitude,
     longitude:     input.longitude,
     active:        input.active ?? true,
@@ -83,7 +87,7 @@ export async function update(locationId: string, input: LocationInput) {
   if (input.contact_email !== undefined) data.contact_email = input.contact_email;
   if (input.contact_phone !== undefined) data.contact_phone = input.contact_phone;
   if (input.address       !== undefined) data.address       = input.address;
-  if (input.city          !== undefined) data.city          = input.city;
+  if (input.city_id       !== undefined) data.city_id       = input.city_id;
   if (input.latitude      !== undefined) data.latitude      = input.latitude;
   if (input.longitude     !== undefined) data.longitude     = input.longitude;
   if (input.active        !== undefined) data.active        = input.active;

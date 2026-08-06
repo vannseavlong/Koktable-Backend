@@ -24,7 +24,16 @@ function toPublicRestaurant(
   return { ...publicRestaurant, locations, cuisines, hours };
 }
 
-export async function list() {
+export interface ListFilters {
+  city_id?: string;
+  district_id?: string;
+}
+
+// city_id/district_id live on restaurant_locations, not restaurants, and a restaurant can
+// have several locations — so this can't be pushed into the `restaurants` findMany
+// where-clause (equality-only, no join). Same shape as getActiveRestaurantIds below: fetch
+// everything active, then filter in JS by "at least one location matches".
+export async function list(filters: ListFilters = {}) {
   const ctx = adminContext();
   const restaurants = await ctx.table('restaurants').findMany({ where: { status: 'active' } }) as Record<string, unknown>[];
   const ids = restaurants.map((r) => r.restaurant_id as string);
@@ -35,16 +44,27 @@ export async function list() {
     restaurantHoursService.getForRestaurants(ids),
   ]);
 
+  const matchesFilters = (locations: Record<string, unknown>[]) =>
+    locations.some((loc) =>
+      (!filters.city_id     || loc.city_id     === filters.city_id) &&
+      (!filters.district_id || loc.district_id === filters.district_id)
+    );
+
   return {
-    restaurants: restaurants.map((r) => {
-      const id = r.restaurant_id as string;
-      return toPublicRestaurant(
-        r,
-        locationsByRestaurant.get(id) ?? [],
-        cuisinesByRestaurant.get(id) ?? [],
-        hoursByRestaurant.get(id) ?? []
-      );
-    }),
+    restaurants: restaurants
+      .filter((r) => {
+        if (!filters.city_id && !filters.district_id) return true;
+        return matchesFilters(locationsByRestaurant.get(r.restaurant_id as string) ?? []);
+      })
+      .map((r) => {
+        const id = r.restaurant_id as string;
+        return toPublicRestaurant(
+          r,
+          locationsByRestaurant.get(id) ?? [],
+          cuisinesByRestaurant.get(id) ?? [],
+          hoursByRestaurant.get(id) ?? []
+        );
+      }),
   };
 }
 

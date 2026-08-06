@@ -1,9 +1,5 @@
 import { defineTable, string, number, json, boolean } from 'longcelot-sheet-db';
 
-// A restaurant's physical site — one restaurant can have several (chains/branches).
-// Holds everything tied to a specific place: contact info a customer would call/visit,
-// and the directory-import facts (rating, price, photos) sourced from Google Places for
-// that one place, which don't make sense averaged/shared across a brand's locations.
 export default defineTable({
   name: 'restaurant_locations',
   actor: 'admin',
@@ -15,12 +11,14 @@ export default defineTable({
     contact_email:   string(),
     contact_phone:   string(),
     address:         string(),
-    city:            string(),
+    // FK into cities.ts/districts.ts rather than free text — see those schemas for why.
+    // district_id is a directory-import field (scripts/backfill-district.ts), same as
+    // rating/price_level/images below: blank for merchant-onboarded locations unless backfilled.
+    city_id:         string().ref('cities.city_id'),
+    district_id:     string().ref('districts.district_id'),
     latitude:        number(),
     longitude:       number(),
     active:          boolean().default(true).required(),
-    // Directory-import fields (populated for bulk-seeded listings; blank for
-    // merchant-onboarded locations unless backfilled).
     rating:          number(),
     rating_count:    number(),
     price_level:     number(),           // 1-4, Google Places scale; blank when unknown — source of truth

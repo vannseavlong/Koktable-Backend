@@ -16,6 +16,7 @@ pnpm db:validate                # Validate schemas/ against live sheets without 
 pnpm db:seed seeds/admin.ts --skip-existing        # Seed service catalogue into the admin sheet
 pnpm db:seed seeds/test-users.ts --skip-existing   # Seed 3 test user accounts (jamie/taylor/morgan @test.local, password Test1234!)
 pnpm db:mock-users [count]      # Create N mock user accounts for local testing (default 3, see scripts/mock-users.ts)
+pnpm db:backfill-district       # One-time: derive restaurant_locations.district from Places API (needs GOOGLE_PLACES_API_KEY)
 
 pnpm test                       # Run the vitest suite once (test/**/*.test.ts)
 pnpm test:watch                 # Same, in watch mode

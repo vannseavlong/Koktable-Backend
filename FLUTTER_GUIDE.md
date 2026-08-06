@@ -117,6 +117,20 @@ returned sorted by `sort_order` ascending.
 | GET | `/user/restaurants/:id/catalog-items` | — | → `{ items: CatalogItemModel[] }` (404 using the same rule as above; active items only, sorted by `sort_order`) |
 | GET | `/user/catalog-items` | — | → `{ items: CatalogItemModel[] }` — cross-restaurant feed, see below |
 
+`GET /user/restaurants` query params (both optional, combinable):
+
+| Param | Type | Behavior |
+|-------|------|----------|
+| `city_id` | string | Exact match against `locations[].city_id` — an id from `GET /user/cities` (section 3c), not a free-text city name. A restaurant matches if **any** of its locations is in that city. |
+| `district_id` | string | Exact match against `locations[].district_id` — an id from `GET /user/districts` (section 3c). Combining with `city_id` requires the *same* location to match both. |
+
+An unset or empty-string param is ignored (no filtering on that dimension), not a `400`. No pagination yet — the full matching set is returned in one response. Fetch `GET /user/cities`/`GET /user/districts` once to populate a filter dropdown, same pattern as Categories/Cuisines (sections 3a–3b) — resolve ids to display names client-side rather than the server returning free-text city/district strings.
+
+```
+GET /user/restaurants?city_id=city_pp&district_id=dist_bkk1
+→ { "restaurants": [ { "restaurant_id": "...", "locations": [ { "city_id": "city_pp", "district_id": "dist_bkk1", ... } ], ... } ] }
+```
+
 `restaurant` object: `{ restaurant_id, category_id, name, description, logo, banner, status, locations, cuisines, hours }`
 — note `application_id` and `owner_user_id` (present on the admin/merchant-scoped
 `restaurants` endpoints) are **stripped** here; they're internal to the admin invite/ownership
@@ -124,7 +138,10 @@ flow and not customer-facing. `category_id` may be `null`/absent for an uncatego
 see section 3a below for resolving it to a display name. `contact_email`/`contact_phone`/`address`/
 etc. moved off this object onto `locations` (a restaurant can have more than one physical site);
 `locations`, `cuisines`, and `hours` are all structured, not strings — see `ADMIN_API.md` § 5 for
-the shapes; none of them are modeled below, this guide predates the split. Note `hours` here stays
+the shapes; none of them are modeled below, this guide predates the split. `locations[].city_id`/
+`district_id` are FKs into `GET /user/cities`/`GET /user/districts` (section 3c) rather than free
+text. `district_id` is a directory-import field (see `scripts/backfill-district.ts`) — blank (`''`)
+until backfilled, same as `rating`/`price_level`/`images` for merchant-onboarded locations. Note `hours` here stays
 a restaurant-level field (unlike `ADMIN_API.md` § 5's admin view, where hours moved onto each
 `locations[]` entry) — the public mirror flattens a restaurant's location(s)' hours back onto the
 restaurant object, same as the merchant-facing endpoint (§ 5 "Merchant restaurant profile").
@@ -297,6 +314,65 @@ class CuisineModel {
         name:      j['name'] as String,
         icon:      j['icon'] as String? ?? '',
         sortOrder: (j['sort_order'] as num?)?.toInt() ?? 0,
+      );
+}
+```
+
+---
+
+### 3c. Cities & Districts — `GET /user/cities`, `GET /user/districts`
+
+Public, no auth. The canonical city/district (sublocality/neighborhood) vocabulary that
+`locations[].city_id`/`district_id` (section 3) — and the `city_id`/`district_id` filter params on
+`GET /user/restaurants` — point into, instead of free-text city/district strings. Fetch both once
+and resolve ids to display names client-side, same pattern as 3a Categories/3b Cuisines — this is
+what backs the "All cities"/"All districts" filter dropdowns. `districts` nests under `cities`
+(`district.city_id`); pass `?city_id=` to `GET /user/districts` to scope the list to one city for a
+cascading "pick a city, then pick a district within it" picker.
+
+```
+GET /user/cities
+→ { "cities": [ { "city_id": "city_pp", "name": "Phnom Penh", "active": true, "sort_order": 0 }, ... ] }
+
+GET /user/districts?city_id=city_pp
+→ { "districts": [ { "district_id": "dist_bkk1", "city_id": "city_pp", "name": "BKK1", "active": true, "sort_order": 0 }, ... ] }
+```
+Only `active: true` rows are returned, sorted by `sort_order` ascending — the same lists an admin
+manages at `/admin/cities`/`/admin/districts` (see `ADMIN_API.md` § 10).
+
+```dart
+class CityModel {
+  final String cityId;
+  final String name;
+  final int sortOrder;
+
+  const CityModel({required this.cityId, required this.name, required this.sortOrder});
+
+  factory CityModel.fromJson(Map<String, dynamic> j) => CityModel(
+        cityId:    j['city_id'] as String,
+        name:      j['name'] as String,
+        sortOrder: (j['sort_order'] as num?)?.toInt() ?? 0,
+      );
+}
+
+class DistrictModel {
+  final String districtId;
+  final String cityId;
+  final String name;
+  final int sortOrder;
+
+  const DistrictModel({
+    required this.districtId,
+    required this.cityId,
+    required this.name,
+    required this.sortOrder,
+  });
+
+  factory DistrictModel.fromJson(Map<String, dynamic> j) => DistrictModel(
+        districtId: j['district_id'] as String,
+        cityId:     j['city_id'] as String,
+        name:       j['name'] as String,
+        sortOrder:  (j['sort_order'] as num?)?.toInt() ?? 0,
       );
 }
 ```

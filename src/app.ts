@@ -15,7 +15,7 @@ export function createApp() {
 
   // ─── Middleware ─────────────────────────────────────────────────────────────
   app.use(cors({
-    origin:      [env.frontendUrl, env.adminFrontendUrl, env.merchantFrontendUrl],
+    origin:      [env.frontendUrl, env.adminFrontendUrl, env.merchantFrontendUrl, env.webFrontendUrl],
     credentials: true,
   }));
   app.use(express.json());

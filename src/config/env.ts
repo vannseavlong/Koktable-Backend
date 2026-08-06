@@ -33,6 +33,11 @@ export const env = {
   // Merchant-facing web app (invite acceptance page, Phase 3 — not built yet).
   // Only used to build the link embedded in the invite email.
   merchantFrontendUrl: process.env.MERCHANT_FRONTEND_URL ?? 'http://localhost:5174',
+  // Customer-facing Web app (../Web) — a separate frontend from the mobile app
+  // `frontendUrl` above (its custom URL scheme isn't a browser-navigable origin,
+  // so it can't cover this). Only used as a CORS allow-listed origin below;
+  // Web's own dev server defaults to this port (see Web/AGENTS.md).
+  webFrontendUrl: process.env.WEB_FRONTEND_URL ?? 'http://localhost:8443',
   jwtSecret:   requiredSecret('JWT_SECRET'),
   // HMAC key for hashing merchant invite tokens (src/lib/inviteToken.ts) — a real
   // secret, not derived from JWT_SECRET, so leaking one doesn't compromise the other.

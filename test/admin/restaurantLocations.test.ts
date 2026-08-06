@@ -21,7 +21,7 @@ function seedRestaurant(overrides: Partial<Record<string, unknown>> = {}) {
 function seedLocation(overrides: Partial<Record<string, unknown>> = {}) {
   fakeDb.seed('admin', 'restaurant_locations', [{
     location_id: 'loc_1', restaurant_id: 'restaurant_1', name: '', contact_email: '', contact_phone: '',
-    address: '', city: '', latitude: null, longitude: null, active: true,
+    address: '', city_id: '', latitude: null, longitude: null, active: true,
     ...overrides,
   }]);
 }
@@ -36,7 +36,7 @@ describe('/admin/restaurants/:id/locations', () => {
       const res = await request(app)
         .post('/admin/restaurants/restaurant_1/locations')
         .set(auth)
-        .send({ name: 'Downtown Branch', address: '123 Main St', city: 'Phnom Penh' });
+        .send({ name: 'Downtown Branch', address: '123 Main St', city_id: 'city_pp' });
 
       expect(res.status).toBe(201);
       expect(res.body.location.restaurant_id).toBe('restaurant_1');
@@ -64,11 +64,11 @@ describe('/admin/restaurants/:id/locations', () => {
       const res = await request(app)
         .patch('/admin/restaurants/restaurant_1/locations/loc_1')
         .set(auth)
-        .send({ name: 'Updated Name', city: 'Siem Reap' });
+        .send({ name: 'Updated Name', city_id: 'city_sr' });
 
       expect(res.status).toBe(200);
       expect(res.body.location.name).toBe('Updated Name');
-      expect(res.body.location.city).toBe('Siem Reap');
+      expect(res.body.location.city_id).toBe('city_sr');
     });
 
     it('404s updating a location for an unknown restaurant', async () => {

@@ -6,6 +6,8 @@ import usersSchema               from '../../schemas/admin/users';
 import credentialsSchema         from '../../schemas/admin/credentials';
 import categoriesSchema          from '../../schemas/admin/categories';
 import cuisinesSchema            from '../../schemas/admin/cuisines';
+import citiesSchema               from '../../schemas/admin/cities';
+import districtsSchema           from '../../schemas/admin/districts';
 import servicesSchema            from '../../schemas/admin/services';
 import restaurantsSchema               from '../../schemas/admin/restaurants';
 import restaurantLocationsSchema  from '../../schemas/admin/restaurant_locations';
@@ -62,6 +64,8 @@ adapter.registerSchemas([
   credentialsSchema,
   categoriesSchema,
   cuisinesSchema,
+  citiesSchema,
+  districtsSchema,
   servicesSchema,
   restaurantsSchema,
   restaurantLocationsSchema,

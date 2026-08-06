@@ -58,16 +58,24 @@ describe('/admin/restaurants', () => {
     expect(res.status).toBe(400);
   });
 
+  it('requires a reason to suspend a restaurant', async () => {
+    seedRestaurant({ status: 'active' });
+    const res = await request(app).patch('/admin/restaurants/restaurant_1').set(auth).send({ status: 'suspended' });
+    expect(res.status).toBe(400);
+  });
+
   it('suspends and reactivates a restaurant', async () => {
     seedRestaurant({ status: 'active' });
 
-    const suspend = await request(app).patch('/admin/restaurants/restaurant_1').set(auth).send({ status: 'suspended' });
+    const suspend = await request(app).patch('/admin/restaurants/restaurant_1').set(auth).send({ status: 'suspended', reason: 'Repeated no-shows unresolved' });
     expect(suspend.status).toBe(200);
     expect(suspend.body.restaurant.status).toBe('suspended');
+    expect(suspend.body.restaurant.suspension_reason).toBe('Repeated no-shows unresolved');
 
     const reactivate = await request(app).patch('/admin/restaurants/restaurant_1').set(auth).send({ status: 'active' });
     expect(reactivate.status).toBe(200);
     expect(reactivate.body.restaurant.status).toBe('active');
+    expect(reactivate.body.restaurant.suspension_reason).toBeFalsy();
   });
 
   it('404s updating an unknown restaurant', async () => {

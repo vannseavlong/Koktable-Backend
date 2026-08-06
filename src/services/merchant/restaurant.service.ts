@@ -13,7 +13,13 @@ import * as restaurantCuisinesService from '../restaurantCuisines.service';
 
 export interface UpdateRestaurantInput {
   name?: string;
+  name_zh?: string;
+  name_km?: string;
+  name_ko?: string;
   description?: string;
+  description_zh?: string;
+  description_km?: string;
+  description_ko?: string;
   logo?: string;
   banner?: string;
   category_id?: string;
@@ -43,7 +49,13 @@ export async function updateOwn(restaurantId: string, body: UpdateRestaurantInpu
 
   const data: Record<string, unknown> = {};
   if (body.name        !== undefined) data.name        = body.name;
+  if (body.name_zh     !== undefined) data.name_zh     = body.name_zh;
+  if (body.name_km     !== undefined) data.name_km     = body.name_km;
+  if (body.name_ko     !== undefined) data.name_ko     = body.name_ko;
   if (body.description !== undefined) data.description = body.description;
+  if (body.description_zh !== undefined) data.description_zh = body.description_zh;
+  if (body.description_km !== undefined) data.description_km = body.description_km;
+  if (body.description_ko !== undefined) data.description_ko = body.description_ko;
   if (body.logo        !== undefined) data.logo        = body.logo;
   if (body.banner      !== undefined) data.banner      = body.banner;
   if (body.category_id !== undefined) data.category_id = body.category_id;

@@ -104,4 +104,4 @@ On `^0.1.41` (upgraded from `0.1.18` — see `CHANGELOG.md` in the package for t
 
 ## Related project
 
-`FLUTTER_GUIDE.md` in this repo is the API reference written for this API's mobile/web client (endpoint shapes, Dart model snippets) — update it when changing request/response shapes.
+`WEB_API_GUIDE.md` in this repo is the API reference written for the web booking client (endpoint shapes, TypeScript snippets) — update it when changing request/response shapes.

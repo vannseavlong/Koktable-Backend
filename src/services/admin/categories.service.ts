@@ -8,9 +8,13 @@ interface ListCategoriesQuery {
 
 interface CategoryInput {
   name?: string;
+  name_zh?: string;
+  name_km?: string;
+  name_ko?: string;
   icon?: string;
   active?: boolean;
   sort_order?: number;
+  moderation_status?: string;
 }
 
 function validateCreate(body: CategoryInput): string | null {
@@ -48,9 +52,13 @@ export async function create(body: CategoryInput) {
   await ctx.table('categories').create({
     category_id,
     name:       body.name,
+    name_zh:    body.name_zh ?? '',
+    name_km:    body.name_km ?? '',
+    name_ko:    body.name_ko ?? '',
     icon:       body.icon ?? '',
     active:     body.active ?? true,
     sort_order: body.sort_order ?? 0,
+    moderation_status: 'approved', // admin-created — no queue needed
   });
 
   return getById(category_id);
@@ -65,9 +73,18 @@ export async function update(id: string, body: CategoryInput) {
 
   const data: Record<string, unknown> = {};
   if (body.name       !== undefined) data.name       = body.name;
+  if (body.name_zh    !== undefined) data.name_zh    = body.name_zh;
+  if (body.name_km    !== undefined) data.name_km    = body.name_km;
+  if (body.name_ko    !== undefined) data.name_ko    = body.name_ko;
   if (body.icon       !== undefined) data.icon       = body.icon;
   if (body.active     !== undefined) data.active     = body.active;
   if (body.sort_order !== undefined) data.sort_order = body.sort_order;
+  if (body.moderation_status !== undefined) {
+    if (!['approved', 'pending', 'rejected'].includes(body.moderation_status)) {
+      throw new AppError(400, 'moderation_status must be one of: approved, pending, rejected');
+    }
+    data.moderation_status = body.moderation_status;
+  }
 
   if (Object.keys(data).length === 0) {
     throw new AppError(400, 'No updatable fields provided');

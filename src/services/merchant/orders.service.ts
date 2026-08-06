@@ -10,14 +10,17 @@ interface ListOrdersQuery {
   offset?: number;
 }
 
-// Same lifecycle as admin/reservations.service.ts's TRANSITIONS — merchants get the
-// same status-advancement rights admin already has, just scoped to their own restaurant.
+// Same lifecycle as admin/reservations.service.ts's TRANSITIONS, minus 'forwarded' —
+// forwarding an unregistered restaurant's booking is an admin-only action (a merchant
+// with a dashboard is, by definition, already registered).
 const TRANSITIONS: Record<string, string[]> = {
-  pending:   ['confirmed', 'cancelled'],
-  confirmed: ['active', 'cancelled'],
-  active:    ['completed', 'cancelled'],
-  completed: [],
-  cancelled: [],
+  pending:    ['waitlisted', 'confirmed', 'cancelled'],
+  waitlisted: ['confirmed', 'cancelled'],
+  confirmed:  ['active', 'cancelled'],
+  active:     ['completed', 'no_show', 'cancelled'],
+  completed:  [],
+  no_show:    [],
+  cancelled:  [],
 };
 
 function withOwner(reservation: Record<string, unknown>, user: Record<string, unknown>): Record<string, unknown> {

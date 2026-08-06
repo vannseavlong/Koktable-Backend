@@ -11,15 +11,21 @@ interface ListReservationsQuery {
   offset?: number;
 }
 
-// Reservation transition rules mirror the lifecycle documented in FLUTTER_GUIDE.md.
+// Reservation transition rules mirror the lifecycle documented in WEB_API_GUIDE.md.
 // Regular users may only reach 'cancelled' via PATCH /user/reservations/:id; every
 // other transition (confirmed -> active -> completed) is admin-only, driven here.
+// 'forwarded' is admin-only (see reservationForwards.service.ts, which sets it as a
+// side effect of logging a forward attempt — not reachable via this plain status PATCH);
+// listed here only so TRANSITIONS documents its onward moves.
 const TRANSITIONS: Record<string, string[]> = {
-  pending:   ['confirmed', 'cancelled'],
-  confirmed: ['active', 'cancelled'],
-  active:    ['completed', 'cancelled'],
-  completed: [],
-  cancelled: [],
+  pending:    ['waitlisted', 'forwarded', 'confirmed', 'cancelled'],
+  waitlisted: ['confirmed', 'cancelled'],
+  forwarded:  ['confirmed', 'cancelled'],
+  confirmed:  ['active', 'cancelled'],
+  active:     ['completed', 'no_show', 'cancelled'],
+  completed:  [],
+  no_show:    [],
+  cancelled:  [],
 };
 
 function withOwner(reservation: Record<string, unknown>, user: Record<string, unknown>): Record<string, unknown> {
@@ -84,6 +90,9 @@ export async function updateStatus(id: string, userId: string, status: string) {
   const validStatuses = Object.keys(TRANSITIONS);
   if (!status || !validStatuses.includes(status)) {
     throw new AppError(400, `status must be one of: ${validStatuses.join(', ')}`);
+  }
+  if (status === 'forwarded') {
+    throw new AppError(400, 'Use POST /admin/reservations/:id/forwards to forward a booking');
   }
 
   const user = await findUser(userId);

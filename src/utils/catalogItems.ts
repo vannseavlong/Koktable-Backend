@@ -2,7 +2,13 @@ export const CATALOG_ITEM_TYPES = ['service', 'product'];
 
 export interface CatalogItemInput {
   name?: string;
+  name_zh?: string;
+  name_km?: string;
+  name_ko?: string;
   description?: string;
+  description_zh?: string;
+  description_km?: string;
+  description_ko?: string;
   item_type?: string;
   price_from?: number;
   icon?: string;
@@ -42,7 +48,13 @@ export function validateCatalogItemUpdate(body: CatalogItemInput): string | null
 export function catalogItemUpdateData(body: CatalogItemInput): Record<string, unknown> {
   const data: Record<string, unknown> = {};
   if (body.name           !== undefined) data.name           = body.name;
+  if (body.name_zh        !== undefined) data.name_zh        = body.name_zh;
+  if (body.name_km        !== undefined) data.name_km        = body.name_km;
+  if (body.name_ko        !== undefined) data.name_ko        = body.name_ko;
   if (body.description    !== undefined) data.description    = body.description;
+  if (body.description_zh !== undefined) data.description_zh = body.description_zh;
+  if (body.description_km !== undefined) data.description_km = body.description_km;
+  if (body.description_ko !== undefined) data.description_ko = body.description_ko;
   if (body.item_type      !== undefined) data.item_type      = body.item_type;
   if (body.price_from     !== undefined) data.price_from     = Number(body.price_from);
   if (body.icon           !== undefined) data.icon           = body.icon;

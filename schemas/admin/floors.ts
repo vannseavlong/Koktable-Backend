@@ -1,4 +1,5 @@
 import { defineTable, string, number, boolean } from 'longcelot-sheet-db';
+import { localeColumns } from '../lib/i18n';
 
 // A physical floor/level at one restaurant_location (e.g. "Ground Floor", "Rooftop").
 // Every location has at least one — even a single-floor site gets one row (e.g.
@@ -14,6 +15,7 @@ export default defineTable({
     restaurant_id: string().required().ref('restaurants.restaurant_id'),
     location_id:   string().required().ref('restaurant_locations.location_id'),
     name:          string().required(),
+    ...localeColumns('name'),
     sort_order:    number().default(0),
     active:        boolean().default(true).required(),
   },

@@ -10,6 +10,9 @@ interface ListDistrictsQuery {
 interface DistrictInput {
   city_id?: string;
   name?: string;
+  name_zh?: string;
+  name_km?: string;
+  name_ko?: string;
   active?: boolean;
   sort_order?: number;
 }
@@ -61,6 +64,9 @@ export async function create(body: DistrictInput) {
     district_id,
     city_id:    body.city_id,
     name:       body.name,
+    name_zh:    body.name_zh ?? '',
+    name_km:    body.name_km ?? '',
+    name_ko:    body.name_ko ?? '',
     active:     body.active ?? true,
     sort_order: body.sort_order ?? 0,
   });
@@ -81,6 +87,9 @@ export async function update(id: string, body: DistrictInput) {
   const data: Record<string, unknown> = {};
   if (body.city_id    !== undefined) data.city_id    = body.city_id;
   if (body.name       !== undefined) data.name       = body.name;
+  if (body.name_zh    !== undefined) data.name_zh    = body.name_zh;
+  if (body.name_km    !== undefined) data.name_km    = body.name_km;
+  if (body.name_ko    !== undefined) data.name_ko    = body.name_ko;
   if (body.active     !== undefined) data.active     = body.active;
   if (body.sort_order !== undefined) data.sort_order = body.sort_order;
 

@@ -15,6 +15,6 @@ export const getById = asyncHandler(async (req: Request, res: Response) => {
 });
 
 export const updateStatus = asyncHandler(async (req: Request, res: Response) => {
-  const restaurant = await adminRestaurantsService.updateStatus(req.params.id as string, req.body);
+  const restaurant = await adminRestaurantsService.updateStatus(req.params.id as string, req.body, req.user!.user_id);
   res.json({ restaurant });
 });

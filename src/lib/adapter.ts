@@ -19,6 +19,27 @@ import tablesSchema                from '../../schemas/admin/tables';
 import catalogItemsSchema        from '../../schemas/admin/catalog_items';
 import merchantApplicationsSchema from '../../schemas/admin/merchant_applications';
 import merchantInvitesSchema     from '../../schemas/admin/merchant_invites';
+import reservationForwardsSchema from '../../schemas/admin/reservation_forwards';
+import restaurantStatusHistorySchema from '../../schemas/admin/restaurant_status_history';
+import restaurantBookingPoliciesSchema from '../../schemas/admin/restaurant_booking_policies';
+import restaurantHoursExceptionsSchema from '../../schemas/admin/restaurant_hours_exceptions';
+import reviewsSchema             from '../../schemas/admin/reviews';
+import reservationTokensSchema   from '../../schemas/admin/reservation_tokens';
+import rolesSchema               from '../../schemas/admin/roles';
+import modulesSchema             from '../../schemas/admin/modules';
+import actionsSchema             from '../../schemas/admin/actions';
+import moduleActionsSchema       from '../../schemas/admin/module_actions';
+import rolePermissionsSchema     from '../../schemas/admin/role_permissions';
+import restaurantStaffSchema     from '../../schemas/admin/restaurant_staff';
+import subscriptionsSchema       from '../../schemas/admin/subscriptions';
+import invoicesSchema            from '../../schemas/admin/invoices';
+import commissionChargesSchema   from '../../schemas/admin/commission_charges';
+import platformSettingsSchema    from '../../schemas/admin/platform_settings';
+import notificationTemplatesSchema from '../../schemas/admin/notification_templates';
+import featuredRestaurantsSchema from '../../schemas/admin/featured_restaurants';
+import supportTicketsSchema      from '../../schemas/admin/support_tickets';
+import supportTicketMessagesSchema from '../../schemas/admin/support_ticket_messages';
+import restaurantReportsSchema   from '../../schemas/admin/restaurant_reports';
 import profileSchema     from '../../schemas/user/profile';
 import reservationsSchema    from '../../schemas/user/reservations';
 
@@ -77,6 +98,27 @@ adapter.registerSchemas([
   catalogItemsSchema,
   merchantApplicationsSchema,
   merchantInvitesSchema,
+  reservationForwardsSchema,
+  restaurantStatusHistorySchema,
+  restaurantBookingPoliciesSchema,
+  restaurantHoursExceptionsSchema,
+  reviewsSchema,
+  reservationTokensSchema,
+  rolesSchema,
+  modulesSchema,
+  actionsSchema,
+  moduleActionsSchema,
+  rolePermissionsSchema,
+  restaurantStaffSchema,
+  subscriptionsSchema,
+  invoicesSchema,
+  commissionChargesSchema,
+  platformSettingsSchema,
+  notificationTemplatesSchema,
+  featuredRestaurantsSchema,
+  supportTicketsSchema,
+  supportTicketMessagesSchema,
+  restaurantReportsSchema,
   profileSchema,
   reservationsSchema,
 ]);

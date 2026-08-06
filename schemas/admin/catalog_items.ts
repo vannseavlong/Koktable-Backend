@@ -1,4 +1,5 @@
 import { defineTable, string, number, boolean } from 'longcelot-sheet-db';
+import { localeColumns } from '../lib/i18n';
 
 export default defineTable({
   name: 'catalog_items',
@@ -9,7 +10,9 @@ export default defineTable({
     restaurant_id:     string().required().ref('restaurants.restaurant_id'),
     item_type:   string().enum(['service', 'product']).default('service').required(),
     name:        string().required(),
+    ...localeColumns('name'),
     description: string(),
+    ...localeColumns('description'),
     price_from:  number().min(0).required(),
     icon:        string(),
     color:       string(),

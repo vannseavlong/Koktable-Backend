@@ -1,4 +1,5 @@
 import { defineTable, string, number, boolean } from 'longcelot-sheet-db';
+import { localeColumns } from '../lib/i18n';
 
 // A section within a floor (e.g. "Main Hall", "Private Room A", "Patio"). restaurant_id
 // and location_id are denormalized from floor_id (same tradeoff as catalog_items.restaurant_id)
@@ -16,6 +17,7 @@ export default defineTable({
     location_id:   string().required().ref('restaurant_locations.location_id'),
     floor_id:      string().required().ref('floors.floor_id'),
     name:          string().required(),
+    ...localeColumns('name'),
     sort_order:    number().default(0),
     active:        boolean().default(true).required(),
   },

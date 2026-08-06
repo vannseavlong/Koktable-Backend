@@ -72,9 +72,9 @@ describe('GET /user/categories (public)', () => {
 
   it('returns only active categories, sorted by sort_order', async () => {
     fakeDb.seed('admin', 'categories', [
-      { category_id: 'c1', name: 'A', active: true,  sort_order: 1 },
-      { category_id: 'c2', name: 'B', active: false, sort_order: 0 },
-      { category_id: 'c3', name: 'C', active: true,  sort_order: 0 },
+      { category_id: 'c1', name: 'A', active: true,  sort_order: 1, moderation_status: 'approved' },
+      { category_id: 'c2', name: 'B', active: false, sort_order: 0, moderation_status: 'approved' },
+      { category_id: 'c3', name: 'C', active: true,  sort_order: 0, moderation_status: 'approved' },
     ]);
     const res = await request(app).get('/user/categories');
     expect(res.status).toBe(200);

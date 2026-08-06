@@ -24,11 +24,23 @@ export default defineTable({
     // table-reservation mode — blank for the legacy stay-based service_id/item_id modes.
     reservation_time: string(),
     notes:        string(),
-    status:       string().enum(['pending', 'confirmed', 'active', 'completed', 'cancelled']).default('pending').required(),
+    // 'forwarded' and 'no_show' are admin/merchant-only transitions — see TRANSITIONS in
+    // admin/reservations.service.ts and merchant/orders.service.ts. 'forwarded' means an
+    // admin has sent this booking to an unregistered restaurant (see
+    // schemas/admin/reservation_forwards.ts for the per-attempt log); a registered
+    // restaurant's own dashboard never sets it.
+    // 'waitlisted' = merchant has no free table for the requested slot right now
+    // (Overview.md §2); moves to 'confirmed' once one frees up, same as any other status.
+    status:       string().enum(['pending', 'waitlisted', 'forwarded', 'confirmed', 'active', 'completed', 'no_show', 'cancelled']).default('pending').required(),
     // Denormalized from the catalog item's restaurant at reservation-creation time (mirrors
     // service_name above). Populated when POST /user/reservations is passed `item_id`
     // (a restaurant-scoped catalog_items row) instead of `service_id`; stays blank for
     // reservations against the legacy single-restaurant `services` table. See reservations.service.ts.
     restaurant_id:      string(),
+    // Table assignment (Overview.md §2) — no .ref('tables.table_id'): tables is an
+    // admin-actor table, reservations is user-actor (per-user sheet); this adapter can't
+    // validate an FK across physically separate sheets, same limitation as restaurant_id
+    // above. Blank until a merchant assigns a table.
+    table_id:     string(),
   },
 });

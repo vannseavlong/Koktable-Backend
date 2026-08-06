@@ -6,7 +6,7 @@ import { adminContext } from '../lib/adapter';
 export async function list() {
   const ctx = adminContext();
   const cuisines = await ctx.table('cuisines').findMany({
-    where:   { active: true },
+    where:   { active: true, moderation_status: 'approved' },
     orderBy: 'sort_order',
     order:   'asc',
   });

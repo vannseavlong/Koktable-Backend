@@ -1,4 +1,5 @@
 import { defineTable, string, number, boolean } from 'longcelot-sheet-db';
+import { localeColumns } from '../lib/i18n';
 
 // Admin-managed service catalogue displayed on the Home screen.
 export default defineTable({
@@ -8,7 +9,9 @@ export default defineTable({
   columns: {
     service_id:  string().required().unique().primary(),
     name:        string().required(),
+    ...localeColumns('name'),
     description: string(),
+    ...localeColumns('description'),
     price_from:  number().min(0).required(),
     icon:        string().required(),    // icon name / emoji key used by the mobile app
     color:       string().required(),    // background hex colour for the card

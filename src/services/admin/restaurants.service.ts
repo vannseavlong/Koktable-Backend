@@ -1,3 +1,4 @@
+import { nanoid } from 'nanoid';
 import { adminContext } from '../../lib/adapter';
 import { AppError } from '../../utils/AppError';
 import * as restaurantHoursService from '../restaurantHours.service';
@@ -10,6 +11,7 @@ interface ListRestaurantsQuery {
 
 interface UpdateRestaurantStatusInput {
   status?: string;
+  reason?: string;
 }
 
 const VALID_STATUSES = ['pending', 'active', 'suspended'];
@@ -88,18 +90,34 @@ export async function getById(id: string) {
   return restaurant;
 }
 
-export async function updateStatus(id: string, input: UpdateRestaurantStatusInput) {
-  const { status } = input;
+export async function updateStatus(id: string, input: UpdateRestaurantStatusInput, changedBy: string) {
+  const { status, reason } = input;
   if (!status || !VALID_STATUSES.includes(status)) {
     throw new AppError(400, `status must be one of: ${VALID_STATUSES.join(', ')}`);
   }
+  // Overview.md §1.2: suspend/reactivate needs a required, logged reason.
+  if (status === 'suspended' && !reason) {
+    throw new AppError(400, 'reason is required to suspend a restaurant');
+  }
 
   const ctx = adminContext();
-  const existing = await ctx.table('restaurants').findOne({ where: { restaurant_id: id } });
+  const existing = await ctx.table('restaurants').findOne({ where: { restaurant_id: id } }) as Record<string, unknown> | null;
   if (!existing) {
     throw new AppError(404, 'Restaurant not found');
   }
 
-  await ctx.table('restaurants').update({ where: { restaurant_id: id }, data: { status } });
+  const suspension_reason = status === 'suspended' ? (reason as string) : '';
+  await ctx.table('restaurants').update({ where: { restaurant_id: id }, data: { status, suspension_reason } });
+
+  await ctx.table('restaurant_status_history').create({
+    history_id:    `rsh_${nanoid(10)}`,
+    restaurant_id: id,
+    from_status:   existing.status,
+    to_status:     status,
+    reason:        reason ?? '',
+    changed_by:    changedBy,
+    changed_at:    new Date().toISOString(),
+  });
+
   return getWithDetails(id);
 }

@@ -5,6 +5,9 @@ import { withDerivedPriceSymbol } from '../utils/restaurantPricing';
 
 export interface LocationInput {
   name?: string;
+  name_zh?: string;
+  name_km?: string;
+  name_ko?: string;
   contact_email?: string;
   contact_phone?: string;
   address?: string;
@@ -50,6 +53,9 @@ export async function create(restaurantId: string, input: LocationInput) {
     location_id,
     restaurant_id: restaurantId,
     name:          input.name ?? '',
+    name_zh:       input.name_zh ?? '',
+    name_km:       input.name_km ?? '',
+    name_ko:       input.name_ko ?? '',
     contact_email: input.contact_email ?? '',
     contact_phone: input.contact_phone ?? '',
     address:       input.address ?? '',
@@ -84,6 +90,9 @@ export async function update(locationId: string, input: LocationInput) {
 
   const data: Record<string, unknown> = {};
   if (input.name          !== undefined) data.name          = input.name;
+  if (input.name_zh       !== undefined) data.name_zh       = input.name_zh;
+  if (input.name_km       !== undefined) data.name_km       = input.name_km;
+  if (input.name_ko       !== undefined) data.name_ko       = input.name_ko;
   if (input.contact_email !== undefined) data.contact_email = input.contact_email;
   if (input.contact_phone !== undefined) data.contact_phone = input.contact_phone;
   if (input.address       !== undefined) data.address       = input.address;

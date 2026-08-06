@@ -13,7 +13,10 @@ export default defineTable({
     contact_email:    string().required(),
     contact_phone:    string(),
     description:      string(),
-    status:           string().enum(['pending', 'approved', 'rejected']).default('pending').required(),
+    // Business license/ID upload (Overview.md §1.2) — a DriveStorageAdapter URL, same as
+    // restaurants.logo/catalog_items.image.
+    document_url:     string(),
+    status:           string().enum(['pending', 'under_review', 'approved', 'rejected']).default('pending').required(),
     rejection_reason: string(),
   },
 });

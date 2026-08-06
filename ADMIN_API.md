@@ -8,7 +8,7 @@ not `GET /reservations`. Every route requires:
 Authorization: Bearer <jwt_token>
 ```
 where the JWT belongs to a `users` row with `role: "admin"` (returned by `POST /user/auth/login`,
-see `FLUTTER_GUIDE.md` for the auth contract — it's the same login endpoint, just a different
+see `WEB_API_GUIDE.md` for the auth contract — it's the same login endpoint, just a different
 account role). Non-admin tokens get `403 { "error": "Admin access required" }`.
 
 ### Getting an admin account
@@ -162,7 +162,7 @@ sheet to read — the list response already includes it on every row, so the adm
 forward from there (e.g. as a hidden field alongside the reservation id, not just the id alone).
 
 ### AdminReservation object (response)
-Same shape as the user-facing `ReservationModel` in `FLUTTER_GUIDE.md`, plus three owner fields:
+Same shape as the user-facing `ReservationModel` in `WEB_API_GUIDE.md`, plus three owner fields:
 ```json
 {
   "reservation_id":   "rsv_sjK8C8N7qc",
@@ -191,7 +191,7 @@ pending → confirmed → active → completed
 ```
 `completed` and `cancelled` are terminal — any other transition attempt returns `409` with the
 current and attempted status in the message. This is exactly the admin-side transition
-`FLUTTER_GUIDE.md` notes isn't exposed on the user-facing `PATCH /user/reservations/:id` (which only
+`WEB_API_GUIDE.md` notes isn't exposed on the user-facing `PATCH /user/reservations/:id` (which only
 allows `notes` and self-service `cancelled`).
 
 `GET /admin/reservations` has no server-side sort override — results are always newest-first by
@@ -368,7 +368,7 @@ drifting into inconsistent spellings for the same place. `district_id` is popula
 resolving (or creating) the matching `districts` row scoped to the location's `city_id` — not
 merchant/admin-editable via `LocationInput`, same as the other directory-import fields. `city_id` is
 merchant/admin-editable via `LocationInput` below, unlike free-text `city` before it. `GET
-/user/restaurants` accepts `city_id`/`district_id` as filter query params — see `FLUTTER_GUIDE.md`
+/user/restaurants` accepts `city_id`/`district_id` as filter query params — see `WEB_API_GUIDE.md`
 § 3. See section 9a below for the `cities`/`districts` list endpoints.
 
 **Adding/editing locations** (admin-only — merchants can edit locations they already have via
@@ -436,7 +436,7 @@ through the merchant application/invite flow. `google_place_id` is unique — it
 
 **Public read-only mirror**: `GET /user/restaurants` and `GET /user/restaurants/:id` (no auth) expose only
 `active` restaurants to end customers, with `application_id`/`owner_user_id` stripped — see
-`FLUTTER_GUIDE.md` section 3. `pending`/`suspended` restaurants 404 there exactly like an unknown
+`WEB_API_GUIDE.md` section 3. `pending`/`suspended` restaurants 404 there exactly like an unknown
 `restaurant_id`, so their existence/status is never leaked publicly. Unlike this admin section,
 the public mirror still returns a **restaurant-level** `hours` field (not nested under
 `locations`) — it's the flattened union of the restaurant's location(s)' hours
@@ -504,7 +504,7 @@ from the string `"true"`/`"false"` back to a boolean when sent this way.
 ```
 
 ### Reservation against a catalog item
-`POST /user/reservations` (see `FLUTTER_GUIDE.md`) now accepts `item_id` as an alternative to
+`POST /user/reservations` (see `WEB_API_GUIDE.md`) now accepts `item_id` as an alternative to
 `service_id` — exactly one of the two is required, not both. Passing `item_id` looks up the
 catalog item, denormalizes its `name` onto `reservation.service_name` and its `restaurant_id` onto
 `reservation.restaurant_id`; an inactive (`active: false`) item is rejected with `400`. The mobile app
@@ -514,7 +514,7 @@ API accepts it today.
 **Public read-only mirror**: `GET /user/restaurants/:id/catalog-items` (no auth) exists now for that
 Phase 4 restaurant-browsing UI — `active: true` items only, for the given restaurant, sorted by `sort_order`.
 404s (restaurant not found or not active) using the same rule as the `/user/restaurants/:id` mirror above.
-See `FLUTTER_GUIDE.md` section 3.
+See `WEB_API_GUIDE.md` section 3.
 
 ### Merchant restaurant profile — `/merchant/restaurant`
 

@@ -72,9 +72,9 @@ describe('GET /user/cuisines (public)', () => {
 
   it('returns only active cuisines, sorted by sort_order', async () => {
     fakeDb.seed('admin', 'cuisines', [
-      { cuisine_id: 'c1', name: 'A', active: true,  sort_order: 1 },
-      { cuisine_id: 'c2', name: 'B', active: false, sort_order: 0 },
-      { cuisine_id: 'c3', name: 'C', active: true,  sort_order: 0 },
+      { cuisine_id: 'c1', name: 'A', active: true,  sort_order: 1, moderation_status: 'approved' },
+      { cuisine_id: 'c2', name: 'B', active: false, sort_order: 0, moderation_status: 'approved' },
+      { cuisine_id: 'c3', name: 'C', active: true,  sort_order: 0, moderation_status: 'approved' },
     ]);
     const res = await request(app).get('/user/cuisines');
     expect(res.status).toBe(200);

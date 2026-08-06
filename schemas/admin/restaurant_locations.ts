@@ -1,4 +1,5 @@
 import { defineTable, string, number, json, boolean } from 'longcelot-sheet-db';
+import { localeColumns } from '../lib/i18n';
 
 export default defineTable({
   name: 'restaurant_locations',
@@ -8,6 +9,7 @@ export default defineTable({
     location_id:     string().required().unique().primary(),
     restaurant_id:   string().required().ref('restaurants.restaurant_id'),
     name:            string(),           // e.g. "Downtown Branch"; blank for a single-location restaurant
+    ...localeColumns('name'),
     contact_email:   string(),
     contact_phone:   string(),
     address:         string(),

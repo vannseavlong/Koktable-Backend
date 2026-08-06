@@ -1,42 +1,38 @@
 import { env } from '../config/env';
+import { sendEmailJs, isEmailJsConfigured, EmailJsError } from '../lib/emailjs';
 
-// Sending the merchant invite email is best-effort: it's a side effect of an admin's
-// approve action, not the state change itself (the restaurant/invite rows are already
-// committed by the time this runs), so a delivery failure shouldn't fail the request —
-// it's logged instead. In non-production, the invite link is always console-logged too,
-// so the flow is testable without real EmailJS credentials configured.
+// KokTable-specific email helpers. The actual EmailJS client (src/lib/emailjs.ts)
+// is generic/reusable — this file just supplies our template params and keeps the
+// "best effort, never throw" behavior invite emails want (a failed send shouldn't
+// fail the approve/resend request that triggered it).
+//
+// Add more helpers the same way for future email kinds (password reset, welcome,
+// etc.) — either point each at its own EmailJS template via `templateId`, or reuse
+// one template with a `kind`/`heading` param and branch inside it.
+
 export async function sendMerchantInviteEmail(to: string, restaurantName: string, inviteUrl: string): Promise<void> {
   if (env.nodeEnv !== 'production') {
     console.log(`[email.service] merchant invite link for ${to} (${restaurantName}): ${inviteUrl}`);
   }
 
-  const { serviceId, templateId, publicKey, privateKey } = env.emailjs;
-  if (!serviceId || !templateId || !publicKey || !privateKey) {
+  if (!isEmailJsConfigured(env.emailjs)) {
     console.warn('[email.service] EmailJS not configured — skipping invite email send.');
     return;
   }
 
   try {
-    const res = await fetch('https://api.emailjs.com/api/v1.0/email/send', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        service_id:  serviceId,
-        template_id: templateId,
-        user_id:     publicKey,
-        accessToken: privateKey,
-        template_params: {
-          to_email:   to,
-          restaurant_name:  restaurantName,
-          invite_url: inviteUrl,
-        },
-      }),
+    await sendEmailJs(env.emailjs, {
+      templateParams: {
+        to_email: to,
+        restaurant_name: restaurantName,
+        invite_url: inviteUrl,
+      },
     });
-
-    if (!res.ok) {
-      console.error(`[email.service] EmailJS send failed: ${res.status} ${await res.text()}`);
-    }
   } catch (err) {
-    console.error('[email.service] EmailJS send threw:', err);
+    if (err instanceof EmailJsError) {
+      console.error(`[email.service] EmailJS send failed: ${err.status ?? ''} ${err.body ?? err.message}`);
+    } else {
+      console.error('[email.service] EmailJS send threw:', err);
+    }
   }
 }

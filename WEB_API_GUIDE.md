@@ -100,10 +100,13 @@ function parseService(j: any): Service {
 ## 3. Restaurants & catalog — `/user/restaurants`
 
 Public browsing of merchant restaurants and their catalogs — no auth required for any
-route in this section. Only `status: 'active'` restaurants are visible; a restaurant that's
-`pending` or `suspended` 404s exactly like an unknown `restaurant_id` (its existence/status
-isn't leaked). Catalog items are similarly filtered to `active: true` only, and are
-returned sorted by `sort_order` ascending.
+route in this section. `status: 'active'` and `status: 'unclaimed'` restaurants are both
+visible (`unclaimed` covers directory-imported listings and admin-approved applications
+whose owner hasn't activated an account yet — see the app's `restaurants` schema comment
+and Overview.md §7.1; still fully searchable and bookable). A restaurant that's `pending`
+or `suspended` 404s exactly like an unknown `restaurant_id` (its existence/status isn't
+leaked). Catalog items are similarly filtered to `active: true` only, and are returned
+sorted by `sort_order` ascending.
 
 | Method | Endpoint | Auth | Body → Response |
 |--------|----------|------|------------------|
@@ -173,7 +176,7 @@ interface Restaurant {
   descriptionZh: string; descriptionKm: string; descriptionKo: string;
   logo: string;
   banner: string; // '' if the merchant hasn't set one
-  status: string; // always "active" for anything the public API returns
+  status: string; // "active" or "unclaimed" for anything the public API returns
   categoryId: string; // '' if uncategorized
   // locations/cuisines/hours on the wire (see ADMIN_API.md § 5) — not modeled here, this
   // guide predates the split; read them directly from the response if/when this is revived.

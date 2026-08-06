@@ -14,7 +14,7 @@ interface UpdateRestaurantStatusInput {
   reason?: string;
 }
 
-const VALID_STATUSES = ['pending', 'active', 'suspended'];
+const VALID_STATUSES = ['pending', 'unclaimed', 'active', 'suspended'];
 
 // Hours are embedded per-location (location.hours), not as a restaurant-level hours[]
 // field — a restaurant is no longer assumed to share one set of hours across all its

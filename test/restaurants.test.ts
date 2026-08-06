@@ -20,15 +20,15 @@ function seedRestaurant(overrides: Partial<Record<string, unknown>> = {}) {
 describe('GET /user/restaurants', () => {
   beforeEach(() => fakeDb.reset());
 
-  it('lists only active restaurants', async () => {
+  it('lists only active and unclaimed restaurants', async () => {
     seedRestaurant({ restaurant_id: 'restaurant_1', status: 'active' });
     fakeDb.seed('admin', 'restaurants', [{ restaurant_id: 'restaurant_2', name: 'Pending Restaurant', status: 'pending' }]);
     fakeDb.seed('admin', 'restaurants', [{ restaurant_id: 'restaurant_3', name: 'Suspended Restaurant', status: 'suspended' }]);
+    fakeDb.seed('admin', 'restaurants', [{ restaurant_id: 'restaurant_4', name: 'Unclaimed Restaurant', status: 'unclaimed' }]);
 
     const res = await request(app).get('/user/restaurants');
     expect(res.status).toBe(200);
-    expect(res.body.restaurants).toHaveLength(1);
-    expect(res.body.restaurants[0].restaurant_id).toBe('restaurant_1');
+    expect(res.body.restaurants.map((r: { restaurant_id: string }) => r.restaurant_id).sort()).toEqual(['restaurant_1', 'restaurant_4']);
   });
 
   it('strips application_id and owner_user_id from the public response', async () => {
@@ -106,6 +106,13 @@ describe('GET /user/restaurants/:id', () => {
     seedRestaurant({ status: 'pending' });
     const res = await request(app).get('/user/restaurants/restaurant_1');
     expect(res.status).toBe(404);
+  });
+
+  it('returns an unclaimed restaurant — bookable before any owner registers', async () => {
+    seedRestaurant({ status: 'unclaimed', owner_user_id: '' });
+    const res = await request(app).get('/user/restaurants/restaurant_1');
+    expect(res.status).toBe(200);
+    expect(res.body.restaurant).toMatchObject({ restaurant_id: 'restaurant_1', status: 'unclaimed' });
   });
 
   it('404s for a suspended restaurant', async () => {

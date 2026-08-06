@@ -105,7 +105,10 @@ export async function approve(id: string) {
         name:           application.restaurant_name,
         description:    application.description ?? '',
         logo:           '',
-        status:         'pending',
+        // Publicly bookable immediately, same as a directory-imported listing — the owner
+        // hasn't activated an account yet, but Overview.md §7.1's acquisition model has this
+        // restaurant searchable/bookable (via the admin-forwarded flow) before that happens.
+        status:         'unclaimed',
       });
       // Contact info lives on restaurant_locations (a restaurant can have several
       // locations) — this seeds the first one from the application; address/coordinates
@@ -138,7 +141,7 @@ export async function resendInvite(id: string) {
   if (!restaurant) {
     throw new AppError(404, 'No restaurant found for this application');
   }
-  if (restaurant.status !== 'pending') {
+  if (restaurant.status !== 'unclaimed') {
     throw new AppError(409, `Cannot resend an invite for a restaurant with status ${restaurant.status} — it has already been activated or suspended`);
   }
 

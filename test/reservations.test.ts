@@ -177,6 +177,16 @@ describe('POST /user/reservations', () => {
     expect(res.status).toBe(404);
   });
 
+  it('books against an unclaimed restaurant (no owner registered yet)', async () => {
+    fakeDb.seed('admin', 'restaurants', [{ restaurant_id: 'restaurant_9', name: 'Unclaimed Restaurant', status: 'unclaimed', owner_user_id: '' }]);
+    const res = await request(app).post('/user/reservations').set(auth).send({
+      guest_name: 'Alex Tran', party_size: 2, restaurant_id: 'restaurant_9',
+      start_date: '2026-08-01',
+    });
+    expect(res.status).toBe(201);
+    expect(res.body.reservation).toMatchObject({ restaurant_id: 'restaurant_9' });
+  });
+
   it('rejects restaurant_id combined with service_id', async () => {
     fakeDb.seed('admin', 'restaurants', [{ restaurant_id: 'restaurant_9', name: 'Test Restaurant', status: 'active' }]);
     const res = await request(app).post('/user/reservations').set(auth).send({

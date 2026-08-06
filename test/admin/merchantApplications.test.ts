@@ -49,7 +49,7 @@ describe('/admin/merchant-applications', () => {
     const res = await request(app).post('/admin/merchant-applications/app_1/approve').set(auth);
     expect(res.status).toBe(200);
     expect(res.body.application.status).toBe('approved');
-    expect(res.body.restaurant).toMatchObject({ name: 'Whiskers & Wags', status: 'pending', application_id: 'app_1' });
+    expect(res.body.restaurant).toMatchObject({ name: 'Whiskers & Wags', status: 'unclaimed', application_id: 'app_1' });
     expect(res.body.invite).toHaveProperty('expires_at');
     // The raw token must never be returned by the API.
     expect(res.body.invite).not.toHaveProperty('token');

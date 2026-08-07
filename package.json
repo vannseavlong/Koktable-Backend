@@ -16,6 +16,7 @@
     "db:sync-table": "tsx scripts/sync-table.ts",
     "db:mock-users": "tsx scripts/mock-users.ts",
     "db:backfill-district": "tsx scripts/backfill-district.ts",
+    "db:backfill-cuisine-moderation": "tsx scripts/backfill-cuisine-moderation.ts",
     "export:sheet-tsv": "tsx scripts/export-restaurant-tsv.ts sheet-import"
   },
   "keywords": [],

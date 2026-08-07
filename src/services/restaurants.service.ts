@@ -24,46 +24,85 @@ function toPublicRestaurant(
 export interface ListFilters {
   city_id?: string;
   district_id?: string;
+  cuisine_id?: string;
+  // Optional pagination: when limit is omitted, list() keeps its original behavior of
+  // returning every matching restaurant (backward compatible for existing callers).
+  // Only paginate once the caller opts in by passing limit.
+  limit?: number;
+  offset?: number;
 }
 
-// city_id/district_id live on restaurant_locations, not restaurants, and a restaurant can
-// have several locations — so this can't be pushed into the `restaurants` findMany
-// where-clause (equality-only, no join). Same shape as getActiveRestaurantIds below: fetch
-// everything, filter to PUBLIC_STATUSES (also equality-only — two values, not one — so this
-// filter happens in JS too), then filter in JS again by "at least one location matches".
+// city_id/district_id live on restaurant_locations, and cuisine_id is a many-to-many via
+// restaurant_cuisines — neither restaurants, so none of this can be pushed into the
+// `restaurants` findMany where-clause (equality-only, no join). Same shape as
+// getActiveRestaurantIds below: fetch everything, filter to PUBLIC_STATUSES (also
+// equality-only — two values, not one — so this filter happens in JS too), then filter in
+// JS again by "at least one location matches" / "has this cuisine attached".
 export async function list(filters: ListFilters = {}) {
   const ctx = adminContext();
   const all = await ctx.table('restaurants').findMany({}) as Record<string, unknown>[];
   const restaurants = all.filter((r) => PUBLIC_STATUSES.includes(r.status as string));
   const ids = restaurants.map((r) => r.restaurant_id as string);
 
-  const [locationsByRestaurant, cuisinesByRestaurant, hoursByRestaurant] = await Promise.all([
+  const [locationsByRestaurant, cuisinesByRestaurant, hoursByRestaurant, cuisineRestaurantIds] = await Promise.all([
     restaurantLocationsService.getForRestaurants(ids),
     restaurantCuisinesService.getForRestaurants(ids),
     restaurantHoursService.getForRestaurants(ids),
+    filters.cuisine_id ? restaurantCuisinesService.getRestaurantIdsForCuisine(filters.cuisine_id) : undefined,
   ]);
 
-  const matchesFilters = (locations: Record<string, unknown>[]) =>
+  const matchesLocationFilters = (locations: Record<string, unknown>[]) =>
     locations.some((loc) =>
       (!filters.city_id     || loc.city_id     === filters.city_id) &&
       (!filters.district_id || loc.district_id === filters.district_id)
     );
 
+  const matched = restaurants.filter((r) => {
+    const id = r.restaurant_id as string;
+    if ((filters.city_id || filters.district_id) && !matchesLocationFilters(locationsByRestaurant.get(id) ?? [])) {
+      return false;
+    }
+    if (cuisineRestaurantIds && !cuisineRestaurantIds.has(id)) return false;
+    return true;
+  });
+
+  const total = matched.length;
+
+  // Pagination is applied to the already-filtered set, not the raw table — same
+  // limit/offset/total pattern as reservations.service.ts's list(), but opt-in: an
+  // omitted limit keeps the pre-pagination behavior of returning everything, so existing
+  // callers don't see a shape change.
+  let limit: number | undefined;
+  if (filters.limit !== undefined) {
+    if (!Number.isInteger(filters.limit) || filters.limit <= 0) {
+      throw new AppError(400, 'Invalid limit: must be a positive integer');
+    }
+    limit = Math.min(filters.limit, 100);
+  }
+
+  let offset: number | undefined;
+  if (filters.offset !== undefined) {
+    if (!Number.isInteger(filters.offset) || filters.offset < 0) {
+      throw new AppError(400, 'Invalid offset: must be a non-negative integer');
+    }
+    offset = filters.offset;
+  }
+
+  const page = limit !== undefined ? matched.slice(offset ?? 0, (offset ?? 0) + limit) : matched;
+
   return {
-    restaurants: restaurants
-      .filter((r) => {
-        if (!filters.city_id && !filters.district_id) return true;
-        return matchesFilters(locationsByRestaurant.get(r.restaurant_id as string) ?? []);
-      })
-      .map((r) => {
-        const id = r.restaurant_id as string;
-        return toPublicRestaurant(
-          r,
-          locationsByRestaurant.get(id) ?? [],
-          cuisinesByRestaurant.get(id) ?? [],
-          hoursByRestaurant.get(id) ?? []
-        );
-      }),
+    restaurants: page.map((r) => {
+      const id = r.restaurant_id as string;
+      return toPublicRestaurant(
+        r,
+        locationsByRestaurant.get(id) ?? [],
+        cuisinesByRestaurant.get(id) ?? [],
+        hoursByRestaurant.get(id) ?? []
+      );
+    }),
+    total,
+    ...(limit !== undefined ? { limit } : {}),
+    ...(offset !== undefined ? { offset } : {}),
   };
 }
 

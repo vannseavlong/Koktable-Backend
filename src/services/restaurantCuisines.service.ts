@@ -44,6 +44,15 @@ export async function getForRestaurants(restaurantIds: string[]): Promise<Map<st
   return byRestaurant;
 }
 
+// Used by restaurants.service.ts's `cuisine_id` filter: which restaurants have this
+// cuisine attached, as a Set for O(1) membership checks (same shape as
+// getActiveRestaurantIds in restaurants.service.ts).
+export async function getRestaurantIdsForCuisine(cuisineId: string): Promise<Set<string>> {
+  const ctx = adminContext();
+  const rows = await ctx.table('restaurant_cuisines').findMany({ where: { cuisine_id: cuisineId } }) as Record<string, unknown>[];
+  return new Set(rows.map((r) => r.restaurant_id as string));
+}
+
 // Replace-all: deletes the restaurant's existing rows and writes `cuisineNames` fresh.
 // Each name must match an existing cuisines.name exactly — no auto-create, same
 // "add it to the canonical list first" convention as category_id elsewhere in this API.

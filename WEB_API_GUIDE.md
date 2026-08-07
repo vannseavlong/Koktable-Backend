@@ -110,24 +110,38 @@ sorted by `sort_order` ascending.
 
 | Method | Endpoint | Auth | Body → Response |
 |--------|----------|------|------------------|
-| GET | `/user/restaurants` | — | → `{ restaurants: Restaurant[] }` (active only) |
+| GET | `/user/restaurants` | — | → `{ restaurants: Restaurant[], total, limit?, offset? }` (active only) |
 | GET | `/user/restaurants/:id` | — | → `{ restaurant: Restaurant }` (404 if not found or not active) |
 | GET | `/user/restaurants/:id/catalog-items` | — | → `{ items: CatalogItem[] }` (404 using the same rule as above; active items only, sorted by `sort_order`) |
 | GET | `/user/catalog-items` | — | → `{ items: CatalogItem[] }` — cross-restaurant feed, see below |
 
-`GET /user/restaurants` query params (both optional, combinable):
+`GET /user/restaurants` query params (all optional, combinable):
 
 | Param | Type | Behavior |
 |-------|------|----------|
 | `city_id` | string | Exact match against `locations[].city_id` — an id from `GET /user/cities` (section 3c), not a free-text city name. A restaurant matches if **any** of its locations is in that city. |
 | `district_id` | string | Exact match against `locations[].district_id` — an id from `GET /user/districts` (section 3c). Combining with `city_id` requires the *same* location to match both. |
+| `cuisine_id` | string | Exact match against the restaurant's cuisines — an id from `GET /user/cuisines` (section 3b), not the free-text `cuisines[]` name on the `Restaurant` object. A restaurant matches if it has this cuisine attached (via `restaurant_cuisines`, many-to-many — see `ADMIN_API.md` § 9). Independent of `city_id`/`district_id`: a restaurant must satisfy the location filter(s) *and* have the cuisine, not either/or. |
+| `limit` | positive integer | Caps the page size, applied *after* the `city_id`/`district_id`/`cuisine_id` filters above. Capped at 100 (a larger value is silently clamped, not rejected). Omit entirely to get the full filtered set in one response, unpaginated — the pre-pagination behavior, kept for backward compatibility. A non-positive or non-integer value returns `400`. |
+| `offset` | non-negative integer | Number of filtered results to skip before taking `limit`. Defaults to `0` when `limit` is supplied. Ignored (no slicing) when `limit` is omitted. A negative or non-integer value returns `400`. |
 
-An unset or empty-string param is ignored (no filtering on that dimension), not a `400`. No pagination yet — the full matching set is returned in one response. Fetch `GET /user/cities`/`GET /user/districts` once to populate a filter dropdown, same pattern as Categories/Cuisines (sections 3a–3b) — resolve ids to display names client-side rather than the server returning free-text city/district strings.
+An unset or empty-string param is ignored (no filtering on that dimension), not a `400`. `total` in the response is always the size of the filtered set (before `limit`/`offset` are applied), so it's safe to use for "have we loaded everything yet" / infinite-scroll logic; `limit`/`offset` are only present in the response when the request supplied them, so an unpaginated call's response shape is unchanged (`{ restaurants, total }`, no extra `null` fields). Fetch `GET /user/cities`/`GET /user/districts`/`GET /user/cuisines` once to populate filter dropdowns, same pattern as Categories/Cuisines (sections 3a–3b) — resolve ids to display names client-side rather than the server returning free-text city/district strings.
 
 ```
 GET /user/restaurants?city_id=city_pp&district_id=dist_bkk1
-→ { "restaurants": [ { "restaurant_id": "...", "locations": [ { "city_id": "city_pp", "district_id": "dist_bkk1", ... } ], ... } ] }
+→ { "restaurants": [ { "restaurant_id": "...", "locations": [ { "city_id": "city_pp", "district_id": "dist_bkk1", ... } ], ... } ], "total": 1 }
+
+GET /user/restaurants?cuisine_id=cui_khmer
+→ { "restaurants": [ { "restaurant_id": "...", "cuisines": ["Khmer"], ... } ], "total": 1 }
+
+GET /user/restaurants?limit=20&offset=20
+→ { "restaurants": [ ...next 20... ], "total": 57, "limit": 20, "offset": 20 }
 ```
+
+Note the request uses `cuisine_id` (an id, resolved from `GET /user/cuisines`) but the response's
+`cuisines` field on each restaurant is `string[]` of display **names**, not ids — the two aren't
+symmetric. There's no free-text restaurant-name search yet; `cuisine_id`/`city_id`/`district_id`
+are the only filter dimensions on this endpoint today.
 
 `restaurant` object: `{ restaurant_id, category_id, name, name_zh, name_km, name_ko, description, description_zh, description_km, description_ko, logo, banner, status, locations, cuisines, hours }`
 — note `application_id` and `owner_user_id` (present on the admin/merchant-scoped

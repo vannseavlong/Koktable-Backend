@@ -14,8 +14,6 @@ export default defineTable({
     icon:       string(),
     active:     boolean().default(true).required(),
     sort_order: number().default(0),
-    // Moderation queue — see categories.ts, same rationale, including why
-    // submitted_by isn't .ref()'d.
     moderation_status: string().enum(['approved', 'pending', 'rejected']).default('approved').required(),
     submitted_by:       string(),
   },

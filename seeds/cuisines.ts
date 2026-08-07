@@ -15,6 +15,7 @@ const cuisines = names.map((name, index) => ({
   name,
   active: true,
   sort_order: index,
+  moderation_status: 'approved',
 }));
 
 export default { cuisines };

@@ -7,10 +7,6 @@ import * as restaurantCuisinesService from './restaurantCuisines.service';
 // Public, unauthenticated read-only views onto the admin-actor `restaurants`
 const PUBLIC_STATUSES = ['active', 'unclaimed'];
 
-// application_id/owner_user_id are internal to the admin invite/ownership flow and are
-// stripped from the public response. locations/cuisines/hours are embedded from their
-// own tables (restaurantLocations.service.ts, restaurantCuisines.service.ts,
-// restaurantHours.service.ts) — none of them are columns on `restaurants` itself.
 function toPublicRestaurant(
   restaurant: Record<string, unknown>,
   locations: Record<string, unknown>[],
@@ -25,19 +21,10 @@ export interface ListFilters {
   city_id?: string;
   district_id?: string;
   cuisine_id?: string;
-  // Optional pagination: when limit is omitted, list() keeps its original behavior of
-  // returning every matching restaurant (backward compatible for existing callers).
-  // Only paginate once the caller opts in by passing limit.
   limit?: number;
   offset?: number;
 }
 
-// city_id/district_id live on restaurant_locations, and cuisine_id is a many-to-many via
-// restaurant_cuisines — neither restaurants, so none of this can be pushed into the
-// `restaurants` findMany where-clause (equality-only, no join). Same shape as
-// getActiveRestaurantIds below: fetch everything, filter to PUBLIC_STATUSES (also
-// equality-only — two values, not one — so this filter happens in JS too), then filter in
-// JS again by "at least one location matches" / "has this cuisine attached".
 export async function list(filters: ListFilters = {}) {
   const ctx = adminContext();
   const all = await ctx.table('restaurants').findMany({}) as Record<string, unknown>[];
@@ -68,10 +55,6 @@ export async function list(filters: ListFilters = {}) {
 
   const total = matched.length;
 
-  // Pagination is applied to the already-filtered set, not the raw table — same
-  // limit/offset/total pattern as reservations.service.ts's list(), but opt-in: an
-  // omitted limit keeps the pre-pagination behavior of returning everything, so existing
-  // callers don't see a shape change.
   let limit: number | undefined;
   if (filters.limit !== undefined) {
     if (!Number.isInteger(filters.limit) || filters.limit <= 0) {
@@ -119,9 +102,6 @@ export async function getActiveRestaurantIds(): Promise<Set<string>> {
   );
 }
 
-// Shared by getById and listCatalogItems (and reservations.service.ts's restaurant_id-only
-// creation mode): 404s if the restaurant doesn't exist OR isn't publicly visible, without
-// distinguishing the two cases in the response.
 export async function getActiveRestaurantOrThrow(id: string) {
   const ctx  = adminContext();
   const restaurant = await ctx.table('restaurants').findOne({ where: { restaurant_id: id } });

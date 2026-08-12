@@ -25,6 +25,7 @@ import restaurantBookingPoliciesSchema from '../../schemas/admin/restaurant_book
 import restaurantHoursExceptionsSchema from '../../schemas/admin/restaurant_hours_exceptions';
 import reviewsSchema             from '../../schemas/admin/reviews';
 import reservationTokensSchema   from '../../schemas/admin/reservation_tokens';
+import revokedTokensSchema       from '../../schemas/admin/revoked_tokens';
 import rolesSchema               from '../../schemas/admin/roles';
 import modulesSchema             from '../../schemas/admin/modules';
 import actionsSchema             from '../../schemas/admin/actions';
@@ -104,6 +105,7 @@ adapter.registerSchemas([
   restaurantHoursExceptionsSchema,
   reviewsSchema,
   reservationTokensSchema,
+  revokedTokensSchema,
   rolesSchema,
   modulesSchema,
   actionsSchema,

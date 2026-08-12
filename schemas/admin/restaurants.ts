@@ -20,9 +20,6 @@ export default defineTable({
     logo:           string(),
     banner:         string(),
     status:         string().enum(['pending', 'unclaimed', 'active', 'suspended']).default('pending').required(),
-    // Current reason, kept in sync with `status` (not derived) — same treatment as
-    // `status` itself. Blank once reactivated. Full audit trail (who/when/every past
-    // reason) lives in restaurant_status_history, not here.
     suspension_reason: string(),
   },
 });

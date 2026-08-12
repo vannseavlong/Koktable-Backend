@@ -21,6 +21,8 @@ export function createApp() {
   app.use(express.json());
 
   // ─── Google OAuth (GET /user/auth/google  →  GET /user/auth/callback) ───────
+  // Mobile app flow: redirects to `frontendUrl`, which is a custom URL scheme deep
+  // link, not a browser-navigable URL — the Web app below needs its own router.
   const googleAuth = createAuthRouter({
     adapter,
     jwtSecret:   env.jwtSecret,
@@ -29,6 +31,28 @@ export function createApp() {
     onUser: handleGoogleProfile,
   });
   app.use('/user', googleAuth.handler);
+
+  // ─── Web customer Google OAuth (GET /user/web/auth/google → GET /user/web/auth/callback) ─
+  // Same customer account lookup/creation as the mobile flow above (`handleGoogleProfile`,
+  // `registrationPolicy: 'open'`), but a separate router: it redirects to `webFrontendUrl`
+  // (a real browser URL, unlike the mobile app's custom scheme) and needs its own
+  // registered `redirect_uri` — Google redirects wherever the *authorizing request* said
+  // to, so each browser-navigable flow needs a distinct one, same reasoning as the admin
+  // flow below. Mounted at a different path than the mobile router above so the two
+  // `/auth/google` routes don't collide.
+  const webGoogleAuth = createAuthRouter({
+    adapter,
+    jwtSecret:   env.jwtSecret,
+    frontendUrl: env.webFrontendUrl,
+    registrationPolicy: 'open',
+    onUser: handleGoogleProfile,
+    oauthConfig: {
+      clientId:     env.google.clientId,
+      clientSecret: env.google.clientSecret,
+      redirectUri:  env.google.webRedirectUri,
+    },
+  });
+  app.use('/user/web', webGoogleAuth.handler);
 
   // ─── Admin Google OAuth (GET /admin/auth/google → GET /admin/auth/callback) ─
   // login-only: no self-registration, and handleAdminGoogleProfile further

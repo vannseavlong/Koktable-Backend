@@ -46,8 +46,10 @@ src/
 ├── routes/              One router per resource, composed in routes/index.ts, mounted at /user in app.ts
 ├── controllers/         Thin: pull req.user / req.body / req.query, call a service, shape the res.json()
 ├── services/            All business logic + validation + SheetAdapter calls live here
-├── middleware/auth.ts    requireAuth / requireAdmin populate req.user from a hand-rolled HMAC-SHA256 JWT
-│                        (no external JWT library — verifyJwt/signJwt implement the whole thing)
+├── middleware/auth.ts    requireAuth / requireAdmin / requireMerchant populate req.user from a
+│                        hand-rolled HMAC-SHA256 JWT (no external JWT library — verifyJwt/signJwt
+│                        implement the whole thing) and reject a token found in `revoked_tokens`
+│                        (async now, for that Sheets lookup — see Auth section below)
 ├── middleware/errorHandler.ts   Catches AppError → { error, details? } with err.statusCode; anything
 │                        else → 500 (asyncHandler.ts routes thrown/rejected errors here)
 └── utils/AppError.ts    The only error type services should throw (statusCode, message, details?)
@@ -68,16 +70,19 @@ A request with no `actor_sheet_id` on its JWT (e.g. a user record created before
 
 ### Request flow
 
-`routes/*.routes.ts` (mounts `requireAuth`/`requireAdmin` from `middleware/auth.ts`) → `controllers/*.controller.ts` (wrapped in `asyncHandler`, thin) → `services/*.service.ts` (validation, `adminContext()`/`userContext()`, business rules, throws `AppError`) → `SheetAdapter.table(name).find/create/update(...)`.
+`routes/*.routes.ts` (mounts `requireAuth`/`requireAdmin`/`requireMerchant` from `middleware/auth.ts`) → `controllers/*.controller.ts` (wrapped in `asyncHandler`, thin) → `services/*.service.ts` (validation, `adminContext()`/`userContext()`, business rules, throws `AppError`) → `SheetAdapter.table(name).find/create/update(...)`.
 
 ### Auth
 
-Three parallel flows converge on the same hand-rolled JWT (`middleware/auth.ts`, HMAC-SHA256, no library):
+Four parallel flows converge on the same hand-rolled JWT (`middleware/auth.ts`, HMAC-SHA256, no library):
 - Email/password: `POST /user/auth/register` and `/login` in `auth.service.ts`, using `hashPassword`/`comparePassword`/`validatePasswordStrength` from `longcelot-sheet-db`. Password hashes live in the separate `credentials` admin table, never on `users`.
-- Customer Google OAuth: `createAuthRouter(...)` from `longcelot-sheet-db`, `registrationPolicy: 'open'` (mounted directly on `/user` in `app.ts`, bypassing this repo's own route layer) drives the `/user/auth/google` → `/user/auth/callback` redirect flow; `handleGoogleProfile` in `auth.service.ts` is the `onUser` callback, finding-or-creating the user row.
-- Admin Google OAuth: a **second** `createAuthRouter(...)` instance mounted on `/admin` (`/admin/auth/google` → `/admin/auth/callback`), `registrationPolicy: 'login-only'` plus `handleAdminGoogleProfile` additionally requiring `role === 'admin'` — no self-registration, and an existing customer account can't get in here even with a valid Google login. Uses its own `oauthConfig.redirectUri` (`GOOGLE_ADMIN_REDIRECT_URI`) and redirects to `ADMIN_FRONTEND_URL`, not `FRONTEND_URL` — see `ADMIN_API.md`. Both OAuth routers share one Google Cloud OAuth client; the admin redirect URI must be registered there as an *additional* authorized redirect URI.
+- Customer Google OAuth (mobile): `createAuthRouter(...)` from `longcelot-sheet-db`, `registrationPolicy: 'open'` (mounted directly on `/user` in `app.ts`, bypassing this repo's own route layer) drives the `/user/auth/google` → `/user/auth/callback` redirect flow; `handleGoogleProfile` in `auth.service.ts` is the `onUser` callback, finding-or-creating the user row. Redirects to `FRONTEND_URL`, the mobile app's custom URL scheme — not a browser-navigable URL, so it can't serve the Web client below.
+- Customer Google OAuth (Web): a **third** `createAuthRouter(...)` instance mounted on `/user/web` (`/user/web/auth/google` → `/user/web/auth/callback`), same `registrationPolicy: 'open'`/`handleGoogleProfile` as the mobile flow above (both create/look up the same customer account) but its own `oauthConfig.redirectUri` (`GOOGLE_WEB_REDIRECT_URI`) and redirects to `WEB_FRONTEND_URL` — see `WEB_API_GUIDE.md`. Mounted on a distinct path from the mobile router so their `/auth/google` routes don't collide.
+- Admin Google OAuth: a separate `createAuthRouter(...)` instance mounted on `/admin` (`/admin/auth/google` → `/admin/auth/callback`), `registrationPolicy: 'login-only'` plus `handleAdminGoogleProfile` additionally requiring `role === 'admin'` — no self-registration, and an existing customer account can't get in here even with a valid Google login. Uses its own `oauthConfig.redirectUri` (`GOOGLE_ADMIN_REDIRECT_URI`) and redirects to `ADMIN_FRONTEND_URL`, not `FRONTEND_URL` — see `ADMIN_API.md`. All three Google OAuth routers share one Google Cloud OAuth client; each redirect URI (`GOOGLE_REDIRECT_URI`, `GOOGLE_WEB_REDIRECT_URI`, `GOOGLE_ADMIN_REDIRECT_URI`) must be registered there as an *additional* authorized redirect URI.
 
-All three paths converge on `signJwt`; the two Google flows additionally go through `createUserSheet()` (customer path only — admins are seeded directly into the shared admin sheet, they never get a per-user sheet).
+All four paths converge on `signJwt`; the three Google flows additionally go through `createUserSheet()` (customer paths only — admins are seeded directly into the shared admin sheet, they never get a per-user sheet).
+
+**Logout / revocation:** the JWT scheme above is otherwise stateless (no session store), so `POST /user/auth/logout` (`requireAuth`-guarded) can't invalidate a token by itself — it writes an HMAC hash of the presented token to the `revoked_tokens` admin table (`schemas/admin/revoked_tokens.ts`) instead. `requireAuth`/`requireAdmin`/`requireMerchant` now check every incoming token against that table (hence async — each authenticated request does one Sheets `findOne`, mitigated by lsdb's 2s read cache) and reject it with the same generic `401` a bad-signature token gets, whether it came from the email/password flow or any of the three Google routers above. `verifyJwt`/`requireAuth` still don't read or enforce the `exp` claim on OAuth-issued tokens (see the `longcelot-sheet-db` section below) — revocation is the only way a token stops working before the client itself discards it.
 
 ### Adding a resource
 

@@ -30,9 +30,26 @@ base field client-side.
 |--------|----------|------|------------------|
 | POST | `/user/auth/register` | — | `{ full_name, email, password }` → `{ token, user }` |
 | POST | `/user/auth/login` | — | `{ email, password }` → `{ token, user }` |
-| GET | `/user/auth/google` | — | Redirects to Google OAuth consent screen |
-| GET | `/user/auth/callback` | — | OAuth callback; redirects to `FRONTEND_URL` with `?token=` |
+| GET | `/user/auth/google` | — | Mobile app only — redirects to Google OAuth consent screen |
+| GET | `/user/auth/callback` | — | Mobile app only; redirects to `FRONTEND_URL` (custom URL scheme) with `?token=` |
+| GET | `/user/web/auth/google` | — | **Web client** — redirects to Google OAuth consent screen |
+| GET | `/user/web/auth/callback` | — | **Web client** OAuth callback; redirects to `WEB_FRONTEND_URL` (this app's own origin) with `?token=` |
 | GET | `/user/auth/me` | Bearer | → `{ user }` |
+| POST | `/user/auth/logout` | Bearer | → `204` (no body) |
+
+To add "Sign in with Google" to the Web client, send the browser to `GET /user/web/auth/google`
+with a plain link/navigation (not a `fetch`) — it's an OAuth redirect flow, not a JSON endpoint.
+After the user consents, Google sends them back through the Backend and it redirects the browser
+to `WEB_FRONTEND_URL/?token=<jwt>`. There's no way to round-trip a "return to this page" path
+through the flow (the package that drives it always redirects to the bare `frontendUrl`), so the
+client should read `token` off the URL once on app load, store it the same way as the
+email/password `token`, and strip it from the URL.
+
+`POST /user/auth/logout` revokes the presented token server-side (see `Backend/CLAUDE.md`'s Auth
+section) — call it, then discard the token client-side, same as any other logout. It's the only
+way to actually invalidate a token before it's naturally forgotten; simply deleting it client-side
+leaves it usable by anyone who captured it in transit. A revoked token gets `401` on every
+subsequent request, including a retried `logout` call with the same token.
 
 `user` object: `{ user_id, email, full_name, role, picture, actor_sheet_id, auth_provider, status }`
 

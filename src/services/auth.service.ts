@@ -5,7 +5,7 @@ import {
   validatePasswordStrength,
 } from 'longcelot-sheet-db';
 import { adminContext } from '../lib/adapter';
-import { signJwt, type JwtPayload } from '../middleware/auth';
+import { signJwt, hashToken, type JwtPayload } from '../middleware/auth';
 import { AppError } from '../utils/AppError';
 
 interface RegisterInput {
@@ -124,6 +124,19 @@ export async function login({ email, password }: LoginInput) {
 
   const token = signJwt(payload);
   return { token, user: responseUser };
+}
+
+// Records the presented token as revoked (see schemas/admin/revoked_tokens.ts) — the
+// JWT scheme is otherwise stateless, so this is the only thing that makes a token stop
+// working before a client simply discards it. `token`/`payload` both come from the
+// already-`requireAuth`-verified request (auth.controller.ts), not re-verified here.
+export async function logout(token: string, payload: JwtPayload): Promise<void> {
+  const ctx = adminContext();
+  await ctx.table('revoked_tokens').create({
+    token_hash: hashToken(token),
+    user_id:    payload.user_id,
+    expires_at: payload.exp ? new Date(payload.exp * 1000).toISOString() : '',
+  });
 }
 
 export async function getMe(userId: string) {

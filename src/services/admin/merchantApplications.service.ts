@@ -105,14 +105,9 @@ export async function approve(id: string) {
         name:           application.restaurant_name,
         description:    application.description ?? '',
         logo:           '',
-        // Publicly bookable immediately, same as a directory-imported listing — the owner
-        // hasn't activated an account yet, but Overview.md §7.1's acquisition model has this
-        // restaurant searchable/bookable (via the admin-forwarded flow) before that happens.
+
         status:         'unclaimed',
       });
-      // Contact info lives on restaurant_locations (a restaurant can have several
-      // locations) — this seeds the first one from the application; address/coordinates
-      // are filled in later by the merchant via PATCH /merchant/restaurant/location.
       await ctx.table('restaurant_locations').create({
         location_id:    `loc_${nanoid(10)}`,
         restaurant_id,

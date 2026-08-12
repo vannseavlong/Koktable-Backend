@@ -16,3 +16,10 @@ export const me = asyncHandler(async (req: Request, res: Response) => {
   const user = await authService.getMe(req.user!.user_id);
   res.json({ user });
 });
+
+export const logout = asyncHandler(async (req: Request, res: Response) => {
+  // requireAuth already validated the shape of this header before this handler runs.
+  const token = req.headers.authorization!.slice(7);
+  await authService.logout(token, req.user!);
+  res.status(204).send();
+});

@@ -53,6 +53,12 @@ export const env = {
     // flows each need their own redirect_uri, both whitelisted in the same
     // Google Cloud OAuth client).
     adminRedirectUri: process.env.GOOGLE_ADMIN_REDIRECT_URI ?? 'http://localhost:3000/admin/auth/callback',
+    // Separate registered redirect URI for the customer-facing Web app's Google login
+    // (../Web) — same reasoning as adminRedirectUri above, plus `redirectUri` above is
+    // registered to the mobile app's flow, which needs its own redirect_uri too since
+    // it authorizes under a different request path (`/user/auth/google`, not
+    // `/user/web/auth/google`).
+    webRedirectUri: process.env.GOOGLE_WEB_REDIRECT_URI ?? 'http://localhost:3000/user/web/auth/callback',
     adminTokens:  process.env.GOOGLE_ADMIN_TOKENS,
   },
   // Optional: sending the merchant invite email is best-effort (see email.service.ts)

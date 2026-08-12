@@ -16,13 +16,6 @@ interface UpdateRestaurantStatusInput {
 
 const VALID_STATUSES = ['pending', 'unclaimed', 'active', 'suspended'];
 
-// Hours are embedded per-location (location.hours), not as a restaurant-level hours[]
-// field — a restaurant is no longer assumed to share one set of hours across all its
-// sites once it has more than one location (see restaurant_hours' location_id re-key).
-// Contrast with restaurantHours.service.ts's restaurant-scoped getForRestaurant(s)
-// convenience wrappers, which flatten hours back onto the restaurant for callers
-// (merchant/public) that still assume a single location — admin intentionally doesn't
-// use those here.
 function withLocationHours(
   locations: Record<string, unknown>[],
   hoursByLocation: Map<string, Record<string, unknown>[]>

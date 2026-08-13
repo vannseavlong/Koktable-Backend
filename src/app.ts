@@ -1,5 +1,6 @@
 import express from 'express';
 import cors from 'cors';
+import helmet from 'helmet';
 import { createAuthRouter } from 'longcelot-sheet-db';
 
 import { env } from './config/env';
@@ -9,11 +10,15 @@ import userRoutes from './routes';
 import adminRoutes from './routes/admin';
 import merchantRoutes from './routes/merchant';
 import { errorHandler } from './middleware/errorHandler';
+import { requestLogger } from './middleware/requestLogger';
 
 export function createApp() {
   const app = express();
+  app.disable('x-powered-by');
 
   // ─── Middleware ─────────────────────────────────────────────────────────────
+  app.use(helmet());
+  app.use(requestLogger);
   app.use(cors({
     origin:      [env.frontendUrl, env.adminFrontendUrl, env.merchantFrontendUrl, env.webFrontendUrl],
     credentials: true,

@@ -2,6 +2,7 @@ import type { Request, Response, NextFunction } from 'express';
 import crypto from 'crypto';
 import { env } from '../config/env';
 import { adminContext } from '../lib/adapter';
+import { logger } from '../lib/logger';
 
 export interface JwtPayload {
   user_id:       string;
@@ -38,7 +39,15 @@ export function verifyJwt(token: string): JwtPayload {
 
   if (sig !== expected) throw new Error('Invalid token signature');
 
-  return JSON.parse(Buffer.from(payload, 'base64url').toString()) as JwtPayload;
+  const decoded = JSON.parse(Buffer.from(payload, 'base64url').toString()) as JwtPayload;
+
+  // Only OAuth-issued tokens carry exp (see JwtPayload's doc comment) — this repo's own
+  // signJwt() below never sets it, so a password-login token is unaffected by this check.
+  if (decoded.exp !== undefined && decoded.exp < Math.floor(Date.now() / 1000)) {
+    throw new Error('Token expired');
+  }
+
+  return decoded;
 }
 
 export function signJwt(payload: Omit<JwtPayload, 'iat'>): string {
@@ -100,8 +109,9 @@ async function authenticate(req: Request): Promise<JwtPayload> {
 // AuthError's own message is used verbatim except for the revoked case, which reuses
 // the generic "invalid or expired" wording so a logged-out token doesn't read
 // differently on the wire than a merely-invalid one.
-function unauthorized(res: Response, err: AuthError): void {
+function unauthorized(req: Request, res: Response, err: AuthError): void {
   const message = err.message === 'Token has been revoked' ? 'Token invalid or expired' : err.message;
+  logger.warn('auth_rejected', { path: req.path, method: req.method, reason: err.message });
   res.status(401).json({ error: message });
 }
 
@@ -110,7 +120,7 @@ export async function requireAuth(req: Request, res: Response, next: NextFunctio
     req.user = await authenticate(req);
     next();
   } catch (err) {
-    if (err instanceof AuthError) unauthorized(res, err);
+    if (err instanceof AuthError) unauthorized(req, res, err);
     else next(err);
   }
 }
@@ -119,11 +129,12 @@ export async function requireAdmin(req: Request, res: Response, next: NextFuncti
   try {
     req.user = await authenticate(req);
   } catch (err) {
-    if (err instanceof AuthError) unauthorized(res, err);
+    if (err instanceof AuthError) unauthorized(req, res, err);
     else next(err);
     return;
   }
   if (req.user.role !== 'admin') {
+    logger.warn('auth_forbidden', { path: req.path, method: req.method, user_id: req.user.user_id, role: req.user.role, required: 'admin' });
     res.status(403).json({ error: 'Admin access required' });
     return;
   }
@@ -134,11 +145,12 @@ export async function requireMerchant(req: Request, res: Response, next: NextFun
   try {
     req.user = await authenticate(req);
   } catch (err) {
-    if (err instanceof AuthError) unauthorized(res, err);
+    if (err instanceof AuthError) unauthorized(req, res, err);
     else next(err);
     return;
   }
   if (req.user.role !== 'merchant') {
+    logger.warn('auth_forbidden', { path: req.path, method: req.method, user_id: req.user.user_id, role: req.user.role, required: 'merchant' });
     res.status(403).json({ error: 'Merchant access required' });
     return;
   }

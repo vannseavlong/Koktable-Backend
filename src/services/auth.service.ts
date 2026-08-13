@@ -7,6 +7,7 @@ import {
 import { adminContext } from '../lib/adapter';
 import { signJwt, hashToken, type JwtPayload } from '../middleware/auth';
 import { AppError } from '../utils/AppError';
+import { logger } from '../lib/logger';
 
 interface RegisterInput {
   full_name?: string;
@@ -54,6 +55,7 @@ export async function register({ full_name, email, password }: RegisterInput) {
 
   const { valid, errors } = validatePasswordStrength(password);
   if (!valid) {
+    logger.warn('register_failed', { email, reason: 'weak_password' });
     throw new AppError(422, 'Weak password', errors);
   }
 
@@ -61,6 +63,7 @@ export async function register({ full_name, email, password }: RegisterInput) {
 
   const existing = await ctx.table('users').findOne({ where: { email } });
   if (existing) {
+    logger.warn('register_failed', { email, reason: 'duplicate_email' });
     throw new AppError(409, 'An account with this email already exists');
   }
 
@@ -91,6 +94,7 @@ export async function login({ email, password }: LoginInput) {
 
   const user = await ctx.table('users').findOne({ where: { email } }) as Record<string, string> | null;
   if (!user) {
+    logger.warn('login_failed', { email, reason: 'unknown_email' });
     throw new AppError(401, 'Invalid email or password');
   }
 
@@ -100,15 +104,18 @@ export async function login({ email, password }: LoginInput) {
 
   const cred = await ctx.table('credentials').findOne({ where: { user_id: user.user_id } }) as Record<string, string> | null;
   if (!cred) {
+    logger.warn('login_failed', { email, reason: 'no_credentials' });
     throw new AppError(401, 'Invalid email or password');
   }
 
   const valid = await comparePassword(password, cred.password_hash);
   if (!valid) {
+    logger.warn('login_failed', { email, reason: 'invalid_password' });
     throw new AppError(401, 'Invalid email or password');
   }
 
   if (user.status === 'inactive') {
+    logger.warn('login_failed', { email, reason: 'inactive_account' });
     throw new AppError(403, 'This account has been deactivated. Contact an admin.');
   }
 
@@ -137,6 +144,7 @@ export async function logout(token: string, payload: JwtPayload): Promise<void> 
     user_id:    payload.user_id,
     expires_at: payload.exp ? new Date(payload.exp * 1000).toISOString() : '',
   });
+  logger.info('token_revoked', { user_id: payload.user_id });
 }
 
 export async function getMe(userId: string) {

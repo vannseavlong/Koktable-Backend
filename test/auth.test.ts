@@ -5,6 +5,7 @@ vi.mock('../src/lib/adapter', async () => await import('../src/testUtils/fakeAda
 
 import { buildTestApp } from './helpers/testApp';
 import { userToken, adminToken } from './helpers/auth';
+import { signJwt } from '../src/middleware/auth';
 import * as fakeDb from '../src/testUtils/fakeAdapter';
 
 const app = buildTestApp();
@@ -48,5 +49,29 @@ describe('POST /user/auth/logout', () => {
 
     const res = await request(app).get('/admin/users').set('Authorization', `Bearer ${token}`);
     expect(res.status).toBe(401);
+  });
+});
+
+describe('JWT exp enforcement', () => {
+  beforeEach(() => fakeDb.reset());
+
+  const basePayload = { user_id: 'u_test_1', email: 'user@test.local', full_name: 'Test User', role: 'user' };
+
+  it('rejects an expired OAuth-style token (exp in the past)', async () => {
+    const token = signJwt({ ...basePayload, exp: Math.floor(Date.now() / 1000) - 60 });
+    const res = await request(app).get('/user/auth/me').set('Authorization', `Bearer ${token}`);
+    expect(res.status).toBe(401);
+  });
+
+  it('accepts a non-expired OAuth-style token (exp in the future)', async () => {
+    const token = signJwt({ ...basePayload, exp: Math.floor(Date.now() / 1000) + 3600 });
+    const res = await request(app).get('/user/auth/me').set('Authorization', `Bearer ${token}`);
+    expect(res.status).not.toBe(401);
+  });
+
+  it('accepts a password-login-style token with no exp claim', async () => {
+    const token = userToken();
+    const res = await request(app).get('/user/auth/me').set('Authorization', `Bearer ${token}`);
+    expect(res.status).not.toBe(401);
   });
 });

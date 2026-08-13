@@ -5,6 +5,7 @@ import { withTotals } from '../utils/reservationTotals';
 import { decrementIfProduct, restockIfProduct } from '../utils/stockAdjustment';
 import { usersWithSheets } from './shared/reservationLookup';
 import { getActiveRestaurantOrThrow } from './restaurants.service';
+import { sanitizeCell } from '../utils/sheetSanitize';
 import type { JwtPayload } from '../middleware/auth';
 
 interface CreateReservationInput {
@@ -170,14 +171,14 @@ export async function create(user: JwtPayload, body: CreateReservationInput) {
 
   await ctx.table('reservations').create({
     reservation_id,
-    guest_name,
+    guest_name:   sanitizeCell(guest_name),
     party_size,
     service_id:   resolvedServiceId,
     service_name: resolvedServiceName,
     start_date,
     end_date,
     daily_rate:   Number(daily_rate),
-    notes:        notes ?? '',
+    notes:        sanitizeCell(notes ?? ''),
     status:       'pending',
     restaurant_id:      restaurantId,
     reservation_time:   reservation_time ?? '',
@@ -254,7 +255,7 @@ export async function update(user: JwtPayload, id: string, updates: UpdateReserv
   }
 
   const data: Record<string, unknown> = {};
-  if (notes  !== undefined) data.notes  = notes;
+  if (notes  !== undefined) data.notes  = sanitizeCell(notes);
   if (status !== undefined) data.status = status;
 
   if (Object.keys(data).length === 0) {

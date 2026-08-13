@@ -5,6 +5,7 @@ import type { DayHoursInput } from '../restaurantHours.service';
 import * as restaurantLocationsService from '../restaurantLocations.service';
 import type { LocationInput } from '../restaurantLocations.service';
 import * as restaurantCuisinesService from '../restaurantCuisines.service';
+import { sanitizeCell } from '../../utils/sheetSanitize';
 
 // Every read/write here is scoped to the merchant's own restaurant_id (resolved from the
 // JWT by the controller) — a merchant can never read or write another restaurant's row,
@@ -48,14 +49,14 @@ export async function updateOwn(restaurantId: string, body: UpdateRestaurantInpu
   }
 
   const data: Record<string, unknown> = {};
-  if (body.name        !== undefined) data.name        = body.name;
-  if (body.name_zh     !== undefined) data.name_zh     = body.name_zh;
-  if (body.name_km     !== undefined) data.name_km     = body.name_km;
-  if (body.name_ko     !== undefined) data.name_ko     = body.name_ko;
-  if (body.description !== undefined) data.description = body.description;
-  if (body.description_zh !== undefined) data.description_zh = body.description_zh;
-  if (body.description_km !== undefined) data.description_km = body.description_km;
-  if (body.description_ko !== undefined) data.description_ko = body.description_ko;
+  if (body.name        !== undefined) data.name        = sanitizeCell(body.name);
+  if (body.name_zh     !== undefined) data.name_zh     = sanitizeCell(body.name_zh);
+  if (body.name_km     !== undefined) data.name_km     = sanitizeCell(body.name_km);
+  if (body.name_ko     !== undefined) data.name_ko     = sanitizeCell(body.name_ko);
+  if (body.description !== undefined) data.description = sanitizeCell(body.description);
+  if (body.description_zh !== undefined) data.description_zh = sanitizeCell(body.description_zh);
+  if (body.description_km !== undefined) data.description_km = sanitizeCell(body.description_km);
+  if (body.description_ko !== undefined) data.description_ko = sanitizeCell(body.description_ko);
   if (body.logo        !== undefined) data.logo        = body.logo;
   if (body.banner      !== undefined) data.banner      = body.banner;
   if (body.category_id !== undefined) data.category_id = body.category_id;

@@ -2,7 +2,7 @@ services:
   - type: web
     name: koktable-api
     runtime: node
-    plan: starter
+    plan: free
     region: singapore
     buildCommand: pnpm install --frozen-lockfile && pnpm build
     startCommand: pnpm start

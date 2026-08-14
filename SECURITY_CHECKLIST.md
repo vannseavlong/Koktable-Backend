@@ -21,7 +21,7 @@ Checked items are already true of this codebase as of 2026-08-13; unchecked item
 ## A03:2025 — Software Supply Chain Failures
 - [x] `.github/workflows/ci.yml` added — runs `pnpm install --frozen-lockfile`, `pnpm build`, `pnpm test` on push/PR to `main`
 - [x] `pnpm audit --audit-level=high` added to CI, `continue-on-error: true` (non-blocking) so a transitive advisory with no available fix doesn't gate every PR — surfaced in the job log for manual review instead
-- [ ] `longcelot-sheet-db` is the one non-registry-standard dependency in the trust chain — confirm how its releases are verified before bumping (see CLAUDE.md's upgrade notes)
+- [ ] `longcelot-sheet-db` installs like any other npm dependency (ordinary semver range in `package.json`, standard registry resolution + sha512 integrity in `pnpm-lock.yaml`) — but it's a single-maintainer, low-adoption first-party package, not a widely-vetted one like `express`/`helmet`. Confirm how its releases are verified (npm account 2FA, provenance/signing, anything beyond one person running `npm publish`) before bumping — see CLAUDE.md's `longcelot-sheet-db dependency` section for upgrade history
 - [x] `pnpm-lock.yaml` committed and CI installs with `--frozen-lockfile`
 
 ## A04:2025 — Cryptographic Failures

@@ -44,6 +44,18 @@ import restaurantReportsSchema   from '../../schemas/admin/restaurant_reports';
 import profileSchema     from '../../schemas/user/profile';
 import reservationsSchema    from '../../schemas/user/reservations';
 
+// DB_DRIVER=postgres is a real, validated option (longcelot-sheet-db@0.1.41 ships
+// createDatabaseAdapter() + `lsdb migrate --sql --apply` for exactly this) but not
+// usable here yet — app.ts's createAuthRouter() calls still need the concrete
+// SheetAdapter type, and createUserSheet() has no SQL-adapter equivalent. See
+// CLAUDE.md → "DB_DRIVER / Postgres cutover" for the full gap list.
+if (env.dbDriver === 'postgres') {
+  throw new Error(
+    'DB_DRIVER=postgres is not usable in this repo yet — see CLAUDE.md → ' +
+    '"DB_DRIVER / Postgres cutover". Set DB_DRIVER=sheets (or leave it unset) for now.'
+  );
+}
+
 // GOOGLE_ADMIN_TOKENS is a JSON-encoded OAuth token object, used in production
 // where there's no local filesystem to persist token state across deploys.
 // Locally, fall back to the token file written by `lsdb sync` (.lsdb-tokens.json

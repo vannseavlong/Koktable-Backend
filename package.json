@@ -9,6 +9,7 @@
     "start": "node dist/src/index.js",
     "test": "vitest run",
     "test:watch": "vitest",
+    "deploy:pro": "curl -fsS -X POST \"$RENDER_DEPLOY_HOOK_URL\"",
     "db:sync": "NODE_OPTIONS='--require tsx/cjs' lsdb sync",
     "db:status": "NODE_OPTIONS='--require tsx/cjs' lsdb status",
     "db:validate": "NODE_OPTIONS='--require tsx/cjs' lsdb validate",

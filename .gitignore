@@ -8,6 +8,8 @@ dist/
 .env
 .env.*
 !.env.example
+!.env.dev
+!.env.prod
 
 # Google OAuth admin tokens (written by `lsdb sync`; legacy filename kept for older checkouts)
 .lsdb-tokens.json
@@ -34,3 +36,5 @@ Thumbs.db
 .vscode/
 .idea/
 *.iml
+.env.dev
+.env.prod

@@ -23,9 +23,21 @@ function requiredSecret(name: string, minLength = 32): string {
   return value;
 }
 
+// 'sheets' (default) or 'postgres' — see src/lib/adapter.ts for what's not wired up yet.
+function dbDriver(): 'sheets' | 'postgres' {
+  const value = process.env.DB_DRIVER ?? 'sheets';
+  if (value !== 'sheets' && value !== 'postgres') {
+    throw new Error(`DB_DRIVER must be "sheets" or "postgres" (got "${value}")`);
+  }
+  return value;
+}
+
 export const env = {
   port:        Number(process.env.PORT ?? 3000),
   nodeEnv:     process.env.NODE_ENV ?? 'development',
+  dbDriver:    dbDriver(),
+  // Only used when dbDriver === 'postgres'; not required() since 'sheets' never reads it.
+  databaseUrl: process.env.DATABASE_URL,
   frontendUrl: process.env.FRONTEND_URL ?? 'http://localhost:3000',
   // Admin portal web app — separate from `frontendUrl` above, which is the
   // mobile app's custom URL scheme, not a browser-navigable URL.

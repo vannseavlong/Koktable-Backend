@@ -107,6 +107,31 @@ On `^0.1.41` (upgraded from `0.1.18` — see `CHANGELOG.md` in the package for t
 - **`hashPassword()`/`validatePasswordStrength()` (0.1.41) reject passwords over bcrypt's 72-byte limit** instead of silently truncating — both call sites in this repo (`auth.service.ts`, `merchant.service.ts`) already check `validatePasswordStrength(...).valid` before hashing and surface `.errors`, so this is a no-op on upgrade, just stricter.
 - `bug-report.md` in this repo documents the three bugs (against v0.1.17) that motivated the original `mock-users.ts` workaround — all three were fixed upstream in 0.1.18 and remain fixed; the workaround (building an admin-context adapter manually instead of shelling out to the CLI) is kept regardless since it's simpler than invoking `lsdb mock-users` as a subprocess.
 
+## DB_DRIVER / Postgres cutover
+
+`DB_DRIVER` (`config/env.ts`, validated eagerly like everything else there) is `'sheets'`
+(default) or `'postgres'`. Only `'sheets'` actually works today — `'postgres'` is a real,
+validated value that makes `src/lib/adapter.ts` throw a clear "not usable yet" error at
+startup instead of half-working. See the large comment block at the top of that file for
+the three concrete gaps blocking a real cutover (Google OAuth routers still typed to the
+concrete `SheetAdapter`, `createDatabaseAdapter()`'s TS return type not exposing
+`registerSchemas()`, and `createUserSheet()` having no SQL-adapter equivalent).
+
+This isn't a from-scratch project, though: `longcelot-sheet-db@0.1.41` (already the
+installed version here) ships `createDatabaseAdapter()` — a factory that reads `$DB_DRIVER`
+itself and returns a Sheets/Postgres/MySQL-backed adapter behind the identical
+`DatabaseAdapter`/`TableOperations` contract — plus first-party CLI tooling to actually
+apply this repo's `schemas/` to a live database:
+
+- `lsdb migrate --sql --apply --connection-string $DATABASE_URL --driver postgres` — applies `schemas/` as real DDL (`CREATE TABLE`, `UNIQUE`, `CHECK` for `enum()`, indexes for `index()` columns, FK-dependency-ordered). Idempotent, safe to rerun.
+- `lsdb migrate-data --run --connection-string $DATABASE_URL --driver postgres --all-users` — the one-time Sheets → Postgres row-data cutover, upserting by `_id`.
+- Both auto-handle Render/Heroku/Supabase's required SSL for any non-localhost `connectionString`.
+
+The package's own `CHANGELOG.md` documents a prior real production cutover done this exact
+way ("F2 Render Postgres data cutover") — worth reading before attempting this repo's own
+cutover, several non-obvious bugs (FK ordering, soft-deleted row exclusion, readonly-column
+upserts) were found and fixed there.
+
 ## Related project
 
 `WEB_API_GUIDE.md` in this repo is the API reference written for the web booking client (endpoint shapes, TypeScript snippets) — update it when changing request/response shapes.

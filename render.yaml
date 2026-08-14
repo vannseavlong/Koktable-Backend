@@ -1,0 +1,59 @@
+services:
+  - type: web
+    name: koktable-api
+    runtime: node
+    plan: starter
+    region: singapore
+    buildCommand: pnpm install --frozen-lockfile && pnpm build
+    startCommand: pnpm start
+    healthCheckPath: /health
+    # CI (.github/workflows/render-deploy.yml) gates deploys on tests/build passing,
+    # then triggers Render via a deploy hook — not Render's own auto-deploy-on-push.
+    autoDeploy: false
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DB_DRIVER
+        value: sheets
+      # Everything below is a real secret or deployment-specific value — entered once
+      # in the Render dashboard, never committed. See .env.prod for what belongs here.
+      - key: JWT_SECRET
+        sync: false
+      - key: INVITE_TOKEN_SECRET
+        sync: false
+      - key: ADMIN_SHEET_ID
+        sync: false
+      - key: GOOGLE_CLIENT_ID
+        sync: false
+      - key: GOOGLE_CLIENT_SECRET
+        sync: false
+      - key: GOOGLE_REDIRECT_URI
+        sync: false
+      - key: GOOGLE_ADMIN_REDIRECT_URI
+        sync: false
+      - key: GOOGLE_WEB_REDIRECT_URI
+        sync: false
+      - key: GOOGLE_ADMIN_TOKENS
+        sync: false
+      - key: FRONTEND_URL
+        sync: false
+      - key: ADMIN_FRONTEND_URL
+        sync: false
+      - key: MERCHANT_FRONTEND_URL
+        sync: false
+      - key: WEB_FRONTEND_URL
+        sync: false
+      - key: SUPER_ADMIN_EMAIL
+        sync: false
+      - key: SUPER_ADMIN_PASSWORD
+        sync: false
+      - key: EMAILJS_SERVICE_ID
+        sync: false
+      - key: EMAILJS_TEMPLATE_ID
+        sync: false
+      - key: EMAILJS_PUBLIC_KEY
+        sync: false
+      - key: EMAILJS_PRIVATE_KEY
+        sync: false
+      - key: GOOGLE_PLACES_API_KEY
+        sync: false

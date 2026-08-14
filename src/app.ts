@@ -15,6 +15,7 @@ import { requestLogger } from './middleware/requestLogger';
 export function createApp() {
   const app = express();
   app.disable('x-powered-by');
+  app.set('trust proxy', 1);
 
   // ─── Middleware ─────────────────────────────────────────────────────────────
   app.use(helmet());

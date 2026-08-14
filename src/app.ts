@@ -18,7 +18,7 @@ export function createApp() {
   app.set('trust proxy', 1);
 
   // ─── Middleware ─────────────────────────────────────────────────────────────
-  app.use(helmet());
+  app.use(helmet({ crossOriginResourcePolicy: { policy: 'cross-origin' } }));
   app.use(requestLogger);
   app.use(cors({
     origin:      [env.frontendUrl, env.adminFrontendUrl, env.merchantFrontendUrl, env.webFrontendUrl],

@@ -12,5 +12,5 @@ export default {
   }
 ],
   // Schema mismatch behaviour: 'warn' | 'error' | 'auto-sync'
-  onSchemaMismatch: 'warn',
+  onSchemaMismatch: 'auto-sync',
 };

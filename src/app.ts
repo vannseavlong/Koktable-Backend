@@ -12,6 +12,8 @@ import merchantRoutes from './routes/merchant';
 import { errorHandler } from './middleware/errorHandler';
 import { requestLogger } from './middleware/requestLogger';
 
+const IDENTITY_ONLY_SCOPES = ['openid', 'email', 'profile'];
+
 export function createApp() {
   const app = express();
   app.disable('x-powered-by');
@@ -35,6 +37,7 @@ export function createApp() {
     frontendUrl: env.frontendUrl,
     registrationPolicy: 'open',
     onUser: handleGoogleProfile,
+    scopes: IDENTITY_ONLY_SCOPES,
   });
   app.use('/user', googleAuth.handler);
 
@@ -52,6 +55,7 @@ export function createApp() {
     frontendUrl: env.webFrontendUrl,
     registrationPolicy: 'open',
     onUser: handleGoogleProfile,
+    scopes: IDENTITY_ONLY_SCOPES,
     oauthConfig: {
       clientId:     env.google.clientId,
       clientSecret: env.google.clientSecret,
@@ -70,6 +74,7 @@ export function createApp() {
     frontendUrl: env.adminFrontendUrl,
     registrationPolicy: 'login-only',
     onUser: handleAdminGoogleProfile,
+    scopes: IDENTITY_ONLY_SCOPES,
     oauthConfig: {
       clientId:     env.google.clientId,
       clientSecret: env.google.clientSecret,

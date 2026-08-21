@@ -47,6 +47,7 @@ interface InviteInfo {
   restaurant: { name: string; description: string; logo: string };
   email: string;
   expires_at: string;
+  account_exists: boolean;
 }
 
 // Shared validity check for both GET (preview) and POST (accept) — 404 if the token
@@ -81,10 +82,13 @@ export async function getInvite(token: string): Promise<InviteInfo> {
     throw new AppError(404, 'Restaurant not found');
   }
 
+  const existingUser = await ctx.table('users').findOne({ where: { email: invite.email } });
+
   return {
     restaurant: { name: restaurant.name, description: restaurant.description, logo: restaurant.logo },
     email: invite.email,
     expires_at: invite.expires_at,
+    account_exists: !!existingUser,
   };
 }
 

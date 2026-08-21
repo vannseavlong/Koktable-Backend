@@ -192,15 +192,17 @@ export async function handleGoogleProfile(profile: GoogleProfile): Promise<Omit<
   return toTokenPayload(user);
 }
 
-// onUser callback for the admin portal's Google OAuth router. registrationPolicy:
-// 'login-only' already rejects unknown emails (no self-registration) — this adds
-// the stricter check that the matched account must actually be role: 'admin',
-// so a customer's valid Google account can't get a session at the admin login
-// path just because their email happens to exist in the users table.
+// onUser callback for the Portal's Google OAuth router (admin sign-in page, used by
+// both admin and merchant accounts). registrationPolicy: 'login-only'
 export async function handleAdminGoogleProfile(profile: GoogleProfile): Promise<Omit<JwtPayload, 'iat'> | null> {
   const ctx  = adminContext();
   const user = await ctx.table('users').findOne({ where: { email: profile.email } }) as Record<string, string> | null;
 
-  if (!user || user.role !== 'admin' || user.status === 'inactive') return null;
-  return toTokenPayload(user);
+  if (!user || (user.role !== 'admin' && user.role !== 'merchant') || user.status === 'inactive') return null;
+
+  const payload = toTokenPayload(user);
+  if (user.role === 'merchant') {
+    payload.restaurant_id = await resolveMerchantRestaurantId(ctx, user.user_id);
+  }
+  return payload;
 }

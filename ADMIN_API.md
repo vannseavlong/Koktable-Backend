@@ -593,7 +593,7 @@ per-process — see caveat below).
 | Method | Endpoint | Rate limit | Body | Response |
 |--------|----------|------------|------|----------|
 | POST | `/merchant/apply` | 5 / hour / IP | `{ restaurant_name, applicant_name, contact_email, contact_phone?, description? }` | `{ application: MerchantApplication }` (201) |
-| GET | `/merchant/invite/:token` | 20 / 15 min / IP | — | `{ restaurant: { name, description, logo }, email, expires_at }` |
+| GET | `/merchant/invite/:token` | 20 / 15 min / IP | — | `{ restaurant: { name, description, logo }, email, expires_at, account_exists }` |
 | POST | `/merchant/invite/:token` | 20 / 15 min / IP | `{ full_name, password }` | `{ token, user, restaurant }` |
 
 `restaurant_name`, `applicant_name`, `contact_email` are required on `POST /apply`.
@@ -606,6 +606,13 @@ both return `404` for an unknown token, `400` for one that's expired, already us
 used" so a merchant who still has an old email gets pointed at their most recent one instead of a
 misleading "already used" message).
 
+**`account_exists` on the GET response:** true when the invite's email already has a `users` row —
+the token itself can still be valid/unused (a person can only own one restaurant in this model, see
+`restaurant_staff.ts`'s uniqueness comment, so a second approved application for the same email
+produces a technically-valid invite that can never be completed). The Portal checks this flag before
+rendering the set-password form and shows a "sign in instead" screen when it's true, rather than
+letting the merchant fill in the form and hit a 409 from `POST /merchant/invite/:token` on submit.
+
 On successful accept, `POST /merchant/invite/:token`: marks the invite used **before** creating
 anything else (fails closed — if a later step throws, the invite is consumed rather than left
 redeemable again), creates a `users` row (`role: "merchant"`, inserted directly into the shared
@@ -615,7 +622,13 @@ admin sheet — no per-user actor sheet, same pattern as admin accounts), create
 later via the existing `POST /user/auth/login` (email/password) — no separate merchant login
 endpoint exists; the response there also carries `restaurant_id` in the JWT for `role: "merchant"`
 accounts. That `restaurant_id` is what scopes every `/merchant/catalog-items` and `/merchant/restaurant`
-request above.
+request above. A merchant can also sign in with the Portal's "Continue with Google" button
+(`GET /admin/auth/google`, same endpoint admins use) as long as their Google account's email
+matches — `handleAdminGoogleProfile` (`auth.service.ts`) accepts `role: "admin"` or `role: "merchant"`
+and, for merchants, resolves and embeds `restaurant_id` into the JWT the same way `login()` does.
+No account linking step is needed: the invite-accept flow always sets `auth_provider: "email"` and
+creates a `credentials` row, but Google sign-in only matches by email and never checks
+`auth_provider`, so both login methods work against the one account.
 
 **`restaurant_id` on the `user` object, not just the JWT:** for `role: "merchant"` accounts, both
 `POST /user/auth/login` and `GET /user/auth/me` also merge `restaurant_id` directly onto the returned

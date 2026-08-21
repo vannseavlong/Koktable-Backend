@@ -64,10 +64,7 @@ export function createApp() {
   });
   app.use('/user/web', webGoogleAuth.handler);
 
-  // ─── Admin Google OAuth (GET /admin/auth/google → GET /admin/auth/callback) ─
-  // login-only: no self-registration, and handleAdminGoogleProfile further
-  // requires the matched account to have role: 'admin'. Separate redirect_uri
-  // from the customer flow above — see adminRedirectUri in config/env.ts.
+  // ─── Portal Google OAuth (GET /admin/auth/google → GET /admin/auth/callback) ─login only
   const adminGoogleAuth = createAuthRouter({
     adapter,
     jwtSecret:   env.jwtSecret,

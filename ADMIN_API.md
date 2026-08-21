@@ -295,6 +295,8 @@ Read-only-ish visibility into restaurants (created only via the approve flow abo
 | PATCH | `/admin/restaurants/:id` | `{ status: "pending" \| "active" \| "suspended" }` | `{ restaurant: Restaurant }` |
 | POST | `/admin/restaurants/:id/locations` | `LocationInput` (below) | `201 { location: Location }` |
 | PATCH | `/admin/restaurants/:id/locations/:locationId` | Partial `LocationInput`, or `{ active: false }` to deactivate | `{ location: Location }` |
+| GET | `/admin/restaurants/:id/subscription` | — | `{ subscription: Subscription }` (below) |
+| PATCH | `/admin/restaurants/:id/subscription` | `{ tier?: "basic" \| "pro", status?: "trialing" \| "active" \| "past_due" \| "cancelled" }` | `{ subscription: Subscription }` |
 
 ### Restaurant object
 `restaurants` holds only brand-level fields — everything tied to a physical site (address,
@@ -337,7 +339,14 @@ keeps its own hours. `cuisines` is similarly embedded from its own table, not a 
       ]
     }
   ],
-  "cuisines": ["Khmer", "Asian"]
+  "cuisines": ["Khmer", "Asian"],
+  "subscription": {
+    "subscription_id": "sub_a1b2c3d4e5",
+    "restaurant_id":   "restaurant_p9c8b7a6z5",
+    "tier":            "pro",
+    "status":          "trialing",
+    "trial_ends_at":   "2026-09-20T00:00:00.000Z"
+  }
 }
 ```
 `restaurants` itself has **no** `hours` field anymore — as of the `restaurant_hours.location_id`
@@ -415,6 +424,26 @@ server-side; a separate facet from `category_id` (dining style), not a replaceme
 `seeds/cuisines.ts` seeds the canonical list and must run before `seeds/restaurants.ts`, which links
 each restaurant by name. A merchant edits their own restaurant's cuisines via
 `PUT /merchant/restaurant/cuisines` (see "Merchant restaurant profile" below).
+
+**`subscription`** (`subscriptions` table, one row per restaurant, `restaurant_id` unique —
+Overview.md §5/§6): `tier` is `"basic"` or `"pro"`, `status` is `"trialing" | "active" | "past_due" |
+"cancelled"`. A restaurant gets a subscription row automatically the moment its merchant
+application is approved (`POST /admin/merchant-applications/:id/approve`, section 3 above), created
+as `tier: "pro"`, `status: "trialing"` with a `trial_ends_at` 30 days out — implementing the free
+Pro trial funnel (Overview.md §7.2), not the `pending`/unclaimed restaurant this API otherwise
+starts a merchant off with. Admin changes tier/status via `PATCH /admin/restaurants/:id/subscription`;
+this is currently the **only** place tier changes — there's no self-serve upgrade/downgrade or
+payment flow yet. `GET` on either the admin or merchant endpoint (below) lazily creates the row on
+first read (same `ensureForRestaurant` used by the approve flow) if it somehow doesn't exist yet, so
+callers never have to handle a missing subscription.
+
+**Tier enforcement — branches**: the one subscription-gated rule enforced so far. A restaurant is
+created with exactly one location (see above); `POST /admin/restaurants/:id/locations` allows a
+second (or further) location only when the restaurant's subscription `tier` is `"pro"` — a `"basic"`
+restaurant attempting a second location gets `403 "Upgrade to Pro to add more than one location."`.
+This only blocks *new* locations past the limit; a restaurant that already has more than one (e.g.
+downgraded from Pro to Basic) isn't retroactively locked — Overview.md §1.3 flags downgrade handling
+as a decision still needed, not yet built.
 
 **`locations[].hours`** (`restaurant_hours` table, one row per day, keyed by `location_id` — a
 `restaurant_id` is also stored on each row, denormalized for direct cross-location querying, same
@@ -528,6 +557,7 @@ Lets a merchant read and edit their own restaurant's profile fields — the coun
 | PATCH | `/merchant/restaurant/location` | merchant | any of `name, contact_email, contact_phone, address, city_id, latitude, longitude` | `{ location: Location }` |
 | PUT | `/merchant/restaurant/hours` | merchant | `{ days: DayHours[] }` | `{ hours: DayHours[] }` |
 | PUT | `/merchant/restaurant/cuisines` | merchant | `{ cuisines: string[] }` (cuisine names) | `{ cuisines: string[] }` |
+| GET | `/merchant/restaurant/subscription` | merchant | — | `{ subscription: Subscription }` (section 5's shape) |
 
 `GET`/`PATCH /merchant/restaurant`'s `Restaurant` object differs from section 5's: it embeds
 a single `location` (singular — the restaurant's first/primary location) rather than a `locations`
@@ -573,6 +603,10 @@ all of this restaurant's `restaurant_cuisines` rows and re-creates them from `cu
 unlinked (not "left unchanged"). Each entry must be an existing `cuisines.name` exactly (case-
 sensitive, no auto-create — add it via `/admin/cuisines` first, section 9); an unrecognized name or
 an empty array rejects the whole request with `400` rather than partially applying it.
+
+`GET /merchant/restaurant/subscription` is **read-only** — a merchant can see their own
+tier/status/trial info but can't change it; `PATCH /admin/restaurants/:id/subscription` (section 5)
+is the only mutation path. Powers the Portal's Billing page.
 
 `status` is **not** an updatable field here — deliberately left out of both the request body
 handling and the field list above. It stays admin-only via `PATCH /admin/restaurants/:id` (section 5);

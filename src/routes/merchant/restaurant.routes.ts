@@ -13,6 +13,7 @@ router.get('/',   restaurantController.getOwn);
 router.patch('/', restaurantImageFields, restaurantController.updateOwn);
 router.put('/hours', restaurantController.updateOwnHours);
 router.put('/cuisines', restaurantController.updateOwnCuisines);
-router.patch('/location', restaurantController.updateOwnLocation);
+router.patch('/location', restaurantController.updateOwnLocation)
+router.get('/subscription', restaurantController.getOwnSubscription);
 
 export default router;

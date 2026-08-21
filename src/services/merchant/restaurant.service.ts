@@ -5,6 +5,7 @@ import type { DayHoursInput } from '../restaurantHours.service';
 import * as restaurantLocationsService from '../restaurantLocations.service';
 import type { LocationInput } from '../restaurantLocations.service';
 import * as restaurantCuisinesService from '../restaurantCuisines.service';
+import * as subscriptionsService from '../admin/subscriptions.service';
 import { sanitizeCell } from '../../utils/sheetSanitize';
 
 // Every read/write here is scoped to the merchant's own restaurant_id (resolved from the
@@ -105,4 +106,13 @@ export async function updateOwnCuisines(restaurantId: string, cuisineNames: stri
   await getOwn(restaurantId); // 404s if this merchant doesn't own a restaurant
   const cuisines = await restaurantCuisinesService.setForRestaurant(restaurantId, cuisineNames);
   return { cuisines };
+}
+
+// Read-only for merchants — tier/status changes are admin-only, via
+// PATCH /admin/restaurants/:id/subscription. ensureForRestaurant() rather than a plain
+// get so a restaurant that predates this feature (or somehow never got one) still gets
+// a real subscription row instead of the Portal having to handle a null one.
+export async function getOwnSubscription(restaurantId: string) {
+  await getOwn(restaurantId); // 404s if this merchant doesn't own a restaurant
+  return subscriptionsService.ensureForRestaurant(restaurantId);
 }

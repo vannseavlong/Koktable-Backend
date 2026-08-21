@@ -82,3 +82,8 @@ export const updateOwnLocation = asyncHandler(async (req: Request, res: Response
   const result = await merchantRestaurantService.updateOwnLocation(restaurantId, req.body ?? {});
   res.json(result);
 });
+
+export const getOwnSubscription = asyncHandler(async (req: Request, res: Response) => {
+  const subscription = await merchantRestaurantService.getOwnSubscription(requireRestaurantId(req));
+  res.json({ subscription });
+});

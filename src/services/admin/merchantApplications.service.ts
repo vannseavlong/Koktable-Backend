@@ -5,6 +5,7 @@ import { generateInviteToken, INVITE_TOKEN_TTL_MS } from '../../lib/inviteToken'
 import { sendMerchantInviteEmail } from '../email.service';
 import { env } from '../../config/env';
 import { withLock } from '../../lib/mutex';
+import * as subscriptionsService from './subscriptions.service';
 
 interface ListApplicationsQuery {
   status?: string;
@@ -116,6 +117,10 @@ export async function approve(id: string) {
       });
       restaurant = await ctx.table('restaurants').findOne({ where: { restaurant_id } }) as Record<string, string>;
     }
+
+    // Auto-enrolls the restaurant in the free-Pro-trial funnel (Overview.md §7.2).
+    // Idempotent — a no-op on the reused-restaurant branch above, which already has one.
+    await subscriptionsService.ensureForRestaurant(restaurant.restaurant_id);
 
     await ctx.table('merchant_applications').update({ where: { application_id: id }, data: { status: 'approved' } });
 

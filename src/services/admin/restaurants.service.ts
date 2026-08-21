@@ -4,6 +4,8 @@ import { AppError } from '../../utils/AppError';
 import * as restaurantHoursService from '../restaurantHours.service';
 import * as restaurantLocationsService from '../restaurantLocations.service';
 import * as restaurantCuisinesService from '../restaurantCuisines.service';
+import * as subscriptionsService from './subscriptions.service';
+import { type Subscription } from './subscriptions.service';
 
 interface ListRestaurantsQuery {
   status?: string;
@@ -29,9 +31,10 @@ function withLocationHours(
 function attach(
   restaurant: Record<string, unknown>,
   locations: Record<string, unknown>[],
-  cuisines: string[]
+  cuisines: string[],
+  subscription: Subscription | null
 ): Record<string, unknown> {
-  return { ...restaurant, locations, cuisines };
+  return { ...restaurant, locations, cuisines, subscription };
 }
 
 export async function list(query: ListRestaurantsQuery) {
@@ -42,9 +45,10 @@ export async function list(query: ListRestaurantsQuery) {
   const restaurants = await ctx.table('restaurants').findMany({ where, orderBy: '_created_at', order: 'desc' }) as Record<string, unknown>[];
   const ids = restaurants.map((r) => r.restaurant_id as string);
 
-  const [locationsByRestaurant, cuisinesByRestaurant] = await Promise.all([
+  const [locationsByRestaurant, cuisinesByRestaurant, subscriptionsByRestaurant] = await Promise.all([
     restaurantLocationsService.getForRestaurants(ids),
     restaurantCuisinesService.getForRestaurants(ids),
+    subscriptionsService.getForRestaurants(ids),
   ]);
 
   // One hours table read total across every restaurant's locations, not one per
@@ -56,7 +60,7 @@ export async function list(query: ListRestaurantsQuery) {
     restaurants: restaurants.map((r) => {
       const id = r.restaurant_id as string;
       const locations = withLocationHours(locationsByRestaurant.get(id) ?? [], hoursByLocation);
-      return attach(r, locations, cuisinesByRestaurant.get(id) ?? []);
+      return attach(r, locations, cuisinesByRestaurant.get(id) ?? [], subscriptionsByRestaurant.get(id) ?? null);
     }),
   };
 }
@@ -66,13 +70,14 @@ async function getWithDetails(id: string): Promise<Record<string, unknown> | nul
   const restaurant = await ctx.table('restaurants').findOne({ where: { restaurant_id: id } }) as Record<string, unknown> | null;
   if (!restaurant) return null;
 
-  const [locations, cuisines] = await Promise.all([
+  const [locations, cuisines, subscription] = await Promise.all([
     restaurantLocationsService.getForRestaurant(id),
     restaurantCuisinesService.getForRestaurant(id),
+    subscriptionsService.getForRestaurant(id),
   ]);
   const locationIds = locations.map((l) => l.location_id as string);
   const hoursByLocation = await restaurantHoursService.getForLocations(locationIds);
-  return attach(restaurant, withLocationHours(locations, hoursByLocation), cuisines);
+  return attach(restaurant, withLocationHours(locations, hoursByLocation), cuisines, subscription);
 }
 
 export async function getById(id: string) {

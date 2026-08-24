@@ -99,6 +99,45 @@ describe('/merchant/restaurant (restaurant-scoped)', () => {
     expect(res.body.restaurant.logo).toBeFalsy();
   });
 
+  it('updates known_for and amenities', async () => {
+    seedRestaurant('restaurant_1');
+    const merchAuth = { Authorization: `Bearer ${merchantToken('restaurant_1')}` };
+
+    const res = await request(app).patch('/merchant/restaurant').set(merchAuth).send({
+      known_for: 'Rooftop seating, live jazz',
+      amenities: ['Wifi', 'Parking'],
+    });
+    expect(res.status).toBe(200);
+    expect(res.body.restaurant).toMatchObject({
+      known_for: 'Rooftop seating, live jazz',
+      amenities: ['Wifi', 'Parking'],
+    });
+  });
+
+  it('decodes amenities sent as a JSON string over multipart', async () => {
+    seedRestaurant('restaurant_1');
+    const merchAuth = { Authorization: `Bearer ${merchantToken('restaurant_1')}` };
+
+    const res = await request(app)
+      .patch('/merchant/restaurant')
+      .set(merchAuth)
+      .field('amenities', JSON.stringify(['Wifi', 'Outdoor seating']))
+      .attach('logo', Buffer.from('fake-image-bytes'), { filename: 'logo.png', contentType: 'image/png' });
+
+    expect(res.status).toBe(200);
+    expect(res.body.restaurant.amenities).toEqual(['Wifi', 'Outdoor seating']);
+  });
+
+  it('rejects a non-string-array amenities value', async () => {
+    seedRestaurant('restaurant_1');
+    const merchAuth = { Authorization: `Bearer ${merchantToken('restaurant_1')}` };
+
+    const res = await request(app).patch('/merchant/restaurant').set(merchAuth).send({
+      amenities: ['Wifi', 42],
+    });
+    expect(res.status).toBe(400);
+  });
+
   it('rejects blanking out the required name field', async () => {
     seedRestaurant('restaurant_1');
     const merchAuth = { Authorization: `Bearer ${merchantToken('restaurant_1')}` };
@@ -235,5 +274,69 @@ describe('/merchant/restaurant (restaurant-scoped)', () => {
     });
     expect(res.status).toBe(200);
     expect(res.body.location).toMatchObject({ restaurant_id: 'restaurant_1', contact_phone: '+1 555 0199' });
+  });
+
+  it('uploads new gallery photos and appends them after the kept ones', async () => {
+    seedRestaurant('restaurant_1', { gallery: ['fake://upload/old-1.png'] });
+    const merchAuth = { Authorization: `Bearer ${merchantToken('restaurant_1')}` };
+
+    const res = await request(app)
+      .put('/merchant/restaurant/gallery')
+      .set(merchAuth)
+      .field('keep', JSON.stringify(['fake://upload/old-1.png']))
+      .attach('gallery', Buffer.from('fake-image-bytes'), { filename: 'new-1.png', contentType: 'image/png' });
+
+    expect(res.status).toBe(200);
+    expect(res.body.gallery).toHaveLength(2);
+    expect(res.body.gallery[0]).toBe('fake://upload/old-1.png');
+    expect(res.body.gallery[1]).toMatch(/^fake:\/\/upload\//);
+
+    const getRes = await request(app).get('/merchant/restaurant').set(merchAuth);
+    expect(getRes.body.restaurant.gallery).toEqual(res.body.gallery);
+  });
+
+  it('reorders and drops a kept gallery photo, best-effort deleting the dropped one', async () => {
+    seedRestaurant('restaurant_1', {
+      gallery: ['fake://upload/a.png', 'fake://upload/b.png', 'fake://upload/c.png'],
+    });
+    const merchAuth = { Authorization: `Bearer ${merchantToken('restaurant_1')}` };
+    const deleteSpy = vi.spyOn(fakeDb.adapter, 'deleteFile');
+
+    const res = await request(app)
+      .put('/merchant/restaurant/gallery')
+      .set(merchAuth)
+      .field('keep', JSON.stringify(['fake://upload/c.png', 'fake://upload/a.png']));
+
+    expect(res.status).toBe(200);
+    expect(res.body.gallery).toEqual(['fake://upload/c.png', 'fake://upload/a.png']);
+    expect(deleteSpy).toHaveBeenCalledWith('fake://upload/b.png');
+  });
+
+  it('rejects a non-JSON keep field on the gallery endpoint', async () => {
+    seedRestaurant('restaurant_1');
+    const merchAuth = { Authorization: `Bearer ${merchantToken('restaurant_1')}` };
+
+    const res = await request(app)
+      .put('/merchant/restaurant/gallery')
+      .set(merchAuth)
+      .field('keep', 'not-json');
+    expect(res.status).toBe(400);
+  });
+
+  it('never lets a merchant touch another restaurant\'s gallery', async () => {
+    seedRestaurant('restaurant_1', { gallery: ['fake://upload/mine.png'] });
+    seedRestaurant('restaurant_2', { gallery: ['fake://upload/theirs.png'] });
+    const merchAuth = { Authorization: `Bearer ${merchantToken('restaurant_1')}` };
+
+    const res = await request(app)
+      .put('/merchant/restaurant/gallery')
+      .set(merchAuth)
+      .field('keep', JSON.stringify(['fake://upload/theirs.png']));
+
+    expect(res.status).toBe(200);
+    expect(res.body.gallery).toEqual(['fake://upload/theirs.png']);
+
+    const other = await request(app).get('/merchant/restaurant').set({ Authorization: `Bearer ${merchantToken('restaurant_2')}` });
+    expect(other.body.restaurant.gallery).toEqual(['fake://upload/theirs.png']);
   });
 });

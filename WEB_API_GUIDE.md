@@ -139,7 +139,8 @@ sorted by `sort_order` ascending.
 | `city_id` | string | Exact match against `locations[].city_id` — an id from `GET /user/cities` (section 3c), not a free-text city name. A restaurant matches if **any** of its locations is in that city. |
 | `district_id` | string | Exact match against `locations[].district_id` — an id from `GET /user/districts` (section 3c). Combining with `city_id` requires the *same* location to match both. |
 | `cuisine_id` | string | Exact match against the restaurant's cuisines — an id from `GET /user/cuisines` (section 3b), not the free-text `cuisines[]` name on the `Restaurant` object. A restaurant matches if it has this cuisine attached (via `restaurant_cuisines`, many-to-many — see `ADMIN_API.md` § 9). Independent of `city_id`/`district_id`: a restaurant must satisfy the location filter(s) *and* have the cuisine, not either/or. |
-| `limit` | positive integer | Caps the page size, applied *after* the `city_id`/`district_id`/`cuisine_id` filters above. Capped at 100 (a larger value is silently clamped, not rejected). Omit entirely to get the full filtered set in one response, unpaginated — the pre-pagination behavior, kept for backward compatibility. A non-positive or non-integer value returns `400`. |
+| `q` | string | Free-text search: case-insensitive substring match against `name`/`name_zh`/`name_km`/`name_ko`. A restaurant matches if **any** of those fields contains the substring. Combinable (AND) with `city_id`/`district_id`/`cuisine_id` — same as those. |
+| `limit` | positive integer | Caps the page size, applied *after* the `city_id`/`district_id`/`cuisine_id`/`q` filters above. Capped at 100 (a larger value is silently clamped, not rejected). Omit entirely to get the full filtered set in one response, unpaginated — the pre-pagination behavior, kept for backward compatibility. A non-positive or non-integer value returns `400`. |
 | `offset` | non-negative integer | Number of filtered results to skip before taking `limit`. Defaults to `0` when `limit` is supplied. Ignored (no slicing) when `limit` is omitted. A negative or non-integer value returns `400`. |
 
 An unset or empty-string param is ignored (no filtering on that dimension), not a `400`. `total` in the response is always the size of the filtered set (before `limit`/`offset` are applied), so it's safe to use for "have we loaded everything yet" / infinite-scroll logic; `limit`/`offset` are only present in the response when the request supplied them, so an unpaginated call's response shape is unchanged (`{ restaurants, total }`, no extra `null` fields). Fetch `GET /user/cities`/`GET /user/districts`/`GET /user/cuisines` once to populate filter dropdowns, same pattern as Categories/Cuisines (sections 3a–3b) — resolve ids to display names client-side rather than the server returning free-text city/district strings.
@@ -151,16 +152,19 @@ GET /user/restaurants?city_id=city_pp&district_id=dist_bkk1
 GET /user/restaurants?cuisine_id=cui_khmer
 → { "restaurants": [ { "restaurant_id": "...", "cuisines": ["Khmer"], ... } ], "total": 1 }
 
+GET /user/restaurants?q=khmer
+→ { "restaurants": [ { "restaurant_id": "...", "name": "Khmer Kitchen", ... } ], "total": 1 }
+
 GET /user/restaurants?limit=20&offset=20
 → { "restaurants": [ ...next 20... ], "total": 57, "limit": 20, "offset": 20 }
 ```
 
 Note the request uses `cuisine_id` (an id, resolved from `GET /user/cuisines`) but the response's
 `cuisines` field on each restaurant is `string[]` of display **names**, not ids — the two aren't
-symmetric. There's no free-text restaurant-name search yet; `cuisine_id`/`city_id`/`district_id`
-are the only filter dimensions on this endpoint today.
+symmetric. `cuisine_id`/`city_id`/`district_id`/`q` are the filter dimensions on this endpoint
+today.
 
-`restaurant` object: `{ restaurant_id, category_id, name, name_zh, name_km, name_ko, description, description_zh, description_km, description_ko, logo, banner, status, locations, cuisines, hours }`
+`restaurant` object: `{ restaurant_id, category_id, name, name_zh, name_km, name_ko, description, description_zh, description_km, description_ko, logo, banner, known_for, known_for_zh, known_for_km, known_for_ko, amenities, gallery, status, locations, cuisines, hours }`
 — note `application_id` and `owner_user_id` (present on the admin/merchant-scoped
 `restaurants` endpoints) are **stripped** here; they're internal to the admin invite/ownership
 flow and not customer-facing. `category_id` may be `null`/absent for an uncategorized restaurant —
@@ -183,12 +187,13 @@ Public, no auth. Returns `active: true` catalog items belonging to `status: 'act
 restaurants, pulled across **all** restaurants (unlike `/user/restaurants/:id/catalog-items`, which is
 scoped to one restaurant). Backs the home page's "Featured Products" grid.
 
-Query params (both optional):
+Query params (all optional, combinable):
 
 | Param | Type | Behavior |
 |-------|------|----------|
 | `type` | `'service' \| 'product'` | Filters `item_type` to this value. Omit to get both types. An unrecognized value returns `400`. |
-| `limit` | positive integer | Caps the result count *after* sorting by `sort_order` ascending. Omit for no cap. A non-positive or non-integer value returns `400`. |
+| `q` | string | Free-text search: case-insensitive substring match against the item's `name`/`name_zh`/`name_km`/`name_ko`. An item matches if **any** of those fields contains the substring. Combinable (AND) with `type`. An unset or empty-string value is ignored (no filtering on it), not a `400`. |
+| `limit` | positive integer | Caps the result count *after* sorting by `sort_order` ascending and applying `type`/`q`. Omit for no cap. A non-positive or non-integer value returns `400`. |
 
 Response shape is identical to `/user/restaurants/:id/catalog-items`'s `items` array — same
 `CatalogItem`, same `image` field, same `sort_order` ascending ordering.
@@ -207,6 +212,10 @@ interface Restaurant {
   descriptionZh: string; descriptionKm: string; descriptionKo: string;
   logo: string;
   banner: string; // '' if the merchant hasn't set one
+  knownFor: string; // '' if unset
+  knownForZh: string; knownForKm: string; knownForKo: string;
+  amenities: string[]; // free-text tag labels, e.g. ["Wifi", "Parking"]
+  gallery: string[]; // merchant-uploaded photo URLs, additional to `banner`
   status: string; // "active" or "unclaimed" for anything the public API returns
   categoryId: string; // '' if uncategorized
   // locations/cuisines/hours on the wire (see ADMIN_API.md § 5) — not modeled here, this
@@ -222,6 +231,10 @@ function parseRestaurant(j: any): Restaurant {
     descriptionZh: j.description_zh ?? '', descriptionKm: j.description_km ?? '', descriptionKo: j.description_ko ?? '',
     logo: j.logo ?? '',
     banner: j.banner ?? '',
+    knownFor: j.known_for ?? '',
+    knownForZh: j.known_for_zh ?? '', knownForKm: j.known_for_km ?? '', knownForKo: j.known_for_ko ?? '',
+    amenities: j.amenities ?? [],
+    gallery: j.gallery ?? [],
     status: j.status,
     categoryId: j.category_id ?? '',
   };

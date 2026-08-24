@@ -106,4 +106,62 @@ describe('GET /user/catalog-items', () => {
     expect(res.status).toBe(200);
     expect(res.body.items).toEqual([]);
   });
+
+  it('filters by q, case-insensitive substring match against name', async () => {
+    seedRestaurant();
+    fakeDb.seed('admin', 'catalog_items', [
+      { item_id: 'i1', restaurant_id: 'restaurant_1', item_type: 'product', name: 'Amok Fish', price_from: 10, active: true, sort_order: 0 },
+      { item_id: 'i2', restaurant_id: 'restaurant_1', item_type: 'product', name: 'Pad Thai',  price_from: 8,  active: true, sort_order: 1 },
+    ]);
+
+    const res = await request(app).get('/user/catalog-items').query({ q: 'amok' });
+    expect(res.status).toBe(200);
+    expect(res.body.items.map((i: { item_id: string }) => i.item_id)).toEqual(['i1']);
+  });
+
+  it('matches q against name_zh/name_km/name_ko as well as name', async () => {
+    seedRestaurant();
+    fakeDb.seed('admin', 'catalog_items', [
+      { item_id: 'i1', restaurant_id: 'restaurant_1', item_type: 'product', name: 'Amok Fish', name_km: 'អាម៉ុក', price_from: 10, active: true, sort_order: 0 },
+      { item_id: 'i2', restaurant_id: 'restaurant_1', item_type: 'product', name: 'Pad Thai',  price_from: 8,  active: true, sort_order: 1 },
+    ]);
+
+    const res = await request(app).get('/user/catalog-items').query({ q: 'អាម៉ុក' });
+    expect(res.status).toBe(200);
+    expect(res.body.items.map((i: { item_id: string }) => i.item_id)).toEqual(['i1']);
+  });
+
+  it('combines q with the type filter', async () => {
+    seedRestaurant();
+    fakeDb.seed('admin', 'catalog_items', [
+      { item_id: 'i1', restaurant_id: 'restaurant_1', item_type: 'product', name: 'Amok Fish',    price_from: 10, active: true, sort_order: 0 },
+      { item_id: 'i2', restaurant_id: 'restaurant_1', item_type: 'service', name: 'Amok Cooking Class', price_from: 20, active: true, sort_order: 1 },
+    ]);
+
+    const res = await request(app).get('/user/catalog-items').query({ q: 'amok', type: 'product' });
+    expect(res.status).toBe(200);
+    expect(res.body.items.map((i: { item_id: string }) => i.item_id)).toEqual(['i1']);
+  });
+
+  it('ignores an unset/empty q filter', async () => {
+    seedRestaurant();
+    fakeDb.seed('admin', 'catalog_items', [
+      { item_id: 'i1', restaurant_id: 'restaurant_1', item_type: 'product', name: 'Amok Fish', price_from: 10, active: true, sort_order: 0 },
+    ]);
+
+    const res = await request(app).get('/user/catalog-items').query({ q: '' });
+    expect(res.status).toBe(200);
+    expect(res.body.items).toHaveLength(1);
+  });
+
+  it('returns an empty list for a q no item matches', async () => {
+    seedRestaurant();
+    fakeDb.seed('admin', 'catalog_items', [
+      { item_id: 'i1', restaurant_id: 'restaurant_1', item_type: 'product', name: 'Amok Fish', price_from: 10, active: true, sort_order: 0 },
+    ]);
+
+    const res = await request(app).get('/user/catalog-items').query({ q: 'nonexistent' });
+    expect(res.status).toBe(200);
+    expect(res.body.items).toEqual([]);
+  });
 });

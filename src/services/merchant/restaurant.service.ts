@@ -24,6 +24,11 @@ export interface UpdateRestaurantInput {
   description_ko?: string;
   logo?: string;
   banner?: string;
+  known_for?: string;
+  known_for_zh?: string;
+  known_for_km?: string;
+  known_for_ko?: string;
+  amenities?: string[];
   category_id?: string;
 }
 
@@ -60,6 +65,16 @@ export async function updateOwn(restaurantId: string, body: UpdateRestaurantInpu
   if (body.description_ko !== undefined) data.description_ko = sanitizeCell(body.description_ko);
   if (body.logo        !== undefined) data.logo        = body.logo;
   if (body.banner      !== undefined) data.banner      = body.banner;
+  if (body.known_for      !== undefined) data.known_for      = sanitizeCell(body.known_for);
+  if (body.known_for_zh   !== undefined) data.known_for_zh   = sanitizeCell(body.known_for_zh);
+  if (body.known_for_km   !== undefined) data.known_for_km   = sanitizeCell(body.known_for_km);
+  if (body.known_for_ko   !== undefined) data.known_for_ko   = sanitizeCell(body.known_for_ko);
+  if (body.amenities   !== undefined) {
+    if (!Array.isArray(body.amenities) || !body.amenities.every((a) => typeof a === 'string')) {
+      throw new AppError(400, 'amenities must be an array of strings');
+    }
+    data.amenities = body.amenities.map((a) => sanitizeCell(a.trim())).filter(Boolean);
+  }
   if (body.category_id !== undefined) data.category_id = body.category_id;
 
   if (Object.keys(data).length === 0) {
@@ -106,6 +121,20 @@ export async function updateOwnCuisines(restaurantId: string, cuisineNames: stri
   await getOwn(restaurantId); // 404s if this merchant doesn't own a restaurant
   const cuisines = await restaurantCuisinesService.setForRestaurant(restaurantId, cuisineNames);
   return { cuisines };
+}
+
+// Bulk-replaces the merchant's own restaurant's gallery (additional photos, distinct
+// from `banner`) — same replace-all shape as hours/cuisines above. The controller
+// (routes/merchant/restaurant.routes.ts's PUT /gallery) resolves the final ordered
+// array before calling this: existing URLs the merchant chose to keep (reordered as
+// desired) followed by newly-uploaded ones, and best-effort deletes from Drive
+// anything that was dropped. This function just persists the final array.
+export async function updateOwnGallery(restaurantId: string, gallery: string[]) {
+  await getOwn(restaurantId); // 404s if this merchant doesn't own a restaurant
+
+  const ctx = adminContext();
+  await ctx.table('restaurants').update({ where: { restaurant_id: restaurantId }, data: { gallery } });
+  return { gallery };
 }
 
 // Read-only for merchants — tier/status changes are admin-only, via

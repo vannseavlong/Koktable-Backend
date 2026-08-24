@@ -314,6 +314,9 @@ keeps its own hours. `cuisines` is similarly embedded from its own table, not a 
   "description":    "Contemporary fine dining, serving the north side.",
   "logo":           "",
   "banner":         "",
+  "known_for":      "Rooftop seating, live jazz on weekends",
+  "amenities":      ["Wifi", "Parking", "Outdoor seating"],
+  "gallery":        [],
   "status":         "active",
   "locations": [
     {
@@ -349,6 +352,15 @@ keeps its own hours. `cuisines` is similarly embedded from its own table, not a 
   }
 }
 ```
+**`known_for`/`amenities`/`gallery`**: brand-level display fields, all merchant-editable via
+`/merchant/restaurant` below (admin has no write path for them today — read-only here, same as
+`name`/`logo`/`banner`). `known_for` is a single free-text tagline (plus `known_for_zh/km/ko`
+locale variants, same convention as `name`/`description`). `amenities` is a free-text
+`string[]` of tag labels — no controlled vocabulary/table yet, same rationale as
+`locations[].images` being a bare array. `gallery` is a `string[]` of merchant-uploaded photo
+URLs, additional to `banner` (the hero image) — distinct from `locations[].images`, which is
+Places-backfilled and blank for merchant-onboarded locations.
+
 `restaurants` itself has **no** `hours` field anymore — as of the `restaurant_hours.location_id`
 re-key, hours are no longer assumed shared across every location of a multi-location brand, so
 each entry in `locations` carries its own `hours` instead.
@@ -553,10 +565,11 @@ Lets a merchant read and edit their own restaurant's profile fields — the coun
 | Method | Endpoint | Auth | Body | Response |
 |--------|----------|------|------|----------|
 | GET | `/merchant/restaurant` | merchant | — | `{ restaurant: Restaurant }` (see below) |
-| PATCH | `/merchant/restaurant` | merchant | any of `name, description, logo, banner, category_id` | `{ restaurant: Restaurant }` |
+| PATCH | `/merchant/restaurant` | merchant | any of `name, description, logo, banner, known_for, amenities, category_id` | `{ restaurant: Restaurant }` |
 | PATCH | `/merchant/restaurant/location` | merchant | any of `name, contact_email, contact_phone, address, city_id, latitude, longitude` | `{ location: Location }` |
 | PUT | `/merchant/restaurant/hours` | merchant | `{ days: DayHours[] }` | `{ hours: DayHours[] }` |
 | PUT | `/merchant/restaurant/cuisines` | merchant | `{ cuisines: string[] }` (cuisine names) | `{ cuisines: string[] }` |
+| PUT | `/merchant/restaurant/gallery` | merchant | multipart: `keep` (JSON array of existing photo URLs to retain, in order) + 0+ `gallery` files | `{ gallery: string[] }` |
 | GET | `/merchant/restaurant/subscription` | merchant | — | `{ subscription: Subscription }` (section 5's shape) |
 
 `GET`/`PATCH /merchant/restaurant`'s `Restaurant` object differs from section 5's: it embeds
@@ -576,7 +589,18 @@ attached file is uploaded to Drive (`src/utils/imageUpload.ts`, wrapping the
 public URL replaces the corresponding field; the previous file (if any) is
 best-effort deleted from Drive. Sending the field as an explicit empty string
 with no file attached (`logo: ""`) clears it (and deletes the old file) without
-uploading a new one.
+uploading a new one. `amenities`, sent over `multipart/form-data`, must be a
+JSON-encoded string of a `string[]` (`amenities: '["Wifi","Parking"]'`) — decoded
+server-side before validation; a plain-JSON request body sends it as a real array.
+
+`PUT /merchant/restaurant/gallery` bulk-replaces the restaurant's `gallery` — always
+`multipart/form-data`. `keep` is a JSON-encoded array of the existing gallery URLs the
+merchant wants to retain, **in their desired final order** — this doubles as the
+reorder/remove mechanism (an existing URL left out of `keep` is dropped, both from the
+array and, best-effort, from Drive). Any attached `gallery` file parts (JPEG/PNG/WebP,
+5MB max each, 10 max per request) are uploaded and appended after `keep`, in submission
+order — so newly-added photos always land at the end; reordering a mix of kept and
+newly-added photos in one request isn't supported, only reordering within the kept set.
 
 Same JWT-`restaurant_id` scoping as `/merchant/catalog-items` on all three endpoints above — there's
 no `:id` in any of these URLs, so a merchant can never target another restaurant's row by guessing/

@@ -12,10 +12,23 @@ import { getActiveRestaurantIds } from './restaurants.service';
 export interface ListQuery {
   type?: string;
   limit?: string;
+  q?: string;
+}
+
+// Case-insensitive substring match against name/name_zh/name_km/name_ko — same fields the
+// public catalog item object exposes.
+const NAME_FIELDS = ['name', 'name_zh', 'name_km', 'name_ko'] as const;
+
+function matchesQuery(item: Record<string, unknown>, q: string): boolean {
+  const needle = q.toLowerCase();
+  return NAME_FIELDS.some((field) => {
+    const value = item[field];
+    return typeof value === 'string' && value.toLowerCase().includes(needle);
+  });
 }
 
 export async function list(query: ListQuery) {
-  const { type, limit: limitRaw } = query;
+  const { type, limit: limitRaw, q } = query;
 
   if (type !== undefined && !CATALOG_ITEM_TYPES.includes(type)) {
     throw new AppError(400, `Invalid type: must be one of ${CATALOG_ITEM_TYPES.join(', ')}`);
@@ -47,7 +60,10 @@ export async function list(query: ListQuery) {
     order:   'asc',
   });
 
-  const visible = items.filter((item) => activeRestaurantIds.has(item.restaurant_id as string));
+  let visible = items.filter((item) => activeRestaurantIds.has(item.restaurant_id as string));
+  if (q) {
+    visible = visible.filter((item) => matchesQuery(item as Record<string, unknown>, q));
+  }
 
   return { items: limit !== undefined ? visible.slice(0, limit) : visible };
 }

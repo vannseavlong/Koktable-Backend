@@ -20,12 +20,26 @@ export const getOwn = asyncHandler(async (req: Request, res: Response) => {
   res.json({ restaurant });
 });
 
+// The edit dialog always submits multipart/form-data (see restaurant-edit-dialog.tsx),
+// so `amenities` arrives as a JSON-encoded string field, not a real array — decode it
+// before it reaches the service. A plain-JSON caller (none today, but same convention
+// as catalogItems.controller.ts's coerceBody) that already sends a real array passes
+// through unchanged.
+function coerceAmenities(body: Record<string, unknown>): Record<string, unknown> {
+  if (typeof body.amenities !== 'string') return body;
+  try {
+    return { ...body, amenities: JSON.parse(body.amenities) };
+  } catch {
+    throw new AppError(400, 'amenities must be a JSON array of strings');
+  }
+}
+
 // Logo/banner arrive as multipart files (see routes/merchant/restaurant.routes.ts's
 // upload.fields([...])); an explicit empty-string field (no file attached) means
 // "clear this image" from the edit dialog's remove button.
 export const updateOwn = asyncHandler(async (req: Request, res: Response) => {
   const restaurantId = requireRestaurantId(req);
-  const body: Record<string, unknown> = { ...req.body };
+  const body: Record<string, unknown> = coerceAmenities({ ...req.body });
 
   const files = req.files as Record<string, Express.Multer.File[]> | undefined;
   const logoFile = files?.logo?.[0];
@@ -80,6 +94,40 @@ export const updateOwnCuisines = asyncHandler(async (req: Request, res: Response
 export const updateOwnLocation = asyncHandler(async (req: Request, res: Response) => {
   const restaurantId = requireRestaurantId(req);
   const result = await merchantRestaurantService.updateOwnLocation(restaurantId, req.body ?? {});
+  res.json(result);
+});
+
+// Bulk replace-all, multipart/form-data (see routes/merchant/restaurant.routes.ts's
+// upload.array('gallery', ...)): `keep` is a JSON-encoded array of existing gallery
+// URLs, in the merchant's desired final order (this is how reordering/removal is
+// expressed — an existing URL omitted from `keep` is dropped); any attached `gallery`
+// files are uploaded and appended after `keep`, in submission order. Whatever was on
+// the restaurant's gallery before but isn't in the final array is best-effort deleted
+// from Drive, same cleanup convention as logo/banner in updateOwn above.
+export const updateOwnGallery = asyncHandler(async (req: Request, res: Response) => {
+  const restaurantId = requireRestaurantId(req);
+
+  let keep: unknown[];
+  try {
+    keep = req.body?.keep ? JSON.parse(req.body.keep) : [];
+  } catch {
+    throw new AppError(400, 'keep must be a JSON array of existing gallery URLs');
+  }
+  if (!Array.isArray(keep) || !keep.every((v) => typeof v === 'string')) {
+    throw new AppError(400, 'keep must be a JSON array of strings');
+  }
+
+  const current = await merchantRestaurantService.getOwn(restaurantId);
+  const currentGallery = Array.isArray(current.gallery) ? (current.gallery as string[]) : [];
+
+  const files = (req.files as Express.Multer.File[] | undefined) ?? [];
+  const uploaded = await Promise.all(files.map((file) => uploadImage(file)));
+
+  const gallery = [...(keep as string[]), ...uploaded];
+  const removed = currentGallery.filter((url) => !gallery.includes(url));
+  await Promise.all(removed.map((url) => deleteImageBestEffort(url)));
+
+  const result = await merchantRestaurantService.updateOwnGallery(restaurantId, gallery);
   res.json(result);
 });
 

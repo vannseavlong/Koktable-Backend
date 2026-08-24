@@ -136,6 +136,51 @@ describe('GET /user/restaurants', () => {
     expect(res.body.restaurants).toEqual([]);
   });
 
+  it('filters by q, case-insensitive substring match against name', async () => {
+    seedRestaurant({ restaurant_id: 'restaurant_1', name: 'Khmer Kitchen' });
+    seedRestaurant({ restaurant_id: 'restaurant_2', name: 'Pizza Place' });
+
+    const res = await request(app).get('/user/restaurants').query({ q: 'khmer' });
+    expect(res.status).toBe(200);
+    expect(res.body.restaurants.map((r: { restaurant_id: string }) => r.restaurant_id)).toEqual(['restaurant_1']);
+  });
+
+  it('matches q against name_zh/name_km/name_ko as well as name', async () => {
+    seedRestaurant({ restaurant_id: 'restaurant_1', name: 'Test Restaurant', name_km: 'ភោជនីយដ្ឋានខ្មែរ' });
+    seedRestaurant({ restaurant_id: 'restaurant_2', name: 'Other Restaurant' });
+
+    const res = await request(app).get('/user/restaurants').query({ q: 'ខ្មែរ' });
+    expect(res.status).toBe(200);
+    expect(res.body.restaurants.map((r: { restaurant_id: string }) => r.restaurant_id)).toEqual(['restaurant_1']);
+  });
+
+  it('combines q with city_id/cuisine_id filters', async () => {
+    seedRestaurant({ restaurant_id: 'restaurant_1', name: 'Khmer Kitchen' });
+    seedRestaurant({ restaurant_id: 'restaurant_2', name: 'Khmer Corner' });
+    fakeDb.seed('admin', 'restaurant_locations', [
+      { location_id: 'loc_1', restaurant_id: 'restaurant_1', city_id: 'city_pp', district_id: 'dist_bkk1' },
+      { location_id: 'loc_2', restaurant_id: 'restaurant_2', city_id: 'city_sr', district_id: 'dist_slakram' },
+    ]);
+
+    const res = await request(app).get('/user/restaurants').query({ q: 'khmer', city_id: 'city_pp' });
+    expect(res.status).toBe(200);
+    expect(res.body.restaurants.map((r: { restaurant_id: string }) => r.restaurant_id)).toEqual(['restaurant_1']);
+  });
+
+  it('ignores an unset/empty q filter', async () => {
+    seedRestaurant({ restaurant_id: 'restaurant_1' });
+    const res = await request(app).get('/user/restaurants').query({ q: '' });
+    expect(res.status).toBe(200);
+    expect(res.body.restaurants).toHaveLength(1);
+  });
+
+  it('returns an empty list for a q no restaurant matches', async () => {
+    seedRestaurant({ restaurant_id: 'restaurant_1', name: 'Khmer Kitchen' });
+    const res = await request(app).get('/user/restaurants').query({ q: 'nonexistent' });
+    expect(res.status).toBe(200);
+    expect(res.body.restaurants).toEqual([]);
+  });
+
   describe('pagination', () => {
     function seedManyRestaurants(count: number) {
       for (let i = 1; i <= count; i++) {

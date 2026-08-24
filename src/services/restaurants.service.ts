@@ -21,8 +21,21 @@ export interface ListFilters {
   city_id?: string;
   district_id?: string;
   cuisine_id?: string;
+  q?: string;
   limit?: number;
   offset?: number;
+}
+
+// Case-insensitive substring match against name/name_zh/name_km/name_ko — same fields the
+// public restaurant object exposes (see toPublicRestaurant above).
+const NAME_FIELDS = ['name', 'name_zh', 'name_km', 'name_ko'] as const;
+
+function matchesQuery(restaurant: Record<string, unknown>, q: string): boolean {
+  const needle = q.toLowerCase();
+  return NAME_FIELDS.some((field) => {
+    const value = restaurant[field];
+    return typeof value === 'string' && value.toLowerCase().includes(needle);
+  });
 }
 
 export async function list(filters: ListFilters = {}) {
@@ -50,6 +63,7 @@ export async function list(filters: ListFilters = {}) {
       return false;
     }
     if (cuisineRestaurantIds && !cuisineRestaurantIds.has(id)) return false;
+    if (filters.q && !matchesQuery(r, filters.q)) return false;
     return true;
   });
 

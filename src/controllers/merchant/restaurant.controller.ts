@@ -3,6 +3,7 @@ import { asyncHandler } from '../../utils/asyncHandler';
 import { AppError } from '../../utils/AppError';
 import * as merchantRestaurantService from '../../services/merchant/restaurant.service';
 import { uploadImage, deleteImageBestEffort } from '../../utils/imageUpload';
+import { uploadFile } from '../../utils/fileUpload';
 
 // requireMerchant (middleware/auth.ts) guarantees req.user.role === 'merchant', but
 // restaurant_id is only populated once the invite/login resolves an owned restaurant (see
@@ -134,4 +135,29 @@ export const updateOwnGallery = asyncHandler(async (req: Request, res: Response)
 export const getOwnSubscription = asyncHandler(async (req: Request, res: Response) => {
   const subscription = await merchantRestaurantService.getOwnSubscription(requireRestaurantId(req));
   res.json({ subscription });
+});
+
+export const getOwnInvoices = asyncHandler(async (req: Request, res: Response) => {
+  const result = await merchantRestaurantService.getOwnInvoices(requireRestaurantId(req), {
+    status: req.query.status as string | undefined,
+    limit:  req.query.limit !== undefined ? Number(req.query.limit) : undefined,
+    offset: req.query.offset !== undefined ? Number(req.query.offset) : undefined,
+  });
+  res.json(result);
+});
+
+export const addOwnInvoiceAttachment = asyncHandler(async (req: Request, res: Response) => {
+  const file = req.file;
+  if (!file) {
+    throw new AppError(400, 'file is required');
+  }
+
+  const file_url = await uploadFile(file);
+  const attachment = await merchantRestaurantService.addOwnInvoiceAttachment(
+    requireRestaurantId(req),
+    req.params.invoiceId as string,
+    { file_url, file_name: file.originalname, mime_type: file.mimetype },
+    req.user!.user_id
+  );
+  res.status(201).json({ attachment });
 });

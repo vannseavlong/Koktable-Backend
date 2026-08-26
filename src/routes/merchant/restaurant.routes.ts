@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import * as restaurantController from '../../controllers/merchant/restaurant.controller';
-import { upload } from '../../middleware/upload';
+import { upload, uploadDocument } from '../../middleware/upload';
 
 const router = Router();
 
@@ -21,5 +21,11 @@ router.put('/cuisines', restaurantController.updateOwnCuisines);
 router.put('/gallery', galleryImageField, restaurantController.updateOwnGallery);
 router.patch('/location', restaurantController.updateOwnLocation)
 router.get('/subscription', restaurantController.getOwnSubscription);
+router.get('/invoices', restaurantController.getOwnInvoices);
+router.post(
+  '/invoices/:invoiceId/attachments',
+  uploadDocument.single('file'),
+  restaurantController.addOwnInvoiceAttachment
+);
 
 export default router;

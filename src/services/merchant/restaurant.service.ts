@@ -6,6 +6,7 @@ import * as restaurantLocationsService from '../restaurantLocations.service';
 import type { LocationInput } from '../restaurantLocations.service';
 import * as restaurantCuisinesService from '../restaurantCuisines.service';
 import * as subscriptionsService from '../admin/subscriptions.service';
+import * as invoicesService from '../admin/invoices.service';
 import { sanitizeCell } from '../../utils/sheetSanitize';
 
 // Every read/write here is scoped to the merchant's own restaurant_id (resolved from the
@@ -144,4 +145,43 @@ export async function updateOwnGallery(restaurantId: string, gallery: string[]) 
 export async function getOwnSubscription(restaurantId: string) {
   await getOwn(restaurantId); // 404s if this merchant doesn't own a restaurant
   return subscriptionsService.ensureForRestaurant(restaurantId);
+}
+
+// Read-only for merchants — same admin invoices table, scoped to their own
+// restaurant_id and with attachments inlined per invoice. Merchants can view/download
+// every attachment and upload their own payment receipt (addOwnInvoiceAttachment
+// below), but never delete one or attach an 'invoice'-kind document — that stays
+// admin-only via /admin/invoices/:id/attachments.
+export async function getOwnInvoices(restaurantId: string, query: { status?: string; limit?: number; offset?: number }) {
+  await getOwn(restaurantId); // 404s if this merchant doesn't own a restaurant
+
+  const { invoices, total, limit, offset } = await invoicesService.list({ ...query, restaurant_id: restaurantId });
+  const attachmentsByInvoice = await invoicesService.getAttachmentsForInvoices(invoices.map((i) => i.invoice_id));
+  const withAttachments = invoices.map((invoice) => ({
+    ...invoice,
+    attachments: attachmentsByInvoice.get(invoice.invoice_id) ?? [],
+  }));
+
+  return { invoices: withAttachments, total, limit, offset };
+}
+
+// Attaches a payment receipt to one of the merchant's own invoices — 404s if either
+// the restaurant or the invoice-under-that-restaurant doesn't resolve, so a merchant
+// can never attach a receipt to another restaurant's bill by guessing an invoice_id.
+// Always kind: 'receipt' — invoicesService.addAttachment auto-transitions
+// pending/failed -> 'submitted' for that kind, so admin sees it needs confirming.
+export async function addOwnInvoiceAttachment(
+  restaurantId: string,
+  invoiceId: string,
+  file: { file_url: string; file_name: string; mime_type: string },
+  uploadedBy: string
+) {
+  await getOwn(restaurantId); // 404s if this merchant doesn't own a restaurant
+
+  const { invoice } = await invoicesService.getById(invoiceId);
+  if (invoice.restaurant_id !== restaurantId) {
+    throw new AppError(404, 'Invoice not found');
+  }
+
+  return invoicesService.addAttachment(invoiceId, file, uploadedBy, 'receipt');
 }

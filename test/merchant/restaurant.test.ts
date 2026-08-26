@@ -339,4 +339,86 @@ describe('/merchant/restaurant (restaurant-scoped)', () => {
     const other = await request(app).get('/merchant/restaurant').set({ Authorization: `Bearer ${merchantToken('restaurant_2')}` });
     expect(other.body.restaurant.gallery).toEqual(['fake://upload/theirs.png']);
   });
+
+  describe('GET /invoices', () => {
+    it('lists own invoices with attachments inlined', async () => {
+      seedRestaurant('restaurant_1');
+      fakeDb.seed('admin', 'invoices', [{
+        invoice_id: 'inv_1', restaurant_id: 'restaurant_1', subscription_id: '', amount: 49,
+        currency: 'USD', status: 'paid', billing_period_start: '2026-08-01', billing_period_end: '2026-08-31',
+        due_date: '2026-08-31', paid_at: '2026-08-15', description: 'Pro plan — August 2026',
+      }]);
+      fakeDb.seed('admin', 'invoice_attachments', [{
+        attachment_id: 'att_1', invoice_id: 'inv_1', file_url: 'fake://upload/invoice.pdf',
+        file_name: 'invoice.pdf', mime_type: 'application/pdf', uploaded_by: 'admin_1',
+      }]);
+      const merchAuth = { Authorization: `Bearer ${merchantToken('restaurant_1')}` };
+
+      const res = await request(app).get('/merchant/restaurant/invoices').set(merchAuth);
+
+      expect(res.status).toBe(200);
+      expect(res.body.invoices).toHaveLength(1);
+      expect(res.body.invoices[0].invoice_id).toBe('inv_1');
+      expect(res.body.invoices[0].attachments).toHaveLength(1);
+      expect(res.body.invoices[0].attachments[0].file_name).toBe('invoice.pdf');
+    });
+
+    it('never returns another restaurant\'s invoices', async () => {
+      seedRestaurant('restaurant_1');
+      seedRestaurant('restaurant_2');
+      fakeDb.seed('admin', 'invoices', [{
+        invoice_id: 'inv_2', restaurant_id: 'restaurant_2', subscription_id: '', amount: 49,
+        currency: 'USD', status: 'pending', billing_period_start: '', billing_period_end: '',
+        due_date: '', paid_at: '', description: '',
+      }]);
+      const merchAuth = { Authorization: `Bearer ${merchantToken('restaurant_1')}` };
+
+      const res = await request(app).get('/merchant/restaurant/invoices').set(merchAuth);
+
+      expect(res.status).toBe(200);
+      expect(res.body.invoices).toHaveLength(0);
+    });
+  });
+
+  describe('POST /invoices/:invoiceId/attachments', () => {
+    it('attaches a receipt and moves a pending invoice to submitted', async () => {
+      seedRestaurant('restaurant_1');
+      fakeDb.seed('admin', 'invoices', [{
+        invoice_id: 'inv_1', restaurant_id: 'restaurant_1', subscription_id: '', amount: 49,
+        currency: 'USD', status: 'pending', billing_period_start: '', billing_period_end: '',
+        due_date: '', paid_at: '', description: '',
+      }]);
+      const merchAuth = { Authorization: `Bearer ${merchantToken('restaurant_1')}` };
+
+      const upload = await request(app)
+        .post('/merchant/restaurant/invoices/inv_1/attachments')
+        .set(merchAuth)
+        .attach('file', Buffer.from('fake-receipt'), { filename: 'receipt.jpg', contentType: 'image/jpeg' });
+
+      expect(upload.status).toBe(201);
+      expect(upload.body.attachment.kind).toBe('receipt');
+
+      const invoiceRes = await request(app).get('/merchant/restaurant/invoices').set(merchAuth);
+      expect(invoiceRes.body.invoices[0].status).toBe('submitted');
+      expect(invoiceRes.body.invoices[0].attachments).toHaveLength(1);
+    });
+
+    it('never lets a merchant attach a receipt to another restaurant\'s invoice', async () => {
+      seedRestaurant('restaurant_1');
+      seedRestaurant('restaurant_2');
+      fakeDb.seed('admin', 'invoices', [{
+        invoice_id: 'inv_2', restaurant_id: 'restaurant_2', subscription_id: '', amount: 49,
+        currency: 'USD', status: 'pending', billing_period_start: '', billing_period_end: '',
+        due_date: '', paid_at: '', description: '',
+      }]);
+      const merchAuth = { Authorization: `Bearer ${merchantToken('restaurant_1')}` };
+
+      const res = await request(app)
+        .post('/merchant/restaurant/invoices/inv_2/attachments')
+        .set(merchAuth)
+        .attach('file', Buffer.from('fake-receipt'), { filename: 'receipt.jpg', contentType: 'image/jpeg' });
+
+      expect(res.status).toBe(404);
+    });
+  });
 });

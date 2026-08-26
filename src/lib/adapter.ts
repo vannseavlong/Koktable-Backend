@@ -34,7 +34,10 @@ import rolePermissionsSchema     from '../../schemas/admin/role_permissions';
 import restaurantStaffSchema     from '../../schemas/admin/restaurant_staff';
 import subscriptionsSchema       from '../../schemas/admin/subscriptions';
 import invoicesSchema            from '../../schemas/admin/invoices';
+import invoiceAttachmentsSchema  from '../../schemas/admin/invoice_attachments';
+import invoiceStatusHistorySchema from '../../schemas/admin/invoice_status_history';
 import commissionChargesSchema   from '../../schemas/admin/commission_charges';
+import plansSchema                from '../../schemas/admin/plans';
 import platformSettingsSchema    from '../../schemas/admin/platform_settings';
 import notificationTemplatesSchema from '../../schemas/admin/notification_templates';
 import featuredRestaurantsSchema from '../../schemas/admin/featured_restaurants';
@@ -126,7 +129,10 @@ adapter.registerSchemas([
   restaurantStaffSchema,
   subscriptionsSchema,
   invoicesSchema,
+  invoiceAttachmentsSchema,
+  invoiceStatusHistorySchema,
   commissionChargesSchema,
+  plansSchema,
   platformSettingsSchema,
   notificationTemplatesSchema,
   featuredRestaurantsSchema,

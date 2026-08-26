@@ -7,6 +7,7 @@ import restaurantsRoutes from '../../src/routes/restaurants.routes';
 import catalogItemsRoutes from '../../src/routes/catalogItems.routes';
 import categoriesRoutes from '../../src/routes/categories.routes';
 import cuisinesRoutes from '../../src/routes/cuisines.routes';
+import plansRoutes from '../../src/routes/plans.routes';
 import { errorHandler } from '../../src/middleware/errorHandler';
 
 // Deliberately doesn't use src/app.ts's createApp(): that also wires up the three
@@ -28,6 +29,7 @@ export function buildTestApp() {
   app.use('/user/catalog-items', catalogItemsRoutes);
   app.use('/user/categories', categoriesRoutes);
   app.use('/user/cuisines', cuisinesRoutes);
+  app.use('/user/plans', plansRoutes);
   app.use(errorHandler);
   return app;
 }

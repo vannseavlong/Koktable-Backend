@@ -13,6 +13,7 @@ export interface Subscription {
   restaurant_id: string;
   tier: 'basic' | 'pro';
   status: 'trialing' | 'active' | 'past_due' | 'cancelled';
+  billing_interval: 'monthly' | 'annual';
   trial_ends_at?: string;
   current_period_start?: string;
   current_period_end?: string;
@@ -61,10 +62,11 @@ export async function ensureForRestaurant(restaurantId: string): Promise<Subscri
 
   const trial_ends_at = new Date(Date.now() + TRIAL_DAYS * 24 * 60 * 60 * 1000).toISOString();
   await ctx.table('subscriptions').create({
-    subscription_id: `sub_${nanoid(10)}`,
-    restaurant_id:   restaurantId,
-    tier:            'pro',
-    status:          'trialing',
+    subscription_id:  `sub_${nanoid(10)}`,
+    restaurant_id:    restaurantId,
+    tier:             'pro',
+    status:           'trialing',
+    billing_interval: 'monthly',
     trial_ends_at,
   });
 
@@ -73,10 +75,12 @@ export async function ensureForRestaurant(restaurantId: string): Promise<Subscri
 
 const VALID_TIERS = ['basic', 'pro'] as const;
 const VALID_STATUSES = ['trialing', 'active', 'past_due', 'cancelled'] as const;
+const VALID_INTERVALS = ['monthly', 'annual'] as const;
 
 interface SetSubscriptionInput {
   tier?: 'basic' | 'pro';
   status?: 'trialing' | 'active' | 'past_due' | 'cancelled';
+  billing_interval?: 'monthly' | 'annual';
 }
 
 // Admin mutation. Explicit enum checks here (same convention as restaurants.service.ts's
@@ -86,8 +90,8 @@ interface SetSubscriptionInput {
 export async function setForRestaurant(restaurantId: string, input: SetSubscriptionInput): Promise<Subscription> {
   const subscription = await ensureForRestaurant(restaurantId);
 
-  if (input.tier === undefined && input.status === undefined) {
-    throw new AppError(400, 'tier or status is required');
+  if (input.tier === undefined && input.status === undefined && input.billing_interval === undefined) {
+    throw new AppError(400, 'tier, status, or billing_interval is required');
   }
   if (input.tier !== undefined && !VALID_TIERS.includes(input.tier)) {
     throw new AppError(400, `tier must be one of: ${VALID_TIERS.join(', ')}`);
@@ -95,11 +99,18 @@ export async function setForRestaurant(restaurantId: string, input: SetSubscript
   if (input.status !== undefined && !VALID_STATUSES.includes(input.status)) {
     throw new AppError(400, `status must be one of: ${VALID_STATUSES.join(', ')}`);
   }
+  if (input.billing_interval !== undefined && !VALID_INTERVALS.includes(input.billing_interval)) {
+    throw new AppError(400, `billing_interval must be one of: ${VALID_INTERVALS.join(', ')}`);
+  }
 
   const ctx = adminContext();
   await ctx.table('subscriptions').update({
     where: { subscription_id: subscription.subscription_id },
-    data:  { ...(input.tier !== undefined && { tier: input.tier }), ...(input.status !== undefined && { status: input.status }) },
+    data:  {
+      ...(input.tier !== undefined && { tier: input.tier }),
+      ...(input.status !== undefined && { status: input.status }),
+      ...(input.billing_interval !== undefined && { billing_interval: input.billing_interval }),
+    },
   });
 
   return (await getForRestaurant(restaurantId))!;

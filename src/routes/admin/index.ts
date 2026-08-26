@@ -10,6 +10,9 @@ import reservationsRoutes from './reservations.routes';
 import merchantApplicationsRoutes from './merchantApplications.routes';
 import restaurantsRoutes    from './restaurants.routes';
 import catalogItemsRoutes from './catalogItems.routes';
+import invoicesRoutes from './invoices.routes';
+import plansRoutes from './plans.routes';
+import dashboardRoutes from './dashboard.routes';
 
 const router = Router();
 
@@ -26,5 +29,8 @@ router.use('/reservations', reservationsRoutes);
 router.use('/merchant-applications', merchantApplicationsRoutes);
 router.use('/restaurants',    restaurantsRoutes);
 router.use('/catalog-items', catalogItemsRoutes);
+router.use('/invoices', invoicesRoutes);
+router.use('/plans', plansRoutes);
+router.use('/dashboard', dashboardRoutes);
 
 export default router;

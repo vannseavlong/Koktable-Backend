@@ -296,7 +296,7 @@ Read-only-ish visibility into restaurants (created only via the approve flow abo
 | POST | `/admin/restaurants/:id/locations` | `LocationInput` (below) | `201 { location: Location }` |
 | PATCH | `/admin/restaurants/:id/locations/:locationId` | Partial `LocationInput`, or `{ active: false }` to deactivate | `{ location: Location }` |
 | GET | `/admin/restaurants/:id/subscription` | — | `{ subscription: Subscription }` (below) |
-| PATCH | `/admin/restaurants/:id/subscription` | `{ tier?: "basic" \| "pro", status?: "trialing" \| "active" \| "past_due" \| "cancelled" }` | `{ subscription: Subscription }` |
+| PATCH | `/admin/restaurants/:id/subscription` | `{ tier?: "basic" \| "pro", status?: "trialing" \| "active" \| "past_due" \| "cancelled", billing_interval?: "monthly" \| "annual" }` | `{ subscription: Subscription }` |
 
 ### Restaurant object
 `restaurants` holds only brand-level fields — everything tied to a physical site (address,
@@ -344,11 +344,12 @@ keeps its own hours. `cuisines` is similarly embedded from its own table, not a 
   ],
   "cuisines": ["Khmer", "Asian"],
   "subscription": {
-    "subscription_id": "sub_a1b2c3d4e5",
-    "restaurant_id":   "restaurant_p9c8b7a6z5",
-    "tier":            "pro",
-    "status":          "trialing",
-    "trial_ends_at":   "2026-09-20T00:00:00.000Z"
+    "subscription_id":  "sub_a1b2c3d4e5",
+    "restaurant_id":    "restaurant_p9c8b7a6z5",
+    "tier":             "pro",
+    "status":           "trialing",
+    "billing_interval": "monthly",
+    "trial_ends_at":    "2026-09-20T00:00:00.000Z"
   }
 }
 ```
@@ -439,15 +440,19 @@ each restaurant by name. A merchant edits their own restaurant's cuisines via
 
 **`subscription`** (`subscriptions` table, one row per restaurant, `restaurant_id` unique —
 Overview.md §5/§6): `tier` is `"basic"` or `"pro"`, `status` is `"trialing" | "active" | "past_due" |
-"cancelled"`. A restaurant gets a subscription row automatically the moment its merchant
-application is approved (`POST /admin/merchant-applications/:id/approve`, section 3 above), created
-as `tier: "pro"`, `status: "trialing"` with a `trial_ends_at` 30 days out — implementing the free
-Pro trial funnel (Overview.md §7.2), not the `pending`/unclaimed restaurant this API otherwise
-starts a merchant off with. Admin changes tier/status via `PATCH /admin/restaurants/:id/subscription`;
-this is currently the **only** place tier changes — there's no self-serve upgrade/downgrade or
-payment flow yet. `GET` on either the admin or merchant endpoint (below) lazily creates the row on
-first read (same `ensureForRestaurant` used by the approve flow) if it somehow doesn't exist yet, so
-callers never have to handle a missing subscription.
+"cancelled"`, `billing_interval` is `"monthly" | "annual"` (drives `POST /admin/invoices/generate` —
+section 11 — both how far `current_period_end` advances each time and which of
+`plans.price_monthly`/`price_annual` — section 13 — gets billed). A restaurant gets a subscription
+row automatically the moment its merchant application is approved
+(`POST /admin/merchant-applications/:id/approve`, section 3 above), created as `tier: "pro"`,
+`status: "trialing"`, `billing_interval: "monthly"` with a `trial_ends_at` 30 days out —
+implementing the free Pro trial funnel (Overview.md §7.2), not the `pending`/unclaimed restaurant
+this API otherwise starts a merchant off with. Admin changes tier/status/billing_interval via
+`PATCH /admin/restaurants/:id/subscription`; this is currently the **only** place they change —
+there's no self-serve upgrade/downgrade or payment flow yet. `GET` on either the admin or merchant
+endpoint (below) lazily creates the row on first read (same `ensureForRestaurant` used by the
+approve flow) if it somehow doesn't exist yet, so callers never have to handle a missing
+subscription.
 
 **Tier enforcement — branches**: the one subscription-gated rule enforced so far. A restaurant is
 created with exactly one location (see above); `POST /admin/restaurants/:id/locations` allows a
@@ -571,6 +576,7 @@ Lets a merchant read and edit their own restaurant's profile fields — the coun
 | PUT | `/merchant/restaurant/cuisines` | merchant | `{ cuisines: string[] }` (cuisine names) | `{ cuisines: string[] }` |
 | PUT | `/merchant/restaurant/gallery` | merchant | multipart: `keep` (JSON array of existing photo URLs to retain, in order) + 0+ `gallery` files | `{ gallery: string[] }` |
 | GET | `/merchant/restaurant/subscription` | merchant | — | `{ subscription: Subscription }` (section 5's shape) |
+| GET | `/merchant/restaurant/invoices` | merchant | `?status=&limit=&offset=` | `{ invoices, total, limit, offset }` (section 11's shape) |
 
 `GET`/`PATCH /merchant/restaurant`'s `Restaurant` object differs from section 5's: it embeds
 a single `location` (singular — the restaurant's first/primary location) rather than a `locations`
@@ -837,3 +843,190 @@ merchant picker below and the admin/seed restaurant-linking path) resolves names
 rejects any name that isn't in this table with `400`, so removing a cuisine that's still actively
 selected by restaurants will start rejecting re-submissions of their full cuisine list until it's
 dropped from the submitted set or re-added here.
+
+## 11. Billing / Invoices — `/admin/invoices` and `/merchant/restaurant/invoices`
+
+`invoices` is a flat resource (not nested under `/admin/restaurants/:id` like section 5's
+`subscription`/`locations`) — the admin Billing view lists across every restaurant, filtered
+by `?restaurant_id`. Each invoice covers one billing period (`billing_period_start`/`_end`,
+usually a calendar month) and can carry any number of attachments (the invoice PDF, a merchant's
+payment receipt, …) in a separate `invoice_attachments` table — one invoice, many files.
+
+| Method | Endpoint | Query / Body | Response |
+|--------|----------|---------------|----------|
+| GET | `/admin/invoices` | `?restaurant_id=&status=&limit=&offset=` | `{ invoices: Invoice[], total, limit, offset }` |
+| GET | `/admin/invoices/:id` | — | `{ invoice: Invoice, attachments: Attachment[], statusHistory: StatusHistoryEntry[], commissionCharges: object[] }` |
+| POST | `/admin/invoices` | `{ restaurant_id, subscription_id?, amount, currency?, billing_period_start?, billing_period_end?, due_date?, description? }` | `201 { invoice: Invoice }` |
+| PATCH | `/admin/invoices/:id` | `{ status?, amount?, due_date?, paid_at?, description? }` | `{ invoice: Invoice }` |
+| POST | `/admin/invoices/generate` | `{ type?: "subscription" \| "commission" \| "all" }` (default `"all"`) | `{ invoices: Invoice[], count }` |
+| POST | `/admin/invoices/:id/attachments` | multipart, field `file` (PDF/JPEG/PNG/WebP, ≤10MB); always `kind: "invoice"` | `201 { attachment: Attachment }` |
+| DELETE | `/admin/invoices/:id/attachments/:attachmentId` | — | `204 No Content` |
+| GET | `/merchant/restaurant/invoices` | merchant; `?status=&limit=&offset=` | `{ invoices: (Invoice & { attachments: Attachment[] })[], total, limit, offset }` |
+| POST | `/merchant/restaurant/invoices/:invoiceId/attachments` | merchant; multipart, field `file`; always `kind: "receipt"` | `201 { attachment: Attachment }` |
+
+`status` is one of `"pending" \| "submitted" \| "paid" \| "failed" \| "refunded"`. Setting
+`status: "paid"` via `PATCH` without an explicit `paid_at` stamps the current time automatically —
+the common "admin clicks Mark Paid" case doesn't need a second field. Every status change (via
+`PATCH`, or a merchant's receipt upload below) writes a row to `invoice_status_history`, returned
+as `statusHistory` on the detail endpoint.
+
+**`submitted`**: a merchant attaching a receipt (`POST /merchant/restaurant/invoices/:invoiceId/attachments`)
+auto-transitions the invoice from `pending`/`failed` to `submitted` — a claim of payment awaiting
+admin confirmation, not yet `paid`. Admin then `PATCH`es to `paid` (confirmed) or `failed`
+(rejected) explicitly; nothing does this automatically.
+
+**Automated invoicing** (`POST /admin/invoices/generate`): no job scheduler runs inside this repo
+(see `Backend/CLAUDE.md`), so this is designed to be called either by hand (an admin "Run billing"
+button — see it before automating anything) or by pointing an external scheduler (Render Cron Job,
+GitHub Actions on a schedule) at the same endpoint. `type: "subscription"` bills every `active`
+subscription whose `current_period_end` has passed, priced from that tier's `plans` row
+(`price_monthly` or `price_annual`, per `subscriptions.billing_interval` — section 5), and advances
+`current_period_start`/`_end` by that interval. `type: "commission"` rolls every `pending`
+`commission_charges` row into one invoice per restaurant (current calendar month) and marks those
+charges `invoiced`. Idempotent either way — a subscription already invoiced for its current period,
+or a restaurant with no pending charges, is skipped, so calling this twice (or a cron overlapping a
+manual click) never double-bills.
+
+`GET /merchant/restaurant/invoices` is **read-only** — a merchant can view/download every
+attachment and upload a payment receipt of their own (`kind: "receipt"`) to one of their own
+invoices, but can't create an invoice, edit one, attach an `"invoice"`-kind document, or delete an
+attachment; those stay admin-only. A merchant attaching a receipt to another restaurant's invoice
+id gets `404`, same as any other restaurant-scoped merchant endpoint.
+
+### Invoice object
+```json
+{
+  "invoice_id":            "inv_a1b2c3d4e5",
+  "restaurant_id":         "restaurant_p9c8b7a6z5",
+  "subscription_id":       "sub_a1b2c3d4e5",
+  "amount":                49,
+  "currency":               "USD",
+  "status":                 "paid",
+  "billing_period_start":  "2026-08-01",
+  "billing_period_end":    "2026-08-31",
+  "due_date":              "2026-08-31",
+  "paid_at":               "2026-08-15T09:12:00.000Z",
+  "description":           "Pro plan — August 2026"
+}
+```
+
+### Attachment object
+```json
+{
+  "attachment_id": "att_a1b2c3d4e5",
+  "invoice_id":    "inv_a1b2c3d4e5",
+  "file_url":      "https://drive.google.com/file/d/.../view",
+  "file_name":     "invoice-august-2026.pdf",
+  "mime_type":     "application/pdf",
+  "uploaded_by":   "admin_q1w2e3r4t5",
+  "kind":          "invoice"
+}
+```
+
+### StatusHistoryEntry object
+```json
+{
+  "history_id":  "ish_a1b2c3d4e5",
+  "invoice_id":  "inv_a1b2c3d4e5",
+  "from_status": "pending",
+  "to_status":   "submitted",
+  "changed_by":  "m_q1w2e3r4t5",
+  "changed_at":  "2026-08-14T03:00:00.000Z"
+}
+```
+
+## 12. Dashboard — `/admin/dashboard/overview`
+
+One read-only aggregation endpoint powering the Portal dashboard's charts (reservations
+trend, peak-hours heatmap, top restaurants, billing pie, merchant tier breakdown) — no
+create/update, and nothing else in this doc changes shape.
+
+| Method | Endpoint | Query | Response |
+|--------|----------|-------|----------|
+| GET | `/admin/dashboard/overview` | `?range=week\|month\|quarter` (default `month`) | see below |
+
+`range` only scopes `reservations` and `topRestaurants` (a rolling 7/30/90-day window,
+ending today) — `billing` and `merchants` are always a current-state snapshot across all
+invoices/subscriptions, not time-windowed. `reservations.trend` is bucketed daily for
+`week`/`month`, and in 7-day chunks for `quarter` (so the chart renders ~13 points instead
+of ~90). Both `trend` and `peakHours` are derived from each reservation's `start_date`
+(and `reservation_time` for the hour) — reservations without a `reservation_time` (legacy
+stay-based bookings) still count toward `total`/`byStatus`/`trend` but are skipped in
+`peakHours`. An invalid `range` value is a `400`.
+
+```json
+{
+  "range": "month",
+  "reservations": {
+    "total": 42,
+    "byStatus": { "pending": 3, "waitlisted": 0, "forwarded": 0, "confirmed": 10, "active": 2, "completed": 25, "no_show": 1, "cancelled": 1 },
+    "trend": [{ "date": "2026-07-28", "count": 4 }],
+    "peakHours": [[0, 0, 1, 0]]
+  },
+  "topRestaurants": [{ "restaurant_id": "restaurant_p9c8b7a6z5", "name": "Test Restaurant", "count": 12 }],
+  "billing": {
+    "byStatus": {
+      "pending":  { "count": 2, "amount": 98 },
+      "paid":     { "count": 8, "amount": 392 },
+      "failed":   { "count": 1, "amount": 49 },
+      "refunded": { "count": 0, "amount": 0 }
+    },
+    "totalAmount": 539,
+    "paidAmount": 392,
+    "outstandingAmount": 147
+  },
+  "merchants": {
+    "total": 6,
+    "byTier":   { "basic": 4, "pro": 2 },
+    "byStatus": { "trialing": 1, "active": 4, "past_due": 1, "cancelled": 0 }
+  }
+}
+```
+
+`reservations.peakHours` is `number[7][24]` — outer index is day-of-week
+(`0` = Sunday … `6` = Saturday, via `Date.UTC`, not the server's local timezone), inner
+index is the hour parsed from `reservation_time` (`"19:30"` → `19`). `outstandingAmount`
+is `pending + submitted + failed` amounts (`submitted` — section 11 — is a merchant's
+claimed-paid receipt awaiting admin confirmation, still unpaid until then); `refunded`
+invoices are excluded from it since that money has already been returned, not owed.
+
+## 13. Plans — `/admin/plans` and `GET /user/plans`
+
+The Basic/Pro comparison as real data instead of a hardcoded list — one row per
+`subscriptions.tier`. Admin manages it here; the merchant My Billing page and any future public
+pricing page read the public endpoint.
+
+| Method | Endpoint | Auth | Body | Response |
+|--------|----------|------|------|----------|
+| GET | `/admin/plans` | admin | — | `{ plans: Plan[] }` (sorted by `sort_order` asc) |
+| GET | `/admin/plans/:id` | admin | — | `{ plan: Plan }` |
+| POST | `/admin/plans` | admin | see below | `{ plan: Plan }` (201) |
+| PATCH | `/admin/plans/:id` | admin | any subset except `tier` | `{ plan: Plan }` |
+| GET | `/user/plans` | none (public) | — | `{ plans: Plan[] }` (only `active: true`, sorted by `sort_order` asc) |
+
+`tier` (`"basic" \| "pro"`, unique — `409` on a duplicate), `name`, `price_monthly` (>= 0), and
+`price_annual` (>= 0) are required on create. `tier` is **not** updatable via `PATCH` — it's the
+join key `subscriptions.tier` and `invoices.service.ts`'s `generateDueInvoices()` look up by, so
+changing it here would silently re-point every subscription already on that plan. No `DELETE` —
+use `PATCH { active: false }` instead (same convention as Cities/Districts, section 10), since a
+plan a subscription's `tier` still resolves against should never disappear outright.
+
+### Plan object
+```json
+{
+  "plan_id":                  "plan_a1b2c3d4e5",
+  "tier":                     "pro",
+  "name":                     "Pro",
+  "price_monthly":            49,
+  "price_annual":             490,
+  "commission_rate_default": 0.05,
+  "max_locations":            null,
+  "features":                 ["Unlimited locations", "Featured/promoted eligible", "Full analytics"],
+  "active":                   true,
+  "sort_order":               1
+}
+```
+`max_locations` blank/`null` means unlimited (Pro today). `commission_rate_default` blank falls
+back to `platform_settings`' platform-wide default, same convention as
+`subscriptions.commission_rate` (section 5) — a subscription's own `commission_rate` overrides
+both when set.

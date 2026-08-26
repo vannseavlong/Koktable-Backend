@@ -12,6 +12,9 @@ export default defineTable({
     restaurant_id:         string().required().unique().ref('restaurants.restaurant_id'),
     tier:                  string().enum(['basic', 'pro']).default('basic').required(),
     status:                string().enum(['trialing', 'active', 'past_due', 'cancelled']).default('trialing').required(),
+    // Drives invoices.service.ts's generateDueInvoices(): how far current_period_end
+    // advances each time, and which of plans.price_monthly/price_annual is billed.
+    billing_interval:      string().enum(['monthly', 'annual']).default('monthly').required(),
     trial_ends_at:         date(),
     current_period_start:  date(),
     current_period_end:    date(),

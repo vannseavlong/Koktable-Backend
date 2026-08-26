@@ -82,4 +82,35 @@ export default {
       sort_order:  6,
     },
   ],
+  // Starter Basic/Pro definitions — previously a hardcoded TIER_FEATURES const in
+  // Portal's my-billing/index.tsx, now real admin-editable data (ADMIN_API.md § 13).
+  // Prices are placeholders; adjust via PATCH /admin/plans/:id once real pricing is set.
+  plans: [
+    {
+      plan_id:                 'plan_basic',
+      tier:                    'basic',
+      name:                    'Basic',
+      price_monthly:           0,
+      price_annual:            0,
+      max_locations:           1,
+      features:                ['1 location', 'Standard listing', 'Basic analytics'],
+      active:                  true,
+      sort_order:              1,
+    },
+    {
+      plan_id:                 'plan_pro',
+      tier:                    'pro',
+      name:                    'Pro',
+      price_monthly:           49,
+      price_annual:            490,
+      features: [
+        'Unlimited locations',
+        'Standard listing',
+        'Featured/promoted eligible',
+        'Full analytics',
+      ],
+      active:                  true,
+      sort_order:              2,
+    },
+  ],
 };

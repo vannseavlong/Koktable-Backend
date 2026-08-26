@@ -24,8 +24,8 @@ importers:
         specifier: ^8.3.0
         version: 8.3.0
       longcelot-sheet-db:
-        specifier: ^0.1.43
-        version: 0.1.43(@types/node@25.9.3)
+        specifier: ^0.1.46
+        version: 0.1.46(@types/node@25.9.3)
       multer:
         specifier: ^2.2.0
         version: 2.2.0
@@ -1014,8 +1014,8 @@ packages:
     resolution: {integrity: sha512-8XPvpAA8uyhfteu8pIvQxpJZ7SYYdpUivZpGy6sFsBuKRY/7rQGavedeB8aK+Zkyq6upMFVL/9AW6vOYzfRyLg==}
     engines: {node: '>=10'}
 
-  longcelot-sheet-db@0.1.43:
-    resolution: {integrity: sha512-dm6xDAnKgaoJNoPwAIY8+QAx1AqF4NrdCrKsS3Crjpkfg2F+JyZ+/w9NX4MTr+zuqXWX2L5Y8FnUI4UFGOcPaQ==}
+  longcelot-sheet-db@0.1.46:
+    resolution: {integrity: sha512-q7HOYs7313PoEpYw6ikheqUOaVYdVCCQ1OTJDM1DQPla7u0F8zXaj61nwkQfLZvwdmEBHS5qyTMnKAVRVQkE/A==}
     engines: {node: '>=16.0.0'}
     hasBin: true
     peerDependencies:
@@ -2423,7 +2423,7 @@ snapshots:
       chalk: 4.1.2
       is-unicode-supported: 0.1.0
 
-  longcelot-sheet-db@0.1.43(@types/node@25.9.3):
+  longcelot-sheet-db@0.1.46(@types/node@25.9.3):
     dependencies:
       bcryptjs: 3.0.3
       chalk: 4.1.2
@@ -2432,7 +2432,7 @@ snapshots:
       google-auth-library: 10.7.0
       googleapis: 172.0.0
       inquirer: 8.2.7(@types/node@25.9.3)
-      nanoid: 3.3.12
+      nanoid: 3.3.18
       zod: 4.4.3
     transitivePeerDependencies:
       - '@types/node'

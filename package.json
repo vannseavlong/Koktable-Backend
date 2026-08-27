@@ -11,6 +11,7 @@
     "test:watch": "vitest",
     "deploy:pro": "curl -fsS -X POST \"$RENDER_DEPLOY_HOOK_URL\"",
     "db:sync": "NODE_OPTIONS='--require tsx/cjs' lsdb sync",
+    "db:sync:table": "NODE_OPTIONS='--require tsx/cjs' lsdb sync --table",
     "db:status": "NODE_OPTIONS='--require tsx/cjs' lsdb status",
     "db:validate": "NODE_OPTIONS='--require tsx/cjs' lsdb validate",
     "db:seed": "NODE_OPTIONS='--require tsx/cjs' lsdb seed",

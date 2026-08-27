@@ -1030,3 +1030,89 @@ plan a subscription's `tier` still resolves against should never disappear outri
 back to `platform_settings`' platform-wide default, same convention as
 `subscriptions.commission_rate` (section 5) — a subscription's own `commission_rate` overrides
 both when set.
+
+## 14. Floor plan — Floors, Rooms, Tables
+
+Three nested resources modeling a restaurant's physical layout, each with the same
+admin (cross-restaurant) / merchant (own-restaurant-only) split as Catalog Items
+(section 6): **Floor** (a level/site, e.g. "Rooftop") → **Room** (a section of a
+floor, e.g. "Main Hall") → **Table** (a physical table in a room). `restaurant_id`
+(and `location_id`, where applicable) is denormalized onto every row so any level can
+be queried directly, without joining up through its parents — writes always derive
+these from the parent ref (`location_id`/`floor_id`/`room_id`), never trust a
+client-supplied value for them.
+
+| Method | Endpoint | Auth | Query / Body | Response |
+|--------|----------|------|---------------|----------|
+| GET | `/admin/floors` | admin | `?restaurant_id=&location_id=&active=` | `{ floors: Floor[] }` |
+| GET | `/admin/floors/:id` | admin | — | `{ floor: Floor }` |
+| POST | `/admin/floors` | admin | `{ restaurant_id, location_id, name, ... }` | `{ floor: Floor }` (201) |
+| PATCH | `/admin/floors/:id` | admin | any updatable field | `{ floor: Floor }` |
+| DELETE | `/admin/floors/:id` | admin | — | 204 (409 if it still has rooms) |
+| GET/POST/PATCH/DELETE | `/merchant/floors[/:id]` | merchant | same as above minus `restaurant_id` (scoped to caller) | same, `Floor` |
+| GET | `/admin/rooms` | admin | `?restaurant_id=&location_id=&floor_id=&active=` | `{ rooms: Room[] }` |
+| GET | `/admin/rooms/:id` | admin | — | `{ room: Room }` |
+| POST | `/admin/rooms` | admin | `{ restaurant_id, floor_id, name, ... }` | `{ room: Room }` (201) |
+| PATCH | `/admin/rooms/:id` | admin | any updatable field | `{ room: Room }` |
+| DELETE | `/admin/rooms/:id` | admin | — | 204 (409 if it still has tables) |
+| GET/POST/PATCH/DELETE | `/merchant/rooms[/:id]` | merchant | same as above minus `restaurant_id` | same, `Room` |
+| GET | `/admin/tables` | admin | `?restaurant_id=&location_id=&room_id=&active=` | `{ tables: Table[] }` |
+| GET | `/admin/tables/:id` | admin | — | `{ table: Table }` |
+| POST | `/admin/tables` | admin | `{ restaurant_id, room_id, label, seats, shape?, ... }` | `{ table: Table }` (201) |
+| PATCH | `/admin/tables/:id` | admin | any updatable field | `{ table: Table }` |
+| DELETE | `/admin/tables/:id` | admin | — | 204 |
+| GET/POST/PATCH/DELETE | `/merchant/tables[/:id]` | merchant | same as above minus `restaurant_id` | same, `Table` |
+
+`location_id` on create must belong to the given/caller's `restaurant_id`, and `floor_id`/`room_id`
+must belong to it too — otherwise a 404 (not a 403 or a validation error), same "don't leak which
+restaurant owns what" rule as Catalog Items. `name` is required on Floor/Room create; `label` and
+`seats` (>= 1) are required on Table create.
+
+### Floor object
+```json
+{
+  "floor_id":      "floor_a1b2c3d4e5",
+  "restaurant_id": "restaurant_p9c8b7a6z5",
+  "location_id":   "loc_a1b2c3d4e5",
+  "name":          "Rooftop",
+  "sort_order":    0,
+  "active":        true
+}
+```
+
+### Room object
+```json
+{
+  "room_id":       "room_a1b2c3d4e5",
+  "restaurant_id": "restaurant_p9c8b7a6z5",
+  "location_id":   "loc_a1b2c3d4e5",
+  "floor_id":      "floor_a1b2c3d4e5",
+  "name":          "Main Hall",
+  "sort_order":    0,
+  "active":        true,
+  "total_seats":   24
+}
+```
+`total_seats` is computed on every read (sum of this room's `Table.seats`), not a stored column —
+there's no separate "set capacity" call, it always reflects the room's current tables.
+
+### Table object
+```json
+{
+  "table_id":      "table_a1b2c3d4e5",
+  "restaurant_id": "restaurant_p9c8b7a6z5",
+  "location_id":   "loc_a1b2c3d4e5",
+  "room_id":       "room_a1b2c3d4e5",
+  "label":         "T1",
+  "seats":         4,
+  "shape":         "square",
+  "position_x":    null,
+  "position_y":    null,
+  "sort_order":    0,
+  "active":        true
+}
+```
+`shape` is one of `round` / `square` / `rectangle`, defaulting to `square`. `label` only needs to
+be unique **within its room** (enforced at the service layer, not the sheet itself) — a `409` on
+create/rename means another table in the same room already has that label. `position_x`/`position_y`
+are floor-plan coordinates, blank until an admin/merchant arranges the layout; nothing reads them yet.

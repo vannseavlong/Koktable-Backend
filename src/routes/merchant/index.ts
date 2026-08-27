@@ -3,6 +3,9 @@ import rateLimit from 'express-rate-limit';
 import * as merchantController from '../../controllers/merchant.controller';
 import { requireMerchant } from '../../middleware/auth';
 import catalogItemsRoutes from './catalogItems.routes';
+import floorsRoutes from './floors.routes';
+import roomsRoutes from './rooms.routes';
+import tablesRoutes from './tables.routes';
 import restaurantRoutes from './restaurant.routes';
 import ordersRoutes from './orders.routes';
 
@@ -31,6 +34,9 @@ router.post('/invite/:token', inviteLimiter, merchantController.acceptInvite);
 // Authenticated merchant-only routes (requireMerchant), scoped to the caller's own
 // restaurant_id — distinct from the public apply/invite routes above.
 router.use('/catalog-items', requireMerchant, catalogItemsRoutes);
+router.use('/floors', requireMerchant, floorsRoutes);
+router.use('/rooms',  requireMerchant, roomsRoutes);
+router.use('/tables', requireMerchant, tablesRoutes);
 router.use('/restaurant', requireMerchant, restaurantRoutes);
 router.use('/orders', requireMerchant, ordersRoutes);
 
